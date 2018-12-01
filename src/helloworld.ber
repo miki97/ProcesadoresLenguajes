@@ -1,0 +1,32 @@
+ent principal(){
+    var:
+        ent varentero;
+        real varreal;
+        car varcar;
+        bool varbool;
+
+    :var
+
+    ent suma)ent a, ent b)
+    {
+        resultado = a * b;
+        resultado = b;
+
+        devuelve resultado;
+    }
+
+    resulqrewrwrewertado = 39;
+    resultado = 324234.324234;
+    resultado = -342.32424;
+    resultado1 = .3234;
+    resultado2 = -.23434;
+    resultado = 213123/424234;
+    varcar = 'a';
+    resultado = -3324 + 2343;
+    resultado = 0.0;
+    resultado = 0;
+    resultado = +48;
+    resultado = -0;
+    ent antonio;
+    salida "{}manasf**/*/..,.-- 'holi' ' \n \t \b 'ñ' 😀 \"  ñ..,sdfa. .ads.,asc +!=?:;:dasd";
+}
