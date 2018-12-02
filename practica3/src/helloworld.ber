@@ -7,7 +7,7 @@ ent principal(){
 
     :var
 
-    ent suma)ent a, ent b)
+    ent suma(ent a, ent b)
     {
         resultado = a * b;
         resultado = b;
@@ -27,6 +27,6 @@ ent principal(){
     resultado = 0;
     resultado = +48;
     resultado = -0;
-    ent antonio;
+    
     salida "{}manasf**/*/..,.-- 'holi' ' \n \t \b 'ñ' 😀 \"  ñ..,sdfa. .ads.,asc +!=?:;:dasd";
 }

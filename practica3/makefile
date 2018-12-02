@@ -28,7 +28,15 @@ $(OBJ)/main.o : $(SRC)/main.c
 $(BIN)/sintactico : $(OBJ)/main.o $(OBJ)/y.tab.o
 	gcc -o $@ $^
 
-try : $(BIN)/sintactico $(SRC)/helloworld.ber
+try2 : $(BIN)/sintactico $(SRC)/helloworld.ber
+	$^ > output_simple.txt
+
+try : $(BIN)/sintactico $(SRC)/programaPrueba.ber
+	$^ > output.txt 
+
+ctry: $(BIN)/sintactico $(SRC)/programaPrueba.ber
+	make clean
+	clear
 	$^ > output.txt 
 
 	
@@ -41,6 +49,7 @@ clean :
 	rm -f -r $(SRC)/y.output
 	rm -f -r $(OBJ)/*
 	rm -f -r ./output.txt
+	rm -f -r ./output_simple.txt
 
 mrproper : clean
 	rm -f -r $(BIN)/*

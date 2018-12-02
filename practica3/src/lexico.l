@@ -24,6 +24,7 @@ Real	{Signo}?{Numero}*\.{Numero}+
 Caract	\'({ASCII_c}|{Escape})\'
 Cadena	\"({ASCII_C}|{Escape})*\"
 
+
 Identif ({Barra}|{Letra})({Barra}|{Letra}|{Numero})*
 
 %%

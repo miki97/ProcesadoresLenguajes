@@ -11,6 +11,24 @@ int yylex();
 void yyerror(const char *msg);
 
 #define YYERROR_VERBOSE
+
+#define _CC_RESET   "\033[0m"
+#define _CC_BLACK   "\033[30m"      /* Black */
+#define _CC_RED     "\033[31m"      /* Red */
+#define _CC_GREEN   "\033[32m"      /* Green */
+#define _CC_YELLOW  "\033[33m"      /* Yellow */
+#define _CC_BLUE    "\033[34m"      /* Blue */
+#define _CC_MAGENTA "\033[35m"      /* Magenta */
+#define _CC_CYAN    "\033[36m"      /* Cyan */
+#define _CC_WHITE   "\033[37m"      /* White */
+#define _CC_BOLDBLACK   "\033[1m\033[30m"      /* Bold Black */
+#define _CC_BOLDRED     "\033[1m\033[31m"      /* Bold Red */
+#define _CC_BOLDGREEN   "\033[1m\033[32m"      /* Bold Green */
+#define _CC_BOLDYELLOW  "\033[1m\033[33m"      /* Bold Yellow */
+#define _CC_BOLDBLUE    "\033[1m\033[34m"      /* Bold Blue */
+#define _CC_BOLDMAGENTA "\033[1m\033[35m"      /* Bold Magenta */
+#define _CC_BOLDCYAN    "\033[1m\033[36m"      /* Bold Cyan */
+#define _CC_BOLDWHITE   "\033[1m\033[37m"      /* Bold White */
 %}
 
 
@@ -185,7 +203,7 @@ Lista_ent: Lista_ent SEPAR CONST_ENT
          | CONST_ENT;
 
 Lista_real: Lista_real SEPAR CONST_REAL
-          | CONST_REAL;
+          | CONST_REAL ;
 
 Sentencia_if: COND_SI PAREN_IZQ Expresion PAREN_DER Sentencia
             | COND_SI PAREN_IZQ Expresion PAREN_DER Sentencia COND_OTRO Sentencia ;
@@ -199,10 +217,10 @@ Sentencia_entrada: ENTRADA Lista_ident ;
 Sentencia_salida: SALIDA Lista_expr_cadena ;
 
 Lista_expr_cadena: Lista_expr_cadena SEPAR Expr_cadena
-                 | Expr_cadena ;
+                 | Expr_cadena;
 
 Expr_cadena: Expresion
-           | CONST_CADENA ;
+           | CONST_CADENA;
 
 Sentencia_return: DEVUELVE Expresion ;
 
@@ -221,7 +239,7 @@ Sentencia_comienzo: OP_INI_LIST Expresion ;
 
 // Implementación de la función yyerror: Escribimos el mensaje de error en pantalla
 void yyerror(const char *msg){
-	fprintf(stderr, "Línea %d: %s\n", yylineno, msg);
+	fprintf(stderr, "%sLínea %d:%s %s\n", _CC_RED, yylineno, _CC_RESET, msg);
 }
 
 //yacc -d -v calc.y ; lex calc.lex ; gcc y.tab.c lex.yy.c -lfl ; ./a.out

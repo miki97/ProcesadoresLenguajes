@@ -811,7 +811,7 @@ YY_DECL
 		}
 
 	{
-#line 29 "src/lexico.l"
+#line 30 "src/lexico.l"
 
 
 #line 818 "src/lex.yy.c"
@@ -883,340 +883,340 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 31 "src/lexico.l"
+#line 32 "src/lexico.l"
 { ECHO; return(INICIO); }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 32 "src/lexico.l"
+#line 33 "src/lexico.l"
 { ECHO; return(PAREN_IZQ); }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 33 "src/lexico.l"
+#line 34 "src/lexico.l"
 { ECHO; return(PAREN_DER); }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 34 "src/lexico.l"
+#line 35 "src/lexico.l"
 { ECHO; return(CORCH_IZQ); }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 35 "src/lexico.l"
+#line 36 "src/lexico.l"
 { ECHO; return(CORCH_DER); }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 36 "src/lexico.l"
+#line 37 "src/lexico.l"
 { ECHO; return(LLAVE_IZQ); }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 37 "src/lexico.l"
+#line 38 "src/lexico.l"
 { ECHO; return(LLAVE_DER); }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 38 "src/lexico.l"
+#line 39 "src/lexico.l"
 { ECHO; return(VAR_IZQ); }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 39 "src/lexico.l"
+#line 40 "src/lexico.l"
 { ECHO; return(VAR_DER); }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 40 "src/lexico.l"
+#line 41 "src/lexico.l"
 { ECHO; return(DELIMIT); } 
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 41 "src/lexico.l"
+#line 42 "src/lexico.l"
 { ECHO; return(SEPAR); } 
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 42 "src/lexico.l"
+#line 43 "src/lexico.l"
 { ECHO; return(TIPO); } 
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 43 "src/lexico.l"
+#line 44 "src/lexico.l"
 { ECHO; return(TIPO); } 
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 44 "src/lexico.l"
+#line 45 "src/lexico.l"
 { ECHO; return(TIPO); } 
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 45 "src/lexico.l"
+#line 46 "src/lexico.l"
 { ECHO; return(TIPO); } 
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 46 "src/lexico.l"
+#line 47 "src/lexico.l"
 { ECHO; return(TIPO_LIST); } 
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 47 "src/lexico.l"
+#line 48 "src/lexico.l"
 { ECHO; return(IGUAL); } 
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 48 "src/lexico.l"
+#line 49 "src/lexico.l"
 { ECHO; return(COND_SI); } 
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 49 "src/lexico.l"
+#line 50 "src/lexico.l"
 { ECHO; return(COND_OTRO); } 
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 50 "src/lexico.l"
+#line 51 "src/lexico.l"
 { ECHO; return(BUCLE); } 
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 51 "src/lexico.l"
+#line 52 "src/lexico.l"
 { ECHO; return(FOR_INI); } 
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 52 "src/lexico.l"
+#line 53 "src/lexico.l"
 { ECHO; return(FOR_STOP); } 
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 53 "src/lexico.l"
+#line 54 "src/lexico.l"
 { ECHO; return(FOR_STEP); } 
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 54 "src/lexico.l"
+#line 55 "src/lexico.l"
 { ECHO; return(FOR_DO); } 
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 55 "src/lexico.l"
+#line 56 "src/lexico.l"
 { ECHO; return(ENTRADA); }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 56 "src/lexico.l"
+#line 57 "src/lexico.l"
 { ECHO; return(SALIDA); } 
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 57 "src/lexico.l"
+#line 58 "src/lexico.l"
 { ECHO; return(DEVUELVE); }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 58 "src/lexico.l"
+#line 59 "src/lexico.l"
 { ECHO; return(OP_UNARIO); }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 59 "src/lexico.l"
+#line 60 "src/lexico.l"
 { ECHO; return(OP_UNARIO); }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 60 "src/lexico.l"
+#line 61 "src/lexico.l"
 { ECHO; return(OP_UNARIO); }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 61 "src/lexico.l"
+#line 62 "src/lexico.l"
 { ECHO; return(OP_UNARIO); }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 62 "src/lexico.l"
+#line 63 "src/lexico.l"
 { ECHO; return(MAS_MENOS); }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 63 "src/lexico.l"
+#line 64 "src/lexico.l"
 { ECHO; return(MAS_MENOS); }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 64 "src/lexico.l"
+#line 65 "src/lexico.l"
 { ECHO; return(MAS_MAS); }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 65 "src/lexico.l"
+#line 66 "src/lexico.l"
 { ECHO; return(OP_BIN_LISTA); }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 66 "src/lexico.l"
+#line 67 "src/lexico.l"
 { ECHO; return(OP_MULTI_DIV); }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 67 "src/lexico.l"
+#line 68 "src/lexico.l"
 { ECHO; return(OP_MULTI_DIV); }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 68 "src/lexico.l"
+#line 69 "src/lexico.l"
 { ECHO; return(OP_BIN_LISTA); }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 69 "src/lexico.l"
+#line 70 "src/lexico.l"
 { ECHO; return(OP_AND); }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 70 "src/lexico.l"
+#line 71 "src/lexico.l"
 { ECHO; return(OP_AND); }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 71 "src/lexico.l"
+#line 72 "src/lexico.l"
 { ECHO; return(OP_OR); }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 72 "src/lexico.l"
+#line 73 "src/lexico.l"
 { ECHO; return(OP_OR); }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 73 "src/lexico.l"
+#line 74 "src/lexico.l"
 { ECHO; return(OP_XOR); }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 74 "src/lexico.l"
+#line 75 "src/lexico.l"
 { ECHO; return(OP_XOR); }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 75 "src/lexico.l"
+#line 76 "src/lexico.l"
 { ECHO; return(OP_IGUALDAD); }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 76 "src/lexico.l"
+#line 77 "src/lexico.l"
 { ECHO; return(OP_IGUALDAD); }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 77 "src/lexico.l"
+#line 78 "src/lexico.l"
 { ECHO; return(OP_RELACION); }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 78 "src/lexico.l"
+#line 79 "src/lexico.l"
 { ECHO; return(OP_RELACION); }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 79 "src/lexico.l"
+#line 80 "src/lexico.l"
 { ECHO; return(OP_RELACION); }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 80 "src/lexico.l"
+#line 81 "src/lexico.l"
 { ECHO; return(OP_RELACION); }
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 81 "src/lexico.l"
+#line 82 "src/lexico.l"
 { ECHO; return(OP_LIST_CONCA); }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 82 "src/lexico.l"
+#line 83 "src/lexico.l"
 { ECHO; return(OP_GET_LIST); }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 83 "src/lexico.l"
+#line 84 "src/lexico.l"
 { ECHO; return(OP_INI_LIST); }
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 84 "src/lexico.l"
+#line 85 "src/lexico.l"
 { ECHO; return(OP_AVR_RETR); }
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 85 "src/lexico.l"
+#line 86 "src/lexico.l"
 { ECHO; return(OP_AVR_RETR); }
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 86 "src/lexico.l"
+#line 87 "src/lexico.l"
 { ECHO; return(CONST_BOOL); } 
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 87 "src/lexico.l"
+#line 88 "src/lexico.l"
 { ECHO; return(CONST_BOOL); } 
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 88 "src/lexico.l"
+#line 89 "src/lexico.l"
 { ECHO; return(CONST_BOOL); } 
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 89 "src/lexico.l"
+#line 90 "src/lexico.l"
 { ECHO; return(CONST_BOOL); }
 	YY_BREAK
 case 60:
 /* rule 60 can match eol */
 YY_RULE_SETUP
-#line 90 "src/lexico.l"
+#line 91 "src/lexico.l"
 { ECHO; return(CONST_CAR); }
 	YY_BREAK
 case 61:
 /* rule 61 can match eol */
 YY_RULE_SETUP
-#line 91 "src/lexico.l"
+#line 92 "src/lexico.l"
 { ECHO; return(CONST_CADENA); }
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 92 "src/lexico.l"
+#line 93 "src/lexico.l"
 { ECHO; return(CONST_ENT); }
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 93 "src/lexico.l"
+#line 94 "src/lexico.l"
 { ECHO; return(CONST_REAL); }
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 94 "src/lexico.l"
+#line 95 "src/lexico.l"
 { ECHO; return(IDENT); } 
 	YY_BREAK
 case 65:
 /* rule 65 can match eol */
 YY_RULE_SETUP
-#line 95 "src/lexico.l"
+#line 96 "src/lexico.l"
 { ECHO; }
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 96 "src/lexico.l"
+#line 97 "src/lexico.l"
 { printf("\nError léxico:%d: Simbolo inválido: '%s'.", yylineno, yytext); }
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 98 "src/lexico.l"
+#line 99 "src/lexico.l"
 ECHO;
 	YY_BREAK
 #line 1223 "src/lex.yy.c"
@@ -2236,7 +2236,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 98 "src/lexico.l"
+#line 99 "src/lexico.l"
 
 
 // /* Programa principal */
