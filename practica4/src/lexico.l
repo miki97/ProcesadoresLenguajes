@@ -40,11 +40,26 @@ Identif ({Barra}|{Letra})({Barra}|{Letra}|{Numero})*
 ":var"				{ ECHO; return(VAR_DER); }
 ";"					{ ECHO; return(DELIMIT); } 
 ","					{ ECHO; return(SEPAR); } 
-"bool"				{ ECHO; return(TIPO); } 
-"car"				{ ECHO; return(TIPO); } 
-"ent"				{ ECHO; return(TIPO); } 
-"real"				{ ECHO; return(TIPO); } 
-"lista de"			{ ECHO; return(TIPO_LIST); } 
+"bool"				{   ECHO; 
+                        yylval.type = BOOLEANO;
+                        return(TIPO); 
+                    } 
+"car"				{   ECHO; 
+                        yylval.type = CARACTER;
+                        return(TIPO); 
+                    } 
+"ent"				{   ECHO; 
+                        yylval.type = ENTERO;
+                        return(TIPO); 
+                    } 
+"real"				{   ECHO; 
+                        yylval.type = REAL;
+                        return(TIPO); 
+                    } 
+"lista de"			{   ECHO; 
+                        yylval.type = LISTA;
+                        return(TIPO_LIST); 
+                    } 
 "="					{ ECHO; return(IGUAL); } 
 "si"				{ ECHO; return(COND_SI); } 
 "otro"				{ ECHO; return(COND_OTRO); } 
@@ -56,43 +71,162 @@ Identif ({Barra}|{Letra})({Barra}|{Letra}|{Numero})*
 "entrada"			{ ECHO; return(ENTRADA); }
 "salida"			{ ECHO; return(SALIDA); } 
 "devuelve"			{ ECHO; return(DEVUELVE); }
-"!"					{ ECHO; return(OP_UNARIO); }
-"no"				{ ECHO; return(OP_UNARIO); }
-"#"					{ ECHO; return(OP_UNARIO); }
-"?"					{ ECHO; return(OP_UNARIO); }
-"+"					{ ECHO; return(MAS_MENOS); }
-"-"					{ ECHO; return(MAS_MENOS); }
-"++"				{ ECHO; return(MAS_MAS); }
-"--"				{ ECHO; return(OP_BIN_LISTA); }
-"*"					{ ECHO; return(OP_MULTI_DIV); }
-"/"					{ ECHO; return(OP_MULTI_DIV); }
-"%"					{ ECHO; return(OP_BIN_LISTA); }
-"&&"				{ ECHO; return(OP_AND); }
-"y"					{ ECHO; return(OP_AND); }
-"||"				{ ECHO; return(OP_OR); }
-"o"					{ ECHO; return(OP_OR); }
-"^^"				{ ECHO; return(OP_XOR); }
-"ox"				{ ECHO; return(OP_XOR); }
-"=="				{ ECHO; return(OP_IGUALDAD); }
-"!="				{ ECHO; return(OP_IGUALDAD); }
-"<"					{ ECHO; return(OP_RELACION); }
-"<="				{ ECHO; return(OP_RELACION); }
-">"					{ ECHO; return(OP_RELACION); }
-">="				{ ECHO; return(OP_RELACION); }
-"**"				{ ECHO; return(OP_LIST_CONCA); }
-"@"					{ ECHO; return(OP_GET_LIST); }
-"$"					{ ECHO; return(OP_INI_LIST); }
-"<<"				{ ECHO; return(OP_AVR_RETR); }
-">>"				{ ECHO; return(OP_AVR_RETR); }
-"falso"				{ ECHO; return(CONST_BOOL); } 
-"FALSO"				{ ECHO; return(CONST_BOOL); } 
-"verdadero"			{ ECHO; return(CONST_BOOL); } 
-"VERDADERO"			{ ECHO; return(CONST_BOOL); }
-{Caract}			{ ECHO; return(CONST_CAR); }
-{Cadena}			{ ECHO; return(CONST_CADENA); }
-{Entero}			{ ECHO; return(CONST_ENT); }
-{Real}				{ ECHO; return(CONST_REAL); }
-{Identif}			{ ECHO; return(IDENT); } 
+"!"					{   ECHO;
+                        yylval.attr = 0;
+                        return(OP_UNARIO); 
+                    }
+"no"				{   ECHO; 
+                        yylval.attr = 1;
+                        return(OP_UNARIO); 
+                    }
+"#"					{   ECHO; 
+                        yylval.attr = 2;
+                        return(OP_UNARIO); 
+                    }
+"?"					{   ECHO; 
+                        yylval.attr = 3;
+                        return(OP_UNARIO); 
+                    }
+"+"					{   ECHO; 
+                        yylval.attr = 0;
+                        return(MAS_MENOS); 
+                    }
+"-"					{   ECHO; 
+                        yylval.attr = 1;
+                        return(MAS_MENOS); 
+                    }
+"++"				{   ECHO; 
+                        yylval.attr = 0;
+                        return(MAS_MAS); 
+                    }
+"--"				{   ECHO; 
+                        yylval.attr = 0;
+                        return(OP_BIN_LISTA); 
+                    }
+"%"					{   ECHO;
+                        yylval.attr = 1;
+                        return(OP_BIN_LISTA); 
+                    }
+"*"					{   ECHO; 
+                        yylval.attr = 0;
+                        return(OP_MULTI_DIV); 
+                    }
+"/"					{   ECHO; 
+                        yylval.attr = 1;
+                        return(OP_MULTI_DIV); 
+                    }
+"&&"				{   ECHO; 
+                        yylval.attr = 0;
+                        return(OP_AND); 
+                    }
+"y"					{   ECHO; 
+                        yylval.attr = 1;
+                        return(OP_AND);
+                    }
+"||"				{   ECHO; 
+                        yylval.attr = 0;
+                        return(OP_OR); 
+                    }
+"o"					{   ECHO; 
+                        yylval.attr = 1;
+                        return(OP_OR); 
+                    }
+"^^"				{   ECHO; 
+                        yylval.attr = 0;
+                        return(OP_XOR); 
+                    }
+"ox"				{   ECHO; 
+                        yylval.attr = 1;
+                        return(OP_XOR); 
+                    }
+"=="				{   ECHO; 
+                        yylval.attr = 0;
+                        return(OP_IGUALDAD); 
+                    }
+"!="				{   ECHO; 
+                        yylval.attr = 1;
+                        return(OP_IGUALDAD); 
+                    }
+"<"					{   ECHO; 
+                        yylval.attr = 0;
+                        return(OP_RELACION); 
+                    }
+"<="				{   ECHO; 
+                        yylval.attr = 1;
+                        return(OP_RELACION); 
+                    }
+">"					{   ECHO; 
+                        yylval.attr = 2;
+                        return(OP_RELACION); 
+                    }
+">="				{   ECHO; 
+                        yylval.attr = 3;
+                        return(OP_RELACION); 
+                    }
+"**"				{   ECHO; 
+                        yylval.attr = 0;
+                        return(OP_LIST_CONCA); 
+                    }
+"@"					{   ECHO; 
+                        yylval.attr = 0;
+                        return(OP_GET_LIST); 
+                    }
+"$"					{   ECHO; 
+                        yylval.attr = 0;
+                        return(OP_INI_LIST); 
+                    }
+"<<"				{   ECHO; 
+                        yylval.attr = 0;
+                        return(OP_AVR_RETR); 
+                    }
+">>"				{   ECHO; 
+                        yylval.attr = 1;
+                        return(OP_AVR_RETR); 
+                    }
+"falso"				{   ECHO; 
+                        yylval.attr = 0;
+                        yylval.lex = strdup(yytext);
+                        return(CONST_BOOL); 
+                    } 
+"FALSO"				{   ECHO; 
+                        yylval.attr = 1;
+                        yylval.lex = strdup(yytext);
+                        return(CONST_BOOL); 
+                    } 
+"verdadero"			{   ECHO; 
+                        yylval.attr = 2;
+                        yylval.lex = strdup(yytext);
+                        return(CONST_BOOL); 
+                    } 
+"VERDADERO"			{   ECHO; 
+                        yylval.attr = 3;
+                        yylval.lex = strdup(yytext);
+                        return(CONST_BOOL); 
+                    }
+{Caract}			{   ECHO; 
+                        yylval.attr = 0;
+                        yylval.lex = strdup(yytext);
+                        return(CONST_CAR); 
+                    }
+{Cadena}			{   ECHO;
+                        yylval.attr = 1;
+                        yylval.lex = strdup(yytext);
+                        return(CONST_CADENA); 
+                    }
+{Entero}			{   ECHO; 
+                        yylval.attr = 2;
+                        yylval.lex = strdup(yytext);
+                        return(CONST_ENT); 
+                    }
+{Real}				{   ECHO; 
+                        yylval.attr = 3;
+                        yylval.lex = strdup(yytext);
+                        return(CONST_REAL); 
+                    }
+{Identif}			{   ECHO; 
+                        yylval.lex = strdup(yytext);
+                        return(IDENT); 
+                    } 
 {Espacio}			{ ECHO; }
 .					{ printf("\nError léxico:%d: Simbolo inválido: '%s'.", yylineno, yytext); }
 

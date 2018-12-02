@@ -5,6 +5,8 @@
 #include <string.h>
 // #include "tokens.tab.h"
 #include "y.tab.h"
+#include "colores.h"
+#include "semantico.h"
 
 // Declaramos ’yyerror’ para que se pueda invocar desde lex (lexico.l)
 int yylex();
@@ -12,23 +14,6 @@ void yyerror(const char *msg);
 
 #define YYERROR_VERBOSE
 
-#define _CC_RESET   "\033[0m"
-#define _CC_BLACK   "\033[30m"      /* Black */
-#define _CC_RED     "\033[31m"      /* Red */
-#define _CC_GREEN   "\033[32m"      /* Green */
-#define _CC_YELLOW  "\033[33m"      /* Yellow */
-#define _CC_BLUE    "\033[34m"      /* Blue */
-#define _CC_MAGENTA "\033[35m"      /* Magenta */
-#define _CC_CYAN    "\033[36m"      /* Cyan */
-#define _CC_WHITE   "\033[37m"      /* White */
-#define _CC_BOLDBLACK   "\033[1m\033[30m"      /* Bold Black */
-#define _CC_BOLDRED     "\033[1m\033[31m"      /* Bold Red */
-#define _CC_BOLDGREEN   "\033[1m\033[32m"      /* Bold Green */
-#define _CC_BOLDYELLOW  "\033[1m\033[33m"      /* Bold Yellow */
-#define _CC_BOLDBLUE    "\033[1m\033[34m"      /* Bold Blue */
-#define _CC_BOLDMAGENTA "\033[1m\033[35m"      /* Bold Magenta */
-#define _CC_BOLDCYAN    "\033[1m\033[36m"      /* Bold Cyan */
-#define _CC_BOLDWHITE   "\033[1m\033[37m"      /* Bold White */
 %}
 
 
@@ -106,7 +91,7 @@ Programa: Cabecera Bloque ;
 
 Cabecera: INICIO PAREN_IZQ PAREN_DER ;
 
-Bloque: LLAVE_IZQ Declar_variables_locales Declar_funciones Sentencias LLAVE_DER;
+Bloque: LLAVE_IZQ { addMarca(); }Declar_variables_locales Declar_funciones Sentencias LLAVE_DER {limpiarBloque();};
 
 Declar_variables_locales: VAR_IZQ Cuerpo_variables VAR_DER
                         | ;
@@ -114,7 +99,7 @@ Declar_variables_locales: VAR_IZQ Cuerpo_variables VAR_DER
 Cuerpo_variables: Cuerpo_variables Declar_variables
                 | Declar_variables ;
 
-Declar_variables: Tipo Lista_ident DELIMIT 
+Declar_variables: Tipo  { setTipo($1); }Lista_ident DELIMIT 
                 | error;
 
 Tipo: Tipo_dato
@@ -130,20 +115,21 @@ Lista_ident: Lista_ident SEPAR IDENT
           
 Declar_funciones: Declar_funciones Declar_funcion
                 | ;
-Cabecera_funcion: TIPO IDENT PAREN_IZQ Lista_parametros PAREN_DER
+Cabecera_funcion: TIPO IDENT {decParam=1;} {addFuncion($2);} PAREN_IZQ Lista_parametros PAREN_DER
+                { actualizarNparam($1); nParam = 0; decParam = 0; } {$1.nDim=0;}
                 | error;
                 
-Declar_funcion: Cabecera_funcion Bloque ;
+Declar_funcion: Cabecera_funcion { funcion=1;} Bloque { funcion=0;};
 
 Lista_parametros: Lista_parametros SEPAR Parametro
                 | Lista_parametros error Parametro
                 | Parametro
                 | ;
 
-Parametro: TIPO IDENT ;
+Parametro: TIPO IDENT {nParam++; setTipo($1); addParametro($2); };
 
-Sentencias: Sentencias Sentencia 
-          | Sentencia ;
+Sentencias: Sentencias {decVar = 2; }Sentencia 
+          | {decVar = 2; }Sentencia ;
 
 Sentencia: Bloque
          | Sentencia_asig DELIMIT
@@ -156,59 +142,83 @@ Sentencia: Bloque
          | Sentencia_iterar DELIMIT
          | Sentencia_comienzo DELIMIT ;
 
-Sentencia_asig: IDENT IGUAL Expresion ;
+Sentencia_asig: IDENT IGUAL Expresion {
+
+	if($1.type!=$3.type){
+		printf("Semantic Error(%d): Types are not equal.\n",line);
+	}
+	/*if(!equalSize($1,$3)){
+		printf("Semantic Error(%d): Sizes are not equal.\n",line);
+	}*/
+};
 
 Lista_expresiones: Lista_expresiones SEPAR Expresion
                  | Lista_expresiones error Expresion
                  | Expresion;                
 
-Expresion: PAREN_IZQ Expresion PAREN_DER
-         | OP_UNARIO Expresion
-         | MAS_MENOS Expresion %prec OP_UNARIO
-         | Expresion MAS_MENOS Expresion
-         | Expresion OP_BIN_LISTA Expresion
-         | Expresion OP_LIST_CONCA Expresion
-         | Expresion OP_OR Expresion
-         | Expresion OP_XOR Expresion
-         | Expresion OP_AND Expresion
-         | Expresion OP_RELACION Expresion
-         | Expresion OP_IGUALDAD Expresion
-         | Expresion OP_MULTI_DIV Expresion
-         | Expresion MAS_MAS Expresion OP_GET_LIST Expresion
-         | IDENT
-         | Constante
-         | IDENT PAREN_IZQ Lista_expresiones PAREN_DER
-         | IDENT PAREN_IZQ PAREN_DER
+Expresion: PAREN_IZQ Expresion PAREN_DER { $$.type = $2.type;}
+         | OP_UNARIO Expresion{compruebaUnario($1, $2, &$$); }
+         | MAS_MENOS Expresion {compruebaSigno($1, $2, &$$); }%prec OP_UNARIO
+         | Expresion MAS_MENOS Expresion{compruebaSignoBin($1, $2, $3, &$$); }
+         | Expresion OP_BIN_LISTA Expresion{compruebaListaBin($1, $2, $3, &$$); }
+         | Expresion OP_LIST_CONCA Expresion{compruebaListaConca($1, $2, $3, &$$); }
+         | Expresion OP_OR Expresion{compruebaBooleanos($1, $2, $3, &$$); }
+         | Expresion OP_XOR Expresion{compruebaBooleanos($1, $2, $3, &$$); }
+         | Expresion OP_AND Expresion{compruebaBooleanos($1, $2, $3, &$$); }
+         | Expresion OP_RELACION Expresion{compruebaRel($1, $2, $3, &$$); }
+         | Expresion OP_IGUALDAD Expresion{compruebaRel($1, $2, $3, &$$); }
+         | Expresion OP_MULTI_DIV Expresion{compruebaProducto($1, $2, $3, &$$); }
+         | Expresion MAS_MAS Expresion OP_GET_LIST Expresion{compruebaListaGet($1, $3, $5, &$$); }
+         | IDENT {decVar = 0;}
+         | Funcion{$$.type = $1.type;}
+         | Constante { $$.type = $1.type;}
          | error;
 
-Constante: CONST_BOOL
-         | CONST_CAR
-         | CONST_ENT
-         | CONST_REAL
-         | Constante_lista ;
+Funcion: | IDENT PAREN_IZQ Lista_expresiones PAREN_DER{ compruebaLlamada($1, &$$); }
+         | IDENT PAREN_IZQ PAREN_DER{ compruebaLlamada($1, &$$); };
 
-Constante_lista: CORCH_IZQ Lista_bool CORCH_DER
-               | CORCH_IZQ Lista_car CORCH_DER
-               | CORCH_IZQ Lista_ent CORCH_DER
-               | CORCH_IZQ Lista_real CORCH_DER
+Constante: CONST_BOOL      {$$.type = $1.type;}
+         | CONST_CAR       {$$.type = $1.type;}
+         | CONST_ENT       {$$.type = $1.type;}
+         | CONST_REAL      {$$.type = $1.type;}
+         | Constante_lista {$$.type = $1.type;};
+
+Constante_lista: CORCH_IZQ Lista_bool CORCH_DER{$$.type = $2.type;}
+               | CORCH_IZQ Lista_car CORCH_DER{$$.type = $2.type;}
+               | CORCH_IZQ Lista_ent CORCH_DER{$$.type = $2.type;}
+               | CORCH_IZQ Lista_real CORCH_DER{$$.type = $2.type;}
                | CORCH_IZQ CORCH_DER ;
 
 Lista_bool: Lista_bool SEPAR CONST_BOOL
-          | CONST_BOOL ;
+          | CONST_BOOL {$$.type = $1.type;};
 
 Lista_car: Lista_car SEPAR CONST_CAR
-         | CONST_CAR ;
+         | CONST_CAR{$$.type = $1.type;};
 
 Lista_ent: Lista_ent SEPAR CONST_ENT
-         | CONST_ENT;
+         | CONST_ENT{$$.type = $1.type;};
 
 Lista_real: Lista_real SEPAR CONST_REAL
-          | CONST_REAL ;
+          | CONST_REAL {$$.type = $1.type;};
 
-Sentencia_if: COND_SI PAREN_IZQ Expresion PAREN_DER Sentencia
-            | COND_SI PAREN_IZQ Expresion PAREN_DER Sentencia COND_OTRO Sentencia ;
+Sentencia_if: COND_SI PAREN_IZQ Expresion PAREN_DER Sentencia{	
+                    if($3.type != BOOLEANO){
+                        printf("expresion no es logica");
+                    }
+            }
+            | COND_SI PAREN_IZQ Expresion PAREN_DER Sentencia COND_OTRO Sentencia {
+					if($3.type != BOOLEANO){
+                        printf("expresion no es logica");
+					}
+            }
+				 ;
 
-Sentencia_while: BUCLE PAREN_IZQ Expresion PAREN_DER Sentencia ;
+Sentencia_while: BUCLE PAREN_IZQ Expresion PAREN_DER Sentencia
+                {
+                    if($3.type != BOOLEANO){
+                        printf("expresion no es logica");                                 
+                    }
+                } ;
 
 Sentencia_for: FOR_INI Sentencia_asig FOR_STOP Expresion FOR_STEP Expresion FOR_DO Sentencia ;
 
@@ -222,7 +232,7 @@ Lista_expr_cadena: Lista_expr_cadena SEPAR Expr_cadena
 Expr_cadena: Expresion
            | CONST_CADENA;
 
-Sentencia_return: DEVUELVE Expresion ;
+Sentencia_return: DEVUELVE Expresion {compruebaDevuelve($2,&$$); } ;
 
 Sentencia_iterar: Expresion OP_AVR_RETR ;
 

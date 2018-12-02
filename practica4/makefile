@@ -11,7 +11,7 @@ INCLUDES = -I$(INC)
 
 
 #**************************COMPILACIÓN**************************#
-all : $(BIN)/sintactico
+all : $(OBJ)/semantico.o $(BIN)/sintactico
 
 $(SRC)/lex.yy.c : $(SRC)/lexico.l
 	lex -o $@ $<
@@ -20,13 +20,16 @@ $(SRC)/y.tab.c : $(SRC)/sintactico.y $(SRC)/lex.yy.c
 	bison -d -v -o $@ $< 
 
 $(OBJ)/y.tab.o : $(SRC)/y.tab.c 
-	gcc -c -o $@ $<
+	gcc -c -o $@ $< 
 
 $(OBJ)/main.o : $(SRC)/main.c
 	gcc -c -o $@ $<
 
-$(BIN)/sintactico : $(OBJ)/main.o $(OBJ)/y.tab.o
-	gcc -o $@ $^
+$(OBJ)/semantico.o: $(SRC)/semantico.c
+	gcc -c -o $@ $< $(INCLUDES) 
+
+$(BIN)/sintactico : $(OBJ)/y.tab.o $(OBJ)/semantico.o $(OBJ)/main.o  
+	gcc -o $@ $^ $(INCLUDES) 
 
 try2 : $(BIN)/sintactico $(SRC)/helloworld.ber
 	$^ > output_simple.txt
@@ -37,9 +40,8 @@ try : $(BIN)/sintactico $(SRC)/programaPrueba.ber
 ctry: $(BIN)/sintactico $(SRC)/programaPrueba.ber
 	make clean
 	clear
-	$^ > output.txt 
+	$^ > output.txt
 
-	
 #***************************LIMPIEZA***************************#
 clean :
 	rm -f -r *~

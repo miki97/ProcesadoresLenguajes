@@ -100,7 +100,7 @@ typedef int YYSTYPE;
 #endif
 
 
-extern YYSTYPE yylval;
+// extern YYSTYPE yylval;
 
 int yyparse (void);
 
