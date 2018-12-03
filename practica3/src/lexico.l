@@ -80,6 +80,7 @@ Identif ({Barra}|{Letra})({Barra}|{Letra}|{Numero})*
 ">"					{ ECHO; return(OP_RELACION); }
 ">="				{ ECHO; return(OP_RELACION); }
 "**"				{ ECHO; return(OP_LIST_CONCA); }
+"@@"                { ECHO; return(OP_BIN_LISTA); }
 "@"					{ ECHO; return(OP_GET_LIST); }
 "$"					{ ECHO; return(OP_INI_LIST); }
 "<<"				{ ECHO; return(OP_AVR_RETR); }

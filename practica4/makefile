@@ -20,7 +20,7 @@ $(SRC)/y.tab.c : $(SRC)/sintactico.y $(SRC)/lex.yy.c
 	bison -d -v -o $@ $< 
 
 $(OBJ)/y.tab.o : $(SRC)/y.tab.c 
-	gcc -c -o $@ $< 
+	gcc -c -o $@ $< $(INCLUDES)
 
 $(OBJ)/main.o : $(SRC)/main.c
 	gcc -c -o $@ $<
@@ -47,6 +47,7 @@ clean :
 	rm -f -r *~
 	rm -f -r $(SRC)/*~
 	rm -f -r $(SRC)/lex.yy.c
+	rm -f -r $(SRC)/y.tab.h
 	rm -f -r $(SRC)/y.tab.c
 	rm -f -r $(SRC)/y.output
 	rm -f -r $(OBJ)/*

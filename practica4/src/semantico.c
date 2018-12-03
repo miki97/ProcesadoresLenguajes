@@ -4,8 +4,8 @@ para manejar la Tabla de Simbolos
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "colores.h"
 #include "semantico.h"
+#include "colores.h"
 
 
 //#define MAX_IN 1000

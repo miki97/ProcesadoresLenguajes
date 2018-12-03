@@ -14,7 +14,7 @@ ent principal()
     ent funcionA (ent a1, real a2, car a3)
     {
         var:
-            ent x1, x2 ;
+            ent x1, x2;
         :var
         car funcionB (car b1, bool b2)
         {
@@ -27,7 +27,7 @@ ent principal()
                 var:
                     real x1 ;
                 :var
-                x1= 1.3 ;
+                x1= -1.3 ;
                 si (c2>10)
                     c2 = c2 - 1 ;
                 otro
@@ -90,4 +90,5 @@ ent principal()
     pe = pe - pe2;
     pe = pe * pe2;
     pe = pe / pe2;
+    p = pe@@2;
 }

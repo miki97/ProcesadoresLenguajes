@@ -5,8 +5,8 @@
 #include <string.h>
 // #include "tokens.tab.h"
 #include "y.tab.h"
-#include "colores.h"
 #include "semantico.h"
+#include "colores.h"
 
 // Declaramos ’yyerror’ para que se pueda invocar desde lex (lexico.l)
 int yylex();

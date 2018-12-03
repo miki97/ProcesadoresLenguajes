@@ -32,7 +32,7 @@ try2 : $(BIN)/sintactico $(SRC)/helloworld.ber
 	$^ > output_simple.txt
 
 try : $(BIN)/sintactico $(SRC)/programaPrueba.ber
-	$^ > output.txt 
+	$^ 
 
 ctry: $(BIN)/sintactico $(SRC)/programaPrueba.ber
 	make clean

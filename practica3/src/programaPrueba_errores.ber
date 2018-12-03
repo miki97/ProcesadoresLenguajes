@@ -1,17 +1,17 @@
 ent principal()
 {
     var:
-        ent  ve ;
-        real vf ;
+        ent  ve n,m,b
+        real vf ,j n;
         car  vc ;
-        bool vl ;
+        bo···ol vl ;
         lista de ent pe, pe2 ;
         lista de real pf, pf2;
         lista de car pc, pc2;
         lista de bool pl ;
     :var
 
-    ent funcionA (ent a1, real a2, car a3)
+    ent funcionA (ent a1 verdadero, real a2, car a3)
     {
         var:
             ent x1, x2;
@@ -27,9 +27,9 @@ ent principal()
                 var:
                     real x1 ;
                 :var
-                x1= 1.3 ;
-                si (c2>10)
-                    c2 = c2 - 1 ;
+                x1= -+-+-+-+1.3 ;
+                si (c2>10+)
+                    c2 = c2 - 1) ;
                 otro
                     x1= 3.1 ;
                 devuelve x1 ;

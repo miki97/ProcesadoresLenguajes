@@ -107,6 +107,10 @@ Identif ({Barra}|{Letra})({Barra}|{Letra}|{Numero})*
                         yylval.attr = 1;
                         return(OP_BIN_LISTA); 
                     }
+"@@"                { ECHO;
+                        yylval.attr = 2;
+                        return(OP_BIN_LISTA); 
+                    }
 "*"					{   ECHO; 
                         yylval.attr = 0;
                         return(OP_MULTI_DIV); 
@@ -171,6 +175,7 @@ Identif ({Barra}|{Letra})({Barra}|{Letra}|{Numero})*
                         yylval.attr = 0;
                         return(OP_GET_LIST); 
                     }
+
 "$"					{   ECHO; 
                         yylval.attr = 0;
                         return(OP_INI_LIST); 
