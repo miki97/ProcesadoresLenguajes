@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 // #include "tokens.tab.h"
-#include "y.tab.h"
+//#include "y.tab.h"
 #include "semantico.h"
 #include "colores.h"
 

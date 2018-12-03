@@ -231,14 +231,14 @@ void compruebaUnario(attrs op, attrs o, attrs* res){
 	//res->tDim2 = 0;
 
 }
-// Busca una in según el nombre
+// Busca una entrada según el nombre
 int buscaNombre(attrs e){
 
     int i = TOPE - 1;
 	int found = 0;
 
 
-	while (i > 0 && !found /*&& ts[i].in != MARK*/) {
+	while (i > 0 && !found && tablasimbolos[i].tipo_entrada != MARCA) {
 		if (tablasimbolos[i].tipo_entrada == FUNCION && strcmp(e.lex, tablasimbolos[i].lex) == 0) {
 			found = 1;
 		} else{
@@ -247,7 +247,7 @@ int buscaNombre(attrs e){
 	}
 
 	if(!found) {
-		//printf("Semantic Error(%d): Ident not declared: %s\n", line, e.lex);
+		printf("Semantic Error(%d): Ident not declared: %s\n", line, e.lex);
 		return -1;
 	} else {
 		return i;
@@ -258,6 +258,7 @@ int buscaNombre(attrs e){
 // Realiza la comprobación de la llamada a una función
 void compruebaLlamada(attrs id, attrs* res){
 
+	printTS();
     int index = buscaNombre(id);
 
 	if(index==-1) {
@@ -522,5 +523,96 @@ void addParametro(attrs e){
 		addEntrada(nueva);
 
 	}
+
+}
+
+
+
+//
+////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
+// Visualización
+//
+
+// Muestra una entrada de la tabla de símbolos
+void printIn(int row){
+
+    Entrada e = tablasimbolos[row];
+	printf("\n\nTipo Entrada: %d\nLexema: %s\nTipo Dato: %d\nNum Parametros: %d\nDimensiones[i][j]: %d[%d][%d]\n",
+		e.tipo_entrada, e.lex, e.tipo, e.nParam/* e.nDim, e.tDim1, e.tDim2*/);
+
+}
+
+// Muestra el type de la in
+void printInType(Entrada type){
+
+
+
+}
+
+// Muestra el type del dato recibido
+void printDataType(TipoDato type){
+
+
+
+}
+
+// Muestra la tabla de símbolos
+void printTS(){
+
+    int j = 0;
+	char *t, *e;
+
+	printf("--------------------------------\n");
+	while(j <= TOPE-1) {
+		if(tablasimbolos[j].tipo_entrada == 0) { e = "MARK"; }
+		if(tablasimbolos[j].tipo_entrada == 1) { e = "FUNCTION"; }
+		if(tablasimbolos[j].tipo_entrada == 2) { e = "VAR"; }
+		if(tablasimbolos[j].tipo_entrada == 3) { e = "FORM"; }
+
+		if(tablasimbolos[j].tipo == 0) { t = "NO_ASIG"; }
+		if(tablasimbolos[j].tipo == 1) { t = "ENTERO"; }
+		if(tablasimbolos[j].tipo == 2) { t = "FLOTANTE"; }
+		if(tablasimbolos[j].tipo == 3) { t = "CARACTER"; }
+		if(tablasimbolos[j].tipo == 4) { t = "BOOLEANO"; }
+		if(tablasimbolos[j].tipo == 5) { t = "STRING"; }
+		if(tablasimbolos[j].tipo == 6) { t = "MATRIZ"; }
+		if(tablasimbolos[j].tipo == 7) { t = "NA"; }
+		printf("----ELEMENTO %d-----------------\n", j);
+		printf("-Entrada: %-12s", e);
+		printf("-Lexema: %-12s", tablasimbolos[j].lex);
+		printf("-type: %-10s", t);
+		printf("-nParam: %-4d", tablasimbolos[j].nParam);
+		//printf("-nDim: %-4d", ts[j].nDim);
+		//printf("-tDim1: %-4d", ts[j].tDim1);
+		//printf("-tDim2: %-4d\n", ts[j].tDim2);
+		j++;
+	}
+	printf("--------------------------------\n");
+
+}
+
+// Muestra un atributo recibido
+void printAttr(attrs e, char *msg){
+
+    char *t;
+
+	if(e.type == 0) { t = "NO_ASIG"; }
+	if(e.type == 1) { t = "ENTERO"; }
+	if(e.type == 2) { t = "FLOTANTE"; }
+	if(e.type == 3) { t = "CARACTER"; }
+	if(e.type == 4) { t = "BOOLEANO"; }
+	if(e.type == 5) { t = "STRING"; }
+	if(e.type == 6) { t = "MATRIZ"; }
+	if(e.type == 7) { t = "NA"; }
+	printf("------%s-------------------------\n", msg);
+	printf("-Atributos: %-4d", e.attr);
+	printf("-Lexema: %-12s", e.lex);
+	printf("-type: %-10s", t);
+	printf("-nDim: %-4d", e.nDim);
+	printf("-tDim1: %-4d", e.tDim1);
+	printf("-tDim2: %-4d\n", e.tDim2);
+	printf("-------------------------------\n");
 
 }

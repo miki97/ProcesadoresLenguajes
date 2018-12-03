@@ -11,16 +11,17 @@ INCLUDES = -I$(INC)
 
 
 #**************************COMPILACIÓN**************************#
-all : $(OBJ)/semantico.o $(BIN)/sintactico
+all : $(BIN)/sintactico
 
 $(SRC)/lex.yy.c : $(SRC)/lexico.l
-	lex -o $@ $<
+	lex -o $@ $< 
 
 $(SRC)/y.tab.c : $(SRC)/sintactico.y $(SRC)/lex.yy.c
-	bison -d -v -o $@ $< 
+	bison -d -v -o $@ $<  
 
 $(OBJ)/y.tab.o : $(SRC)/y.tab.c 
 	gcc -c -o $@ $< $(INCLUDES)
+	
 
 $(OBJ)/main.o : $(SRC)/main.c
 	gcc -c -o $@ $<
@@ -28,7 +29,7 @@ $(OBJ)/main.o : $(SRC)/main.c
 $(OBJ)/semantico.o: $(SRC)/semantico.c
 	gcc -c -o $@ $< $(INCLUDES) 
 
-$(BIN)/sintactico : $(OBJ)/y.tab.o $(OBJ)/semantico.o $(OBJ)/main.o  
+$(BIN)/sintactico :  $(OBJ)/semantico.o $(OBJ)/main.o  $(OBJ)/y.tab.o
 	gcc -o $@ $^ $(INCLUDES) 
 
 try2 : $(BIN)/sintactico $(SRC)/helloworld.ber

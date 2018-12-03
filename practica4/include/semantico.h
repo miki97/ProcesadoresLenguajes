@@ -81,3 +81,9 @@ void compruebaRel(attrs o1, attrs op, attrs o2, attrs* res);
 void compruebaProducto(attrs o1, attrs op, attrs o2, attrs* res);
 void compruebaListaGet(attrs o1, attrs o2, attrs o3, attrs* res);
 void addParametro(attrs e);
+
+void printIn(int row);
+void printInType(Entrada type);
+void printDataType(TipoDato type);
+void printTS();
+void printAttr(attrs e, char *msg);
