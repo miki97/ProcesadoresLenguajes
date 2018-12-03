@@ -571,14 +571,13 @@ void printTS(){
 		if(tablasimbolos[j].tipo_entrada == 2) { e = "VAR"; }
 		if(tablasimbolos[j].tipo_entrada == 3) { e = "FORM"; }
 
-		if(tablasimbolos[j].tipo == 0) { t = "NO_ASIG"; }
+		if(tablasimbolos[j].tipo == 0) { t = "BOOLEANO"; }
 		if(tablasimbolos[j].tipo == 1) { t = "ENTERO"; }
-		if(tablasimbolos[j].tipo == 2) { t = "FLOTANTE"; }
+		if(tablasimbolos[j].tipo == 2) { t = "REAL"; }
 		if(tablasimbolos[j].tipo == 3) { t = "CARACTER"; }
-		if(tablasimbolos[j].tipo == 4) { t = "BOOLEANO"; }
-		if(tablasimbolos[j].tipo == 5) { t = "STRING"; }
-		if(tablasimbolos[j].tipo == 6) { t = "MATRIZ"; }
-		if(tablasimbolos[j].tipo == 7) { t = "NA"; }
+		if(tablasimbolos[j].tipo == 4) { t = "STRING"; }
+		if(tablasimbolos[j].tipo == 5) { t = "LISTA"; }
+		if(tablasimbolos[j].tipo == 6) { t = "NA"; }
 		printf("----ELEMENTO %d-----------------\n", j);
 		printf("-Entrada: %-12s", e);
 		printf("-Lexema: %-12s", tablasimbolos[j].lex);
@@ -598,14 +597,13 @@ void printAttr(attrs e, char *msg){
 
     char *t;
 
-	if(e.type == 0) { t = "NO_ASIG"; }
+	if(e.type == 0) { t = "BOOLEANO"; }
 	if(e.type == 1) { t = "ENTERO"; }
-	if(e.type == 2) { t = "FLOTANTE"; }
+	if(e.type == 2) { t = "REAL"; }
 	if(e.type == 3) { t = "CARACTER"; }
-	if(e.type == 4) { t = "BOOLEANO"; }
-	if(e.type == 5) { t = "STRING"; }
-	if(e.type == 6) { t = "MATRIZ"; }
-	if(e.type == 7) { t = "NA"; }
+	if(e.type == 4) { t = "STRING"; }
+	if(e.type == 5) { t = "LISTA"; }
+	if(e.type == 6) { t = "NA"; }
 	printf("------%s-------------------------\n", msg);
 	printf("-Atributos: %-4d", e.attr);
 	printf("-Lexema: %-12s", e.lex);
