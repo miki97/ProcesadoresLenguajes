@@ -27,22 +27,15 @@ typedef struct {
 	char *lex;
 	TipoDato tipo;
 	int nParam;
+	int tipolista;
 } Entrada;
 
 //creo que esto por ahora no nos sirve
 typedef struct {
-
-	int attr;
-	char *lex;
-	TipoDato type;
-	unsigned int nDim;
-
-	// Tamaño de la dimensión 1
-	int tDim1;
-
-	// Tamaño de la dimensión 2
-	int tDim2;
-
+	int attr;           /**/
+	char *lex;          /**/
+	TipoDato type;      /**/
+	unsigned int nDim;  /**/
 } attrs;
 /////////
 
@@ -61,6 +54,7 @@ extern int decVar;
 
 // Funciones
 int  addEntrada(Entrada);
+int addVar(attrs in);
 int  eliminarEntrada();
 void limpiarBloque();
 void addMarca();
@@ -87,3 +81,6 @@ void printInType(Entrada type);
 void printDataType(TipoDato type);
 void printTS();
 void printAttr(attrs e, char *msg);
+void printSemanticError(const char* msg);
+void incrementaNumParametros();
+void compruebaTipoIdentificador(attrs,attrs*);

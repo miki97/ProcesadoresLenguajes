@@ -5,6 +5,8 @@
 #include <string.h>
 // #include "tokens.tab.h"
 
+#define _CC_RESET   "\033[0m"
+#define _CC_RED     "\033[31m"      /* Red */
 %}
 
 %option yylineno
@@ -190,40 +192,48 @@ Identif ({Barra}|{Letra})({Barra}|{Letra}|{Numero})*
                     }
 "falso"				{   ECHO; 
                         yylval.attr = 0;
+                        yylval.type = BOOLEANO;
                         yylval.lex = strdup(yytext);
                         return(CONST_BOOL); 
                     } 
 "FALSO"				{   ECHO; 
                         yylval.attr = 1;
+                        yylval.type = BOOLEANO;
                         yylval.lex = strdup(yytext);
                         return(CONST_BOOL); 
                     } 
 "verdadero"			{   ECHO; 
                         yylval.attr = 2;
+                        yylval.type = BOOLEANO;
                         yylval.lex = strdup(yytext);
                         return(CONST_BOOL); 
                     } 
 "VERDADERO"			{   ECHO; 
                         yylval.attr = 3;
+                        yylval.type = BOOLEANO;
                         yylval.lex = strdup(yytext);
                         return(CONST_BOOL); 
                     }
-{Caract}			{   ECHO; 
+{Caract}			{   ECHO;
+                        yylval.type = CARACTER; 
                         yylval.attr = 0;
                         yylval.lex = strdup(yytext);
                         return(CONST_CAR); 
                     }
 {Cadena}			{   ECHO;
+                        yylval.type = STRING;
                         yylval.attr = 1;
                         yylval.lex = strdup(yytext);
                         return(CONST_CADENA); 
                     }
-{Entero}			{   ECHO; 
+{Entero}			{   ECHO;
+                        yylval.type = ENTERO; 
                         yylval.attr = 2;
                         yylval.lex = strdup(yytext);
                         return(CONST_ENT); 
                     }
-{Real}				{   ECHO; 
+{Real}				{   ECHO;
+                        yylval.type = REAL;
                         yylval.attr = 3;
                         yylval.lex = strdup(yytext);
                         return(CONST_REAL); 
@@ -233,7 +243,7 @@ Identif ({Barra}|{Letra})({Barra}|{Letra}|{Numero})*
                         return(IDENT); 
                     } 
 {Espacio}			{ ECHO; }
-.					{ printf("\nError léxico:%d: Simbolo inválido: '%s'.", yylineno, yytext); }
+.					{ printf("\n%sLínea %d:%s error léxico, simbolo inválido: '%s'.", _CC_RED, yylineno, _CC_RESET, yytext); }
 
 %%
 

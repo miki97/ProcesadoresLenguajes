@@ -91,7 +91,7 @@ Programa: Cabecera Bloque ;
 
 Cabecera: INICIO PAREN_IZQ PAREN_DER ;
 
-Bloque: LLAVE_IZQ { addMarca(); }Declar_variables_locales Declar_funciones Sentencias LLAVE_DER {limpiarBloque();};
+Bloque: LLAVE_IZQ {addMarca();} Declar_variables_locales Declar_funciones Sentencias LLAVE_DER {limpiarBloque();} ;
 
 Declar_variables_locales: VAR_IZQ Cuerpo_variables VAR_DER
                         | ;
@@ -99,7 +99,7 @@ Declar_variables_locales: VAR_IZQ Cuerpo_variables VAR_DER
 Cuerpo_variables: Cuerpo_variables Declar_variables
                 | Declar_variables ;
 
-Declar_variables: Tipo  { setTipo($1); }Lista_ident DELIMIT 
+Declar_variables: Tipo  {setTipo($1);} Lista_ident DELIMIT 
                 | error;
 
 Tipo: Tipo_dato
@@ -109,14 +109,15 @@ Tipo_dato: TIPO ;
 
 Tipo_lista: TIPO_LIST Tipo_dato ;
 
-Lista_ident: Lista_ident SEPAR IDENT
+Lista_ident: Lista_ident SEPAR IDENT {addVar($3);}
            | Lista_ident error IDENT
-           | IDENT;
+           | IDENT {addVar($1);};
           
 Declar_funciones: Declar_funciones Declar_funcion
                 | ;
+
 Cabecera_funcion: TIPO IDENT {decParam=1;} {addFuncion($2);} PAREN_IZQ Lista_parametros PAREN_DER
-                { actualizarNparam($1); nParam = 0; decParam = 0; } {$1.nDim=0;}
+                { actualizarNparam($1); nParam = 0; decParam = 0; }
                 | error;
                 
 Declar_funcion: Cabecera_funcion { funcion=1;} Bloque { funcion=0;};
@@ -128,8 +129,8 @@ Lista_parametros: Lista_parametros SEPAR Parametro
 
 Parametro: TIPO IDENT {nParam++; setTipo($1); addParametro($2); };
 
-Sentencias: Sentencias {decVar = 2; }Sentencia 
-          | {decVar = 2; }Sentencia ;
+Sentencias: Sentencias Sentencia 
+          | Sentencia ;
 
 Sentencia: Bloque
          | Sentencia_asig DELIMIT
@@ -143,18 +144,19 @@ Sentencia: Bloque
          | Sentencia_comienzo DELIMIT ;
 
 Sentencia_asig: IDENT IGUAL Expresion {
-
-	if($1.type!=$3.type){
-		printf("Semantic Error(%d): Types are not equal.\n",line);
-	}
-	/*if(!equalSize($1,$3)){
-		printf("Semantic Error(%d): Sizes are not equal.\n",line);
-	}*/
+    compruebaTipoIdentificador($1,&$$);
+    printf("asignacion");
+    printf("%d",$$.type);
+    printf("   ");
+    printf("%d",$3.type);
+    if($$.type != $3.type) {
+        printSemanticError("tipos de operandos en la asignacion tienen que ser iguales.");
+    }
 };
 
-Lista_expresiones: Lista_expresiones SEPAR Expresion
-                 | Lista_expresiones error Expresion
-                 | Expresion;                
+Lista_expresiones: Lista_expresiones SEPAR Expresion {incrementaNumParametros();}
+                 | Lista_expresiones error Expresion {incrementaNumParametros();}
+                 | Expresion {nParam =1;};                
 
 Expresion: PAREN_IZQ Expresion PAREN_DER { $$.type = $2.type;}
          | OP_UNARIO Expresion{compruebaUnario($1, $2, &$$); }
@@ -169,12 +171,12 @@ Expresion: PAREN_IZQ Expresion PAREN_DER { $$.type = $2.type;}
          | Expresion OP_IGUALDAD Expresion{compruebaRel($1, $2, $3, &$$); }
          | Expresion OP_MULTI_DIV Expresion{compruebaProducto($1, $2, $3, &$$); }
          | Expresion MAS_MAS Expresion OP_GET_LIST Expresion{compruebaListaGet($1, $3, $5, &$$); }
-         | IDENT {decVar = 0;}
+         | IDENT {decVar = 0; compruebaTipoIdentificador($1,&$$);}
          | Funcion{$$.type = $1.type;}
          | Constante { $$.type = $1.type;}
          | error;
 
-Funcion: | IDENT PAREN_IZQ Lista_expresiones PAREN_DER{ compruebaLlamada($1, &$$); }
+Funcion: IDENT PAREN_IZQ Lista_expresiones PAREN_DER{ compruebaLlamada($1, &$$); nParam=0; }
          | IDENT PAREN_IZQ PAREN_DER{ compruebaLlamada($1, &$$); };
 
 Constante: CONST_BOOL      {$$.type = $1.type;}
