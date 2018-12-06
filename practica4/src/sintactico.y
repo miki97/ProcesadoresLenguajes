@@ -102,12 +102,12 @@ Cuerpo_variables: Cuerpo_variables Declar_variables
 Declar_variables: Tipo  {setTipo($1);} Lista_ident DELIMIT 
                 | error;
 
-Tipo: Tipo_dato
-    | Tipo_lista ;
+Tipo: Tipo_dato  {$$.type = $1.type;}
+    | Tipo_lista {$$.type = $1.type;};
 
-Tipo_dato: TIPO ;
+Tipo_dato: TIPO {$$.type = $1.type;};
 
-Tipo_lista: TIPO_LIST Tipo_dato ;
+Tipo_lista: TIPO_LIST Tipo_dato {compruebaTipoLista($2,&$$);} ;
 
 Lista_ident: Lista_ident SEPAR IDENT {addVar($3);}
            | Lista_ident error IDENT
@@ -143,25 +143,16 @@ Sentencia: Bloque
          | Sentencia_iterar DELIMIT
          | Sentencia_comienzo DELIMIT ;
 
-Sentencia_asig: IDENT IGUAL Expresion {
-    compruebaTipoIdentificador($1,&$$);
-    printf("asignacion");
-    printf("%d",$$.type);
-    printf("   ");
-    printf("%d",$3.type);
-    if($$.type != $3.type) {
-        printSemanticError("tipos de operandos en la asignacion tienen que ser iguales.");
-    }
-};
+Sentencia_asig: IDENT IGUAL Expresion {compruebaAsignacion($1,$2,$3,&$$);};
 
-Lista_expresiones: Lista_expresiones SEPAR Expresion {incrementaNumParametros();}
-                 | Lista_expresiones error Expresion {incrementaNumParametros();}
-                 | Expresion {nParam =1;};                
+Lista_expresiones: Lista_expresiones SEPAR Expresion {nParam++;addPar($3);}
+                 | Lista_expresiones error Expresion {nParam++;addPar($3);}
+                 | Expresion {nParam =1; addPar($1);};                
 
 Expresion: PAREN_IZQ Expresion PAREN_DER { $$.type = $2.type;}
          | OP_UNARIO Expresion{compruebaUnario($1, $2, &$$); }
          | MAS_MENOS Expresion {compruebaSigno($1, $2, &$$); }%prec OP_UNARIO
-         | Expresion MAS_MENOS Expresion{compruebaSignoBin($1, $2, $3, &$$); }
+         | Expresion MAS_MENOS Expresion{compruebaSumaBin($1, $2, $3, &$$); }
          | Expresion OP_BIN_LISTA Expresion{compruebaListaBin($1, $2, $3, &$$); }
          | Expresion OP_LIST_CONCA Expresion{compruebaListaConca($1, $2, $3, &$$); }
          | Expresion OP_OR Expresion{compruebaBooleanos($1, $2, $3, &$$); }
@@ -203,28 +194,14 @@ Lista_ent: Lista_ent SEPAR CONST_ENT
 Lista_real: Lista_real SEPAR CONST_REAL
           | CONST_REAL {$$.type = $1.type;};
 
-Sentencia_if: COND_SI PAREN_IZQ Expresion PAREN_DER Sentencia{	
-                    if($3.type != BOOLEANO){
-                        printf("expresion no es logica");
-                    }
-            }
-            | COND_SI PAREN_IZQ Expresion PAREN_DER Sentencia COND_OTRO Sentencia {
-					if($3.type != BOOLEANO){
-                        printf("expresion no es logica");
-					}
-            }
-				 ;
+Sentencia_if: COND_SI PAREN_IZQ Expresion PAREN_DER Sentencia{compruebaCondicion($3);}
+            | COND_SI PAREN_IZQ Expresion PAREN_DER Sentencia COND_OTRO Sentencia {compruebaCondicion($3);};
 
-Sentencia_while: BUCLE PAREN_IZQ Expresion PAREN_DER Sentencia
-                {
-                    if($3.type != BOOLEANO){
-                        printf("expresion no es logica");                                 
-                    }
-                } ;
+Sentencia_while: BUCLE PAREN_IZQ Expresion PAREN_DER Sentencia{compruebaCondicion($3);};
 
 Sentencia_for: FOR_INI Sentencia_asig FOR_STOP Expresion FOR_STEP Expresion FOR_DO Sentencia ;
 
-Sentencia_entrada: ENTRADA Lista_ident ;
+Sentencia_entrada: ENTRADA {decVar=-1;}Lista_ident {decVar=0;};
 
 Sentencia_salida: SALIDA Lista_expr_cadena ;
 
@@ -234,12 +211,11 @@ Lista_expr_cadena: Lista_expr_cadena SEPAR Expr_cadena
 Expr_cadena: Expresion
            | CONST_CADENA;
 
-Sentencia_return: DEVUELVE Expresion {compruebaDevuelve($2,&$$); } ;
+Sentencia_return: DEVUELVE Expresion {compruebaDevuelve($2,&$$);} ;
 
 Sentencia_iterar: Expresion OP_AVR_RETR ;
 
 Sentencia_comienzo: OP_INI_LIST Expresion ;
-
 %%
 
 // Aqui incluimos el fichero generado por el ’lex’ que implementa la función ’yylex’

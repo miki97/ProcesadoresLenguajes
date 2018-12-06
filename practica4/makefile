@@ -20,23 +20,23 @@ $(SRC)/y.tab.c : $(SRC)/sintactico.y $(SRC)/lex.yy.c
 	bison -d -v -o $@ $<  
 
 $(OBJ)/y.tab.o : $(SRC)/y.tab.c 
-	gcc -c -o $@ $< $(INCLUDES)
+	gcc -c -o $@ $< $(INCLUDES) -g
 	
 
 $(OBJ)/main.o : $(SRC)/main.c
-	gcc -c -o $@ $<
+	gcc -c -o $@ $< -g
 
 $(OBJ)/semantico.o: $(SRC)/semantico.c
-	gcc -c -o $@ $< $(INCLUDES) 
+	gcc -c -o $@ $< $(INCLUDES) -g
 
 $(BIN)/sintactico :  $(OBJ)/semantico.o $(OBJ)/main.o  $(OBJ)/y.tab.o
-	gcc -o $@ $^ $(INCLUDES) 
+	gcc -o $@ $^ $(INCLUDES) -g
 
 try2 : $(BIN)/sintactico $(SRC)/helloworld.ber
-	$^ > output_simple.txt
+	$^ > 'output_simple.txt'
 
 try : $(BIN)/sintactico $(SRC)/programaPrueba.ber
-	$^ >> output.txt 
+	$^ > 'output.txt' 
 
 ctry: $(BIN)/sintactico $(SRC)/programaPrueba.ber
 	make clean

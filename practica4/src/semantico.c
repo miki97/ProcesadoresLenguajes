@@ -7,10 +7,6 @@ para manejar la Tabla de Simbolos
 #include "semantico.h"
 #include "colores.h"
 
-#define true 1
-#define false 0
-#define bool int
-
 extern int yylineno;
 
 Entrada tablasimbolos[MAX_IN];
@@ -22,7 +18,7 @@ int currentFunction = -1;
 int nParam=0;
 int decParam=0;
 int decVar=0;
-
+int nParamLlamada =1;
 ///////////////////////////////////////////////////////////////////////////////
 // Tabla de Símbolos
 ///////////////////////////////////////////////////////////
@@ -45,24 +41,27 @@ int addEntrada(Entrada in){
 		printSemanticError("desbordamiento de pila.");
 		return false;
 	}
-
 }
+
 int addVar(attrs in){
     // Si se tienen más entradas de las que puede alojar la tabla de símbolos
     // dará un error, si no, se inserta
-	if(TOPE < MAX_IN) {
+	if(decVar ==0)
+	{
+		if(TOPE < MAX_IN) {
 
-		tablasimbolos[TOPE].tipo_entrada= VAR;
-		tablasimbolos[TOPE].lex=in.lex;
-		tablasimbolos[TOPE].tipo= tipoGlobal;
-		tablasimbolos[TOPE].nParam=0;
+			tablasimbolos[TOPE].tipo_entrada= VAR;
+			tablasimbolos[TOPE].lex=in.lex;
+			tablasimbolos[TOPE].tipo= tipoGlobal;
+			tablasimbolos[TOPE].nParam=0;
 
-        // Se aumenta el contador de entradas
-		TOPE++;
-		return true;
-	} else {
-		printSemanticError("desbordamiento de pila.");
-		return false;
+        	// Se aumenta el contador de entradas
+			TOPE++;
+			return true;
+		} else {
+			printSemanticError("desbordamiento de pila.");
+			return false;
+		}
 	}
 
 }
@@ -92,12 +91,12 @@ void limpiarBloque() {
 	}
 
     // Borramos los parametros de la funcion
-    if (tablasimbolos[TOPE-1].tipo_entrada == PARAM) {
+    /*if (tablasimbolos[TOPE-1].tipo_entrada == PARAM) {
         while(tablasimbolos[TOPE-1].tipo_entrada != FUNCION && TOPE > 0) {
     		TOPE--;
     	}
          //TOPE--;
-	}
+	}*/
 }
 
 
@@ -138,7 +137,7 @@ void addMarca() {
 // Guarda el tipo de la variable para poder saber el tipo cuando llege
 // los identificadores
 int setTipo(attrs value) {
-    tipoGlobal = value.type;
+	tipoGlobal = value.type;
 }
 
 // Añade una entrada de funcion
@@ -192,19 +191,22 @@ int encontrarSiguienteFuncion(){
 
 }
 
+//funcion para comprobar una sentencia de asignacion
+void compruebaAsignacion(attrs o1, attrs op, attrs o2,attrs* res  ){
+	compruebaTipoIdentificador(o1,res);
+    if(res->type != o2.type) {
+        //printTS();
+        //printf("tipo de prametro1: %d , tipo de parametro2: %d",$1.type,$3.type);
+        printSemanticError("tipos de operandos en la asignacion tienen que ser iguales.");
+    }
+}
+
 // Comprueba si el tipo de la expresión coincide con lo que devuelve la función
 void compruebaDevuelve(attrs expr, attrs* res){
 
     int index = encontrarSiguienteFuncion();
-	printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-	printf("%d",index);
-
 	if (index > -1) {
-			printf("%d",expr.type);
-			printf(" ");
-			printf("%d", tablasimbolos[index].tipo );
 		if ((int)expr.type != (int)tablasimbolos[index].tipo) {
-			printf("entra");
 			//printTS();
 			printSemanticError("el tipo de salida no concuerda con el tipo definido en la funcion.");
 			return;
@@ -227,23 +229,38 @@ void compruebaDevuelve(attrs expr, attrs* res){
 
 void compruebaUnario(attrs op, attrs o, attrs* res){
 
-	if( strcmp(op.lex,"#")){
-		if (o.type != LISTA /*|| isArray(o)*/) {
-			printSemanticError("Operador solo para listas");
+	printf("hihihihhi %s",op.lex);
+	if( strcmp(op.lex,"#")==0){
+		if (!esLista(o)) {
+			printSemanticError("operador solo para listas.");
 		}
 		else{
 			res->type = ENTERO;
 		}
 	}
-	else if(strcmp(op.lex,"?")){
-		if (o.type != LISTA){
-			printSemanticError("Operador solo para listas");
+	else if(strcmp(op.lex,"?")==0){
+		if (!esLista(o)){
+			printSemanticError("operador solo para listas.");
 		}
-		else{
+		else if (o.type == LISTA_BOOLEANO){
+				res->type = BOOLEANO;							
+			}
+			else if(o.type == LISTA_ENTERO ){
+				res->type = ENTERO;												
+			}
+			else if(o.type == LISTA_REAL){
+				res->type = REAL;				
+			}
+			else if (o.type == LISTA_CARACTER){
+				res->type = CARACTER;
+			}
+			else if(o.type == LISTA_STRING){
+				res->type = STRING;								
+			}
+			
 			// TODO !!!!!!!el tipo de la lista guardada
-		}
 	}
-    else if (o.type != BOOLEANO /*|| isArray(o)*/) {
+    else if (o.type != BOOLEANO ) {
 		printSemanticError("Operador unario para expresiones booleanas.");
 	}
 	else{
@@ -270,7 +287,6 @@ int buscaNombre(attrs e){
 	}
 
 	if(!found) {
-		printf("Semantic Error(%d): Ident not declared: %s\n", yylineno, e.lex);
 		return -1;
 	} else {
 		return i;
@@ -278,7 +294,10 @@ int buscaNombre(attrs e){
 }
 
 
-// Realiza la comprobación de la llamada a una función
+/**
+ * Funcion para comprobar que el numero de parametro y el tipo de los parametros es el correcto
+ * 
+ * */
 void compruebaLlamada(attrs id, attrs* res){
 
 	// printTS();
@@ -288,224 +307,288 @@ void compruebaLlamada(attrs id, attrs* res){
 
 		currentFunction = -1;
 
-		printf("\nSemantic Error(%d)): Function: Id not found %s.\n", yylineno, id.lex);
     } else {
-		for(int i = 0 ; i < nParam ; i++){
-			//printf(i);
-		}
 		//printf((char)nParam);
 		if (nParam != tablasimbolos[index].nParam) {
 			printSemanticError("numero de parametros no valido.");
 		} else {
-
+			//printTS();
+			int correcto = 1;
+			int i = index+1;
+			int j = TOPE -nParam;
+			for( ; i <= (index+nParam) && correcto && j < TOPE ; i++){
+				if(tablasimbolos[i].tipo != tablasimbolos[j].tipo){
+					correcto =0;
+					printSemanticError("El tipo de parametros no valido:");					
+				
+				}
+				j++;
+			}
 			currentFunction = index;
 			res->lex = strdup(tablasimbolos[index].lex);
 			res->type = tablasimbolos[index].tipo;
 		}
-		printf("hacemos llamada");
-		printf("%d",res->type);
+		TOPE -= nParam;
+		//printf("hacemos llamada");
+		//printTS();		
+		//printf("%d",res->type);
 	}
 }
 
+/**Funcion para añadir los parametros con los que se llama una función 
+ * a la tabla de simbolos para permitir la comprobacion despues al realizar 
+ * la llamada de la funcion
+ * */
+bool addPar(attrs in){
+    // Si se tienen más entradas de las que puede alojar la tabla de símbolos
+    // dará un error, si no, se inserta
+	if(TOPE < MAX_IN) {
+
+		tablasimbolos[TOPE].tipo_entrada= VAR;
+		tablasimbolos[TOPE].lex=in.lex;
+		tablasimbolos[TOPE].tipo= in.type;
+		tablasimbolos[TOPE].nParam=0;
+
+		// Se aumenta el contador de entradas
+		TOPE++;
+		return true;
+	} else {
+		printSemanticError("desbordamiento de pila.");
+		return false;
+	}
+
+}	
 
 // Comprobación de la operación +, - como signo unario
 void compruebaSigno(attrs op, attrs o, attrs* res){
 
-    if ((o.type != REAL && o.type != ENTERO) /*|| isArray(o)*/) {
-		printf("Semantic Error(%d): Operator expects integer or real expression.", yylineno);
+    if ((o.type != REAL && o.type != ENTERO) ) {
+		printSemanticError("el signo solo valido para entero o real");
 	}
-
-	res->type = o.type;
-	//res->nDim = 0;
-	//res->tDim1 = 0;
-	//res->tDim2 = 0;
-
+	else{
+		res->type = o.type;
+	}
+	
 }
 
 
 // Realiza la comprobación de la operación +, - binaria
-void compruebaSignoBin(attrs o1, attrs op, attrs o2, attrs* res){
+void compruebaSumaBin(attrs o1, attrs op, attrs o2, attrs* res){
 
-    if (o1.type != o2.type) {
-	    printf("Semantic Error(%d): Expressions must be equals types.", yylineno);
-  		return;
-  	}
-
-	if (o1.type != ENTERO && o1.type != REAL) {
-		printf("Semantic Error%d): Invalid type in op. Both must be equals.", yylineno);
+	// Si el operador izquierdo es una lista, comprobar el tipo de la lista con el derecho.
+	if (esLista(o1) && (getTipoLista(o1.lex) != o2.type)) {
+		
+		printSemanticError("operando sobre lista tiene que ser del mismo tipo que la lista.");	
+		return;
+	} 
+	// Si el operador derecho es una lista, comprobar que el izquierdo es una lista.
+	else if (esLista(o2) && (getTipoLista(o2.lex) != o1.type)) {
+		
+		printSemanticError("operando sobre lista tiene que ser del mismo tipo que la lista.");	
 		return;
 	}
-	res->type = o1.type;
-    /*
-	if (isArray(o1) && isArray(o2)){
-
-		if(equalSize(o1,o2)){
-
-			res->type = o1.type;
-			res->nDim = o1.nDim;
-			res->tDim1 = o1.tDim1;
-			res->tDim2 = o1.tDim2;
-
-		} else {
-
-            printf("Semantic Error(%d): Size arrays must be same", yylineno);
+	else if (esLista(o1) || esLista(o2)) {
+		if (esLista(o1) && esLista(o2)) {
+			printSemanticError("operador no valido para dos listas.");
 			return;
-
 		}
-
-	} else {
-
-		if (isArray(o1) && !isArray(o2)) {
-
-			res->type = o1.type;
-			res->nDim = o1.nDim;
-			res->tDim1 = o1.tDim1;
-			res->tDim2 = o1.tDim2;
-
-		}
-
-		if (!isArray(o1) && isArray(o2)){
-
-			if (strcmp(op.lex,"-")==0){
-
-				printf("Semantic Error(%d): Operation not allowed.", yylineno);
+		else if (esLista(o1)) {
+			if (tipoDeListaATipoDeDato(o1.type) != ENTERO && tipoDeListaATipoDeDato(o1.type) != REAL) {
+				printSemanticError("operandos de tipo invalido, esperaba lista de ENTERO o REAL.");
+				return;				
+			}
+			if (o2.type != ENTERO && o2.type != REAL) {
+				printSemanticError("operandos de tipo invalido, esperaba ENTERO o REAL.");
 				return;
-
-			} else {
-
-				res->type = o2.type;
-				res->nDim = o2.nDim;
-				res->tDim1 = o2.tDim1;
-				res->tDim2 = o2.tDim2;
-
 			}
 
+			res->type = o1.type;
+			return;
 		}
+		else if (esLista(o2)) {
+			printf("este es el simbolo: %s",op.lex);
+			if ( strcmp(op.lex,"-") == 0) {
+				printSemanticError("operandos de tipo invalido, no se puede restar una lista.");
+				return;				
+			}	
+			if (tipoDeListaATipoDeDato(o2.type) != ENTERO && tipoDeListaATipoDeDato(o2.type) != REAL) {
+				printSemanticError("operandos de tipo invalido, esperaba lista de ENTERO o REAL.");
+				return;
+			}
+			if (o1.type != ENTERO && o1.type != REAL) {
+				printSemanticError("operandos de tipo invalido, esperaba ENTERO o REAL.");
+				return;
+			}
 
-	}*/
+			res->type = o2.type;
+			return;
+		}
+	}
+	// Comprobar mismo tipo o operacion sobre lista
+    else if (o1.type != o2.type) {
+		printSemanticError("ambos operandos tienen que ser del mismo tipo.");	
+		
+		return;
+	}	
+	// Si no es ENTERO o REAL
+	else if ((o1.type != ENTERO && o1.type != REAL) || (o2.type != ENTERO && o2.type != REAL)) {
+		printSemanticError("operandos de tipo invalido, esperaba ENTERO o REAL.");	
+		return;
+	}
 
+	res->type = o1.type;
 }
+
 
 // Realiza la comprobación de la operaciónes binarias de listas
 void compruebaListaBin(attrs o1, attrs op, attrs o2, attrs* res){
 
-    if (o1.type != LISTA && o2.type != ENTERO) {
-	    printf("Semantic Error(%d): El primer parametro debe ser lista y segundo entero.",yylineno);
-  		return;
+    if (!esLista(o1)) {
+	    printSemanticError("el primer elemento debe ser una lista");
   	}
+	else if(o2.type != ENTERO){
+		printSemanticError("el segundo elemento debe ser entero");		
+	}
+
+	if(strcmp(op.lex,"@@") ==0){
+		res->type = tipoDeListaATipoDeDato(o1.type);		
+	}	
+	else{
+		res->type = o1.type;
+	}
 }
 
 // Realiza la comprobación de la operaciónes binarias de listas
 void compruebaListaConca(attrs o1, attrs op, attrs o2, attrs* res){
 
-    if (o1.type != LISTA && o2.type != LISTA) {
-	    printf("Semantic Error(%d): Ambos deben ser de tipo lista.",yylineno);
-  		return;
+    if (!esLista(o1) || !esLista(o2)) {
+		printSemanticError("el operador de concatenar solo para dos lsitas");		
   	}
+	else if( o1.type != o2.type){
+		printSemanticError("solo se pueden concatenar listas del mismo tipo");				
+	}
+	else{
+		res->type = o1.type;		
+	}	  
 }
-// Realiza la comprobación de la operación ||
+void compruebaCondicion(attrs o1){
+	if(o1.type != BOOLEANO){
+        printSemanticError("expresion de condicion no es logica");
+    }
+}
+// Realiza la comprobación de la operación || y && o xor
 void compruebaBooleanos(attrs o1, attrs op, attrs o2, attrs* res){
 
     if (o1.type != o2.type) {
-		printf("Semantic Error (%d): Expressions must be same types.",yylineno);
-		return;
+		printSemanticError("ambos operandos deben der del mismo tipo, se esperaba BOOLEANO");
 	}
-	if (o1.type != BOOLEANO) {
+	else if (o1.type != BOOLEANO) {
 		printSemanticError("operandos de tipo invalido, ambos tienen que ser iguales, esperaba BOOLEANO.");	
-		return;
 	}
-
-	res->type = BOOLEANO;
+	else{
+		res->type = BOOLEANO;				
+	}
 }
 
-// Realiza la comprobación de la operación <, >, <=, >=, <>
+// Realiza la comprobación de la operación <, >, <=, >=, <> y el ==
 void compruebaRel(attrs o1, attrs op, attrs o2, attrs* res){
 
 	//printTS();
-	printf("%d",o1.type);
-	printf(" ",o1.type);
-	printf("%d",o2.type);
+	//printf("%d ",o1.type);
+	//printf("%d",o2.type);
 
     if (o1.type != o2.type) {
 
-		printf("Semantic Error (%d): Expressions must be same types.", yylineno);
-		return;
+		printSemanticError("diferentes tipos en la relacion");
 	}
-	if ((o1.type != ENTERO && o1.type != REAL) /*|| isArray(o1) || isArray(o2)*/) {
-		printSemanticError("operandos de tipo invalido, ambos tienen que ser iguales, esperaba ENTERO o REAL.");				
-		return;
+	else{
+		res->type = BOOLEANO;
 	}
 
-	res->type = BOOLEANO;
 }
-// Realiza la comprobación de la operación *, /
-void compruebaProducto(attrs o1, attrs op, attrs o2, attrs* res){
-    if (o1.type != o2.type) {
+
+/**
+ * Comprueba la integridad semantica de los operadores en una operacion de producto. 
+ * @param attrs  o1  Operando izquierdo.
+ * @param attrs  op
+ * @param attrs  o2  Operando derecho.
+ * @param attrs* res Parte derecha de la produccion.
+ */
+void compruebaProducto(attrs o1, attrs op, attrs o2, attrs* res) {
+	// Si el operador izquierdo es una lista, comprobar el tipo de la lista con el derecho.
+	if (esLista(o1) && (getTipoLista(o1.lex) != o2.type)) {
+		printSemanticError("operando sobre lista tiene que ser del mismo tipo que la lista.");	
+		return;
+	} 
+	// Si el operador derecho es una lista, comprobar que el izquierdo es una lista.
+	else if (esLista(o2) && (getTipoLista(o2.lex) != o1.type)) {
+		printSemanticError("operando sobre lista tiene que ser del mismo tipo que la lista.");	
+		return;
+	}
+	else if (esLista(o1) || esLista(o2)) {
+		if (esLista(o1) && esLista(o2)) {
+			printSemanticError("operador * no valido para dos listas.");
+			return;
+		}
+		else if (esLista(o1)) {
+			if (tipoDeListaATipoDeDato(o1.type) != ENTERO && tipoDeListaATipoDeDato(o1.type) != REAL) {
+				printSemanticError("operandos de tipo invalido, esperaba lista de ENTERO o REAL.");
+				return;
+			}
+			if (o2.type != ENTERO && o2.type != REAL) {
+				printSemanticError("operandos de tipo invalido, esperaba ENTERO o REAL.");
+				return;
+			}
+
+			res->type = o1.type;
+			return;
+		}
+		else if (esLista(o2)) {
+			if (strcmp(op.lex,"/") == 0) {
+				printSemanticError("operandos de tipo invalido, no se puede dividir entre lista.");
+				return;
+			}
+
+			if (tipoDeListaATipoDeDato(o2.type) != ENTERO && tipoDeListaATipoDeDato(o2.type) != REAL) {
+				printSemanticError("operandos de tipo invalido, esperaba lista de ENTERO o REAL.");
+				return;
+			}
+			if (o1.type != ENTERO && o1.type != REAL) {
+				printSemanticError("operandos de tipo invalido, esperaba ENTERO o REAL.");
+				return;
+			}
+
+			res->type = o2.type;
+			return;
+		}
+	}
+	// Comprobar mismo tipo o operacion sobre lista
+    else if (o1.type != o2.type) {
 		printSemanticError("ambos operandos tienen que ser del mismo tipo.");	
 		return;
 	}
-
-	if (o1.type != ENTERO && o1.type != REAL) {
-		printSemanticError("operandos de tipo invalido, ambos tienen que ser iguales, esperaba ENTERO o REAL.");	
+	// Si no es ENTERO o REAL
+	else if ((o1.type != ENTERO && o1.type != REAL) || (o2.type != ENTERO && o2.type != REAL)) {
+		printSemanticError("operandos de tipo invalido, esperaba ENTERO o REAL.");	
 		return;
 	}
+
 	res->type = o1.type;
-    /*
-	if (isArray(o1) && isArray(o2)){
-
-		if(equalSize(o1,o2)){
-
-			res->type = o1.type;
-			res->nDim = o1.nDim;
-			res->tDim1 = o1.tDim1;
-			res->tDim2 = o1.tDim2;
-
-		} else {
-
-            printf("Semantic Error(%d): Size arrays must be same", yylineno);
-			return;
-
-		}
-
-	} else {
-
-		if (isArray(o1) && !isArray(o2)) {
-
-			res->type = o1.type;
-			res->nDim = o1.nDim;
-			res->tDim1 = o1.tDim1;
-			res->tDim2 = o1.tDim2;
-
-		}
-
-		if (!isArray(o1) && isArray(o2)){
-
-			if (strcmp(op.lex,"-")==0){
-
-				printf("Semantic Error(%d): Operation not allowed.", yylineno);
-				return;
-
-			} else {
-
-				res->type = o2.type;
-				res->nDim = o2.nDim;
-				res->tDim1 = o2.tDim1;
-				res->tDim2 = o2.tDim2;
-
-			}
-
-		}
-
-	}*/
-
 }
-// Realiza la comprobación de la operaciónes binarias de listas
+
+// Realiza la comprobación de la operaciónes get de listas
 void compruebaListaGet(attrs o1, attrs o2, attrs o3, attrs* res){
 
-    if (o1.type != LISTA && o2.type != ENTERO && o3.type != ENTERO) {
-	    printf("Semantic Error(%d): Ambos deben ser de tipo lista.", yylineno);
+    if (!esLista(o1)) {
+	    printSemanticError("debe ser una lista.");
   		return;
   	}
+	else if(tipoDeListaATipoDeDato(o1.type) != o2.type ){
+		printSemanticError("el elemento debe ser del mismo tipo que la lista");
+	}
+	else if(o3.type != ENTERO){
+		printSemanticError("el indice debe ser un numero entero");
+	}
 }
 
 
@@ -523,8 +606,9 @@ void addParametro(attrs e){
 		} else{
 
 			found = 1;
-			printf("Semantic Error(%d): Exist param: %s\n", yylineno, e.lex);
-
+			printSemanticError("el parametro ya existia");			
+			//printf("Semantic Error(%d): Exist param: %s\n", yylineno, e.lex);
+// tipo de 2: 7
         }
 
 	}
@@ -545,7 +629,7 @@ void addParametro(attrs e){
 void compruebaTipoIdentificador(attrs ident, attrs* res) {
 	int i = TOPE-1;
 	int encontrado = 0;
-	printTS();
+	//printTS();
 	while(i > 0 && !encontrado){
 		int cmp = strcmp(tablasimbolos[i].lex, ident.lex);
 		if( tablasimbolos[i].tipo_entrada == VAR && cmp == 0){
@@ -555,8 +639,12 @@ void compruebaTipoIdentificador(attrs ident, attrs* res) {
 			i--;
 		}	
 	}
-	if(encontrado){
+	//printf("Encontrado en linea %d",i);
+	if (encontrado) {
 		res->type = tablasimbolos[i].tipo;
+	}
+	else {
+		printSemanticError("identificador no declarado");
 	}
 }
 
@@ -571,8 +659,8 @@ void compruebaTipoIdentificador(attrs ident, attrs* res) {
 void printIn(int row){
 
     Entrada e = tablasimbolos[row];
-	printf("\n\nTipo Entrada: %d\nLexema: %s\nTipo Dato: %d\nNum Parametros: %d\nDimensiones[i][j]: %d[%d][%d]\n",
-		e.tipo_entrada, e.lex, e.tipo, e.nParam/* e.nDim, e.tDim1, e.tDim2*/);
+	// printf("\n\nTipo Entrada: %d\nLexema: %s\nTipo Dato: %d\nNum Parametros: %d\n",
+	// 	e.tipo_entrada, e.lex, e.tipo, e.nParam);
 
 }
 
@@ -609,15 +697,17 @@ void printTS(){
 		if(tablasimbolos[j].tipo == 3) { t = "CARACTER"; }
 		if(tablasimbolos[j].tipo == 4) { t = "STRING"; }
 		if(tablasimbolos[j].tipo == 5) { t = "LISTA"; }
-		if(tablasimbolos[j].tipo == 6) { t = "NA"; }
+		if(tablasimbolos[j].tipo == 6) { t = "LISTA_BOOLEANO";}
+		if(tablasimbolos[j].tipo == 7) { t = "LISTA_ENTERO";}
+		if(tablasimbolos[j].tipo== 8) { t = "LISTA_REAL";}
+		if(tablasimbolos[j].tipo == 9) { t = "LISTA_CARACTER";}
+		if(tablasimbolos[j].tipo == 10) { t = "LISTA_STRING";}
+		if(tablasimbolos[j].tipo == 11) { t = "NA"; }
 		printf("----ELEMENTO %d-----------------\n", j);
 		printf("-Entrada: %-12s", e);
 		printf("-Lexema: %-12s", tablasimbolos[j].lex);
 		printf("-type: %-10s", t);
 		printf("-nParam: %-4d", tablasimbolos[j].nParam);
-		//printf("-nDim: %-4d", ts[j].nDim);
-		//printf("-tDim1: %-4d", ts[j].tDim1);
-		//printf("-tDim2: %-4d\n", ts[j].tDim2);
 		j++;
 	}
 	printf("--------------------------------\n");
@@ -628,21 +718,22 @@ void printTS(){
 void printAttr(attrs e, char *msg){
 
     char *t;
-
 	if(e.type == 0) { t = "BOOLEANO"; }
 	if(e.type == 1) { t = "ENTERO"; }
 	if(e.type == 2) { t = "REAL"; }
 	if(e.type == 3) { t = "CARACTER"; }
 	if(e.type == 4) { t = "STRING"; }
 	if(e.type == 5) { t = "LISTA"; }
-	if(e.type == 6) { t = "NA"; }
+	if(e.type == 6) { t = "LISTA_BOOLEANO";}
+	if(e.type == 7) { t = "LISTA_ENTERO";}
+	if(e.type == 8) { t = "LISTA_REAL";}
+	if(e.type == 9) { t = "LISTA_CARACTER";}
+	if(e.type == 10) { t = "LISTA_STRING";}
+	if(e.type == 11) { t = "NA"; }
 	printf("------%s-------------------------\n", msg);
 	printf("-Atributos: %-4d", e.attr);
 	printf("-Lexema: %-12s", e.lex);
 	printf("-type: %-10s", t);
-	//printf("-nDim: %-4d", e.nDim);
-	//printf("-tDim1: %-4d", e.tDim1);
-	//printf("-tDim2: %-4d\n", e.tDim2);
 	printf("-------------------------------\n");
 }
 
@@ -651,6 +742,75 @@ void printSemanticError(const char* msg) {
 	fprintf(stderr, "%sLínea %d:%s error semantico, %s\n", _CC_RED, yylineno, _CC_RESET, msg);
 }
 
-void incrementaNumParametros(){
-	nParam++;
+/**
+ *  Asigna en res el tipo de lista.
+ */
+void compruebaTipoLista(attrs con, attrs *res) {
+	if (con.type == BOOLEANO) {
+		res->type = LISTA_BOOLEANO;
+	} else if (con.type == ENTERO) {
+		res->type = LISTA_ENTERO;
+	} else if (con.type == REAL) {
+		res->type = LISTA_REAL;
+	} else if (con.type == CARACTER) {
+		res->type = LISTA_CARACTER;
+	} else if (con.type == STRING) {
+		res->type = LISTA_STRING;
+	}
+}
+
+/**
+ * Comprueba si es de algun tipo lista.
+ */
+bool esLista(attrs con) {
+	if (con.type == LISTA_BOOLEANO 	|| 
+		con.type == LISTA_ENTERO 	|| 
+		con.type == LISTA_REAL 		||  
+		con.type == LISTA_CARACTER  ||
+		con.type == LISTA_STRING ) {
+		return true;
+	}
+	return false;
+}
+/**
+ * Comprueba el tipo de la lista en la tabla de simbolos.
+ * @param const char* lex Identificador de la lista.
+ */
+TipoDato getTipoLista(const char* lex) {
+
+	int i = TOPE-1;
+	int encontrado = 0;
+	
+	while(i > 0 && !encontrado) {
+		int cmp = strcmp(tablasimbolos[i].lex, lex);
+		if( tablasimbolos[i].tipo_entrada == VAR && cmp == 0){
+			encontrado =1;
+		}
+		else{
+			i--;
+		}	
+	}
+	if (encontrado) {
+		return tipoDeListaATipoDeDato(tablasimbolos[i].tipo);
+	} else {
+		printSemanticError("declaracion implicita de lista.");
+		return -1;
+	}
+}
+
+/**
+ * Relaciona los tipos de listas con los tipos de datos basicos.
+ */
+TipoDato tipoDeListaATipoDeDato(TipoDato tipoLista) {
+	if (tipoLista == LISTA_BOOLEANO) {
+		return BOOLEANO;
+	} else if (tipoLista == LISTA_ENTERO) {
+		return ENTERO;
+	} else if (tipoLista == LISTA_REAL) {
+		return REAL;
+	} else if (tipoLista == LISTA_CARACTER) {
+		return CARACTER;
+	} else if (tipoLista == LISTA_STRING) {
+		return STRING;
+	}
 }

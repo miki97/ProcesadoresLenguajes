@@ -59,7 +59,6 @@ Identif ({Barra}|{Letra})({Barra}|{Letra}|{Numero})*
                         return(TIPO); 
                     } 
 "lista de"			{   ECHO; 
-                        yylval.type = LISTA;
                         return(TIPO_LIST); 
                     } 
 "="					{ ECHO; return(IGUAL); } 
@@ -81,19 +80,23 @@ Identif ({Barra}|{Letra})({Barra}|{Letra}|{Numero})*
                         yylval.attr = 1;
                         return(OP_UNARIO); 
                     }
-"#"					{   ECHO; 
+"#"					{   ECHO;
+                        yylval.lex = "#"; 
                         yylval.attr = 2;
                         return(OP_UNARIO); 
                     }
-"?"					{   ECHO; 
+"?"					{   ECHO;
+                        yylval.lex = "?";
                         yylval.attr = 3;
                         return(OP_UNARIO); 
                     }
-"+"					{   ECHO; 
+"+"					{   ECHO;
+                        yylval.lex ="+";
                         yylval.attr = 0;
                         return(MAS_MENOS); 
                     }
 "-"					{   ECHO; 
+                        yylval.lex ="-";
                         yylval.attr = 1;
                         return(MAS_MENOS); 
                     }
@@ -109,15 +112,18 @@ Identif ({Barra}|{Letra})({Barra}|{Letra}|{Numero})*
                         yylval.attr = 1;
                         return(OP_BIN_LISTA); 
                     }
-"@@"                { ECHO;
+"@@"                {   ECHO;
+                        yylval.lex ="@@";
                         yylval.attr = 2;
                         return(OP_BIN_LISTA); 
                     }
 "*"					{   ECHO; 
+                        yylval.lex ="*";
                         yylval.attr = 0;
                         return(OP_MULTI_DIV); 
                     }
 "/"					{   ECHO; 
+                        yylval.lex ="/";
                         yylval.attr = 1;
                         return(OP_MULTI_DIV); 
                     }
@@ -174,6 +180,7 @@ Identif ({Barra}|{Letra})({Barra}|{Letra}|{Numero})*
                         return(OP_LIST_CONCA); 
                     }
 "@"					{   ECHO; 
+                        yylval.lex ="@";
                         yylval.attr = 0;
                         return(OP_GET_LIST); 
                     }
