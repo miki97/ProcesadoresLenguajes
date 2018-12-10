@@ -23,6 +23,7 @@ void yyerror(const char *msg);
 
 
 // Operadores de comparacion y relacion
+//%left PAREN_IZQ
 %left OP_OR
 %left OP_XOR
 %left OP_AND
@@ -32,6 +33,7 @@ void yyerror(const char *msg);
 %left MAS_MENOS MAS_MAS OP_LIST_CONCA OP_BIN_LISTA
 %left OP_GET_LIST
 %left OP_MULTI_DIV
+//%left PAREN_DER
 
 
 // Operadores unarios

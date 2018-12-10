@@ -61,6 +61,7 @@ extern int decParam;
 extern int decVar;
 extern int nParamLlamada;
 // Funciones
+int buscaEntrada(attrs e);
 int  addEntrada(Entrada);
 int addVar(attrs in);
 int  eliminarEntrada();

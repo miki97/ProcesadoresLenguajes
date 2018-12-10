@@ -245,7 +245,7 @@ Identif ({Barra}|{Letra})({Barra}|{Letra}|{Numero})*
                         yylval.lex = strdup(yytext);
                         return(CONST_REAL); 
                     }
-{Identif}			{   ECHO; 
+{Identif}			{   ECHO;
                         yylval.lex = strdup(yytext);
                         return(IDENT); 
                     } 

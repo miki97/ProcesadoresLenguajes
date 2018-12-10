@@ -23,6 +23,30 @@ int nParamLlamada =1;
 // Tabla de Símbolos
 ///////////////////////////////////////////////////////////
 
+int buscaEntrada(attrs e){
+
+    int i = TOPE -1;
+	int found = 0;
+	int finbloque=0;
+	//printTS();
+
+	while (i > 0 && !found && !finbloque) {
+		if (strcmp(e.lex, tablasimbolos[i].lex) == 0) {
+			found = 1;
+		} else {
+			i--;
+		}
+		if(tablasimbolos[i].tipo_entrada == FUNCION){
+			finbloque=1;			
+		}
+	}
+
+	if(!found) {
+		return -1;
+	} else {
+		return i;
+	}
+}
 // Inserta una in en la tabla de símbolos
 int addEntrada(Entrada in){
     // Si se tienen más entradas de las que puede alojar la tabla de símbolos
@@ -46,23 +70,35 @@ int addEntrada(Entrada in){
 int addVar(attrs in){
     // Si se tienen más entradas de las que puede alojar la tabla de símbolos
     // dará un error, si no, se inserta
-	if(decVar ==0)
-	{
-		if(TOPE < MAX_IN) {
+	int i = buscaEntrada(in);
+	if( i == -1){
+		if(decVar ==0)
+		{
+			if(TOPE < MAX_IN) {
 
-			tablasimbolos[TOPE].tipo_entrada= VAR;
-			tablasimbolos[TOPE].lex=in.lex;
-			tablasimbolos[TOPE].tipo= tipoGlobal;
-			tablasimbolos[TOPE].nParam=0;
+				tablasimbolos[TOPE].tipo_entrada= VAR;
+				tablasimbolos[TOPE].lex=in.lex;
+				tablasimbolos[TOPE].tipo= tipoGlobal;
+				tablasimbolos[TOPE].nParam=0;
 
-        	// Se aumenta el contador de entradas
-			TOPE++;
-			return true;
+        		// Se aumenta el contador de entradas
+				TOPE++;
+				return true;
 		} else {
 			printSemanticError("desbordamiento de pila.");
 			return false;
 		}
+		}
+		
 	}
+	else{
+		if(decVar==0){
+			printSemanticError("no se puede declarar la variable.");
+
+		}
+		
+	}
+	
 
 }
 
@@ -229,7 +265,7 @@ void compruebaDevuelve(attrs expr, attrs* res){
 
 void compruebaUnario(attrs op, attrs o, attrs* res){
 
-	printf("hihihihhi %s",op.lex);
+	// printf("hihihihhi %s",op.lex);
 	if( strcmp(op.lex,"#")==0){
 		if (!esLista(o)) {
 			printSemanticError("operador solo para listas.");
@@ -271,24 +307,30 @@ void compruebaUnario(attrs op, attrs o, attrs* res){
 
 }
 // Busca una entrada según el nombre
-int buscaNombre(attrs e){
+int buscaNombre(attrs e) {
 
     int i = TOPE -1;
 	int found = 0;
 
 	//printTS();
 
-	while (i > 0 && !found && tablasimbolos[i].tipo_entrada != MARCA) {
+	while ( i > 0 && !found ) {
 		if (tablasimbolos[i].tipo_entrada == FUNCION && strcmp(e.lex, tablasimbolos[i].lex) == 0) {
 			found = 1;
 		} else {
 			i--;
 		}
+
+		// fprintf(stderr, "%s IMPRIMO i: %d, found = %d\n\n\n%s", _CC_BOLDGREEN, i, found, _CC_RESET);
 	}
+	// printTS();
 
 	if(!found) {
+		//DEBUG
+		fprintf(stderr, "%s NO ENCUENTRO LA FUNCION, DEVUELVO -1 \n\n%s", _CC_BOLDBLUE, _CC_RESET);
 		return -1;
 	} else {
+		// fprintf(stderr, "%s LO HE ENCONTRADO %d\n\n\n%s", _CC_BOLDBLUE, i, _CC_RESET);
 		return i;
 	}
 }
@@ -299,16 +341,18 @@ int buscaNombre(attrs e){
  * 
  * */
 void compruebaLlamada(attrs id, attrs* res){
-
+	//DEBUG
 	// printTS();
     int index = buscaNombre(id);
+	//DEbUG
+	// fprintf(stderr, "%s TENGO UN VALOR %d\n %s", _CC_BOLDBLUE, index, _CC_RESET);		
 
-	if(index==-1) {
-
+	if (index == -1) {
 		currentFunction = -1;
-
     } else {
-		//printf((char)nParam);
+		//DEBUG
+		// fprintf(stderr, "%sNumero de parametros funcion: %d, Numero de parametros en la tabla de simbolos: %d%s \n", _CC_BOLDBLUE, nParam, tablasimbolos[index].nParam, _CC_RESET);
+			
 		if (nParam != tablasimbolos[index].nParam) {
 			printSemanticError("numero de parametros no valido.");
 		} else {
@@ -406,7 +450,7 @@ void compruebaSumaBin(attrs o1, attrs op, attrs o2, attrs* res){
 			return;
 		}
 		else if (esLista(o2)) {
-			printf("este es el simbolo: %s",op.lex);
+			// printf("este es el simbolo: %s",op.lex);
 			if ( strcmp(op.lex,"-") == 0) {
 				printSemanticError("operandos de tipo invalido, no se puede restar una lista.");
 				return;				
@@ -494,8 +538,8 @@ void compruebaBooleanos(attrs o1, attrs op, attrs o2, attrs* res){
 void compruebaRel(attrs o1, attrs op, attrs o2, attrs* res){
 
 	//printTS();
-	//printf("%d ",o1.type);
-	//printf("%d",o2.type);
+	//fprintf(stderr,"tipo bool1%d ",o1.type);
+	//fprintf(stderr,"tipobool2%d",o2.type);
 
     if (o1.type != o2.type) {
 
@@ -516,6 +560,7 @@ void compruebaRel(attrs o1, attrs op, attrs o2, attrs* res){
  */
 void compruebaProducto(attrs o1, attrs op, attrs o2, attrs* res) {
 	// Si el operador izquierdo es una lista, comprobar el tipo de la lista con el derecho.
+	//fprintf(stderr,"el tipo del1 %d el tipo del2 %d \n",o1.type,o2.type);
 	if (esLista(o1) && (getTipoLista(o1.lex) != o2.type)) {
 		printSemanticError("operando sobre lista tiene que ser del mismo tipo que la lista.");	
 		return;
@@ -644,6 +689,7 @@ void compruebaTipoIdentificador(attrs ident, attrs* res) {
 		res->type = tablasimbolos[i].tipo;
 	}
 	else {
+		//printTS();
 		printSemanticError("identificador no declarado");
 	}
 }
