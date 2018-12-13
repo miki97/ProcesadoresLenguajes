@@ -1,16 +1,16 @@
-/* 
-	Fichero para declarar las funciones y elementos necesarios
-	para manejar la Tabla de Simbolos
+/* Fichero para declarar las funciones y elementos necesarios
+para manejar la Tabla de Simbolos
 */
-
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 #include "semantico.h"
 #include "colores.h"
-
-
 
 extern int yylineno;
 
 Entrada tablasimbolos[MAX_IN];
+Entrada TF[MAX_IN];
 long int TOPE = 0;
 int line = 1;
 unsigned int funcion=0;
@@ -20,80 +20,51 @@ int nParam=0;
 int decParam=0;
 int decVar=0;
 int nParamLlamada =1;
-
-
-///////////////////////////////////////////////////////////
-// Tabla de Símbolos									 //
+///////////////////////////////////////////////////////////////////////////////
+// Tabla de Símbolos
 ///////////////////////////////////////////////////////////
 
-// Inserta una in en la tabla de símbolos
-int addEntrada(Entrada in){
-    // Si no llegamos al tope de la tabla, se inserta
-	if (TOPE < MAX_IN){
-		tablasimbolos[TOPE].tipo_entrada = in.tipo_entrada;
-		tablasimbolos[TOPE].lex = in.lex;
-		tablasimbolos[TOPE].tipo = in.tipo;
-		tablasimbolos[TOPE].nParam = in.nParam;
-		tablasimbolos[TOPE].tipolista = in.tipolista;
-
-        // Se aumenta el contador de entradas
-		TOPE++;
-
-		// Se muestra la tabla
-		// printTS();
-		return true;
-	} 
-	else {
-		printSemanticError("desbordamiento de tabla.");
-		return false;
-	}
-}
-
-// Elimina una in de la tabla de símbolos
-bool eliminarEntrada() {
-    // Si la tabla de símbolos tiene alguna in puede eliminar la última
-    if (TOPE > 0) {
-		TOPE--;
-		return true;
-	} 
-	else {
-		printSemanticError("intento de borrar entrada con tabla vacía.");
-		return false;
-	}
-}
-
-// Elimina las entradas de la tabla de símbolos hasta la marca de tope
-void eliminarBloque() {
-	// Busca asta que hay una marca en el tope
-    while (tablasimbolos[TOPE - 1].tipo_entrada != MARCA && TOPE > 0)
-		TOPE--;
-
-	// Elimina la marca	
-	if (tablasimbolos[TOPE - 1].tipo_entrada == MARCA)
-		TOPE--;
-}
-
-// Busca una entrada en la tabla
-int buscaEntrada(attrs e, TipoEntrada tp){
-    int i = TOPE - 1;
+int buscaEntrada(attrs e){
+    int i = TOPE -1;
 	int found = 0;
-	int finbloque = 0;
+	int finbloque=0;
 	//printTS();
 
 	while (i > 0 && !found && !finbloque) {
-		if (!strcmp(e.lex, tablasimbolos[i].lex) && tablasimbolos[i].tipo_entrada == tp)
+		if (strcmp(e.lex, tablasimbolos[i].lex) == 0) {
 			found = 1;
-		else
+		} else {
 			i--;
-
-		if (tablasimbolos[i].tipo_entrada == FUNCION)
-			finbloque = 1;			
+		}
+		if(tablasimbolos[i].tipo_entrada == FUNCION){
+			finbloque=1;			
+		}
 	}
 
-	if (found)
-		return i;
-	else
+	if(!found) {
 		return -1;
+	} else {
+		return i;
+	}
+}
+// Inserta una in en la tabla de símbolos
+int addEntrada(Entrada in){
+    // Si se tienen más entradas de las que puede alojar la tabla de símbolos
+    // dará un error, si no, se inserta
+	if(TOPE < MAX_IN) {
+
+		tablasimbolos[TOPE].tipo_entrada=in.tipo_entrada;
+		tablasimbolos[TOPE].lex=in.lex;
+		tablasimbolos[TOPE].tipo=in.tipo;
+		tablasimbolos[TOPE].nParam=in.nParam;
+
+        // Se aumenta el contador de entradas
+		TOPE++;
+		return true;
+	} else {
+		printSemanticError("desbordamiento de pila.");
+		return false;
+	}
 }
 
 int addVar(attrs in){
@@ -129,6 +100,39 @@ int addVar(attrs in){
 	}
 	
 
+}
+
+// Elimina una in de la tabla de símbolos
+bool eliminarEntrada() {
+    // Si la tabla de símbolos tiene alguna in puede eliminar la última
+    if (TOPE > 0) {
+		TOPE--;
+		return true;
+	} else {
+		printSemanticError("intento de borrar entrada con tabla vacia.");
+		return false;
+	}
+}
+
+// Elimina las entradas de la tabla de símbolos hasta la marca de tope
+void limpiarBloque() {
+
+	// Busca asta que hay una marca en el tope
+    while(tablasimbolos[TOPE-1].tipo_entrada != MARCA && TOPE > 0){
+		TOPE--;
+	}
+	// Elimina la marca	
+	if (tablasimbolos[TOPE-1].tipo_entrada == MARCA) {
+		TOPE--;
+	}
+
+    // Borramos los parametros de la funcion
+    /*if (tablasimbolos[TOPE-1].tipo_entrada == PARAM) {
+        while(tablasimbolos[TOPE-1].tipo_entrada != FUNCION && TOPE > 0) {
+    		TOPE--;
+    	}
+         //TOPE--;
+	}*/
 }
 
 
@@ -301,6 +305,34 @@ void compruebaUnario(attrs op, attrs o, attrs* res){
 
 	
 
+}
+// Busca una entrada según el nombre
+int buscaNombre(attrs e) {
+
+    int i = TOPE -1;
+	int found = 0;
+
+	//printTS();
+
+	while ( i > 0 && !found ) {
+		if (tablasimbolos[i].tipo_entrada == FUNCION && strcmp(e.lex, tablasimbolos[i].lex) == 0) {
+			found = 1;
+		} else {
+			i--;
+		}
+
+		// fprintf(stderr, "%s IMPRIMO i: %d, found = %d\n\n\n%s", _CC_BOLDGREEN, i, found, _CC_RESET);
+	}
+	// printTS();
+
+	if(!found) {
+		//DEBUG
+		fprintf(stderr, "%s NO ENCUENTRO LA FUNCION, DEVUELVO -1 \n\n%s", _CC_BOLDBLUE, _CC_RESET);
+		return -1;
+	} else {
+		// fprintf(stderr, "%s LO HE ENCONTRADO %d\n\n\n%s", _CC_BOLDBLUE, i, _CC_RESET);
+		return i;
+	}
 }
 
 
@@ -704,6 +736,7 @@ void printTS(){
 		if(tablasimbolos[j].tipo_entrada == 1) { e = "FUNCTION"; }
 		if(tablasimbolos[j].tipo_entrada == 2) { e = "VAR"; }
 		if(tablasimbolos[j].tipo_entrada == 3) { e = "PARAM"; }
+		if(tablasimbolos[j].tipo_entrada == 4)	{ e = "DESCRIPT";}
 
 		if(tablasimbolos[j].tipo == 0) { t = "BOOLEANO"; }
 		if(tablasimbolos[j].tipo == 1) { t = "ENTERO"; }
@@ -827,4 +860,110 @@ TipoDato tipoDeListaATipoDeDato(TipoDato tipoLista) {
 	} else if (tipoLista == LISTA_STRING) {
 		return STRING;
 	}
+}
+
+/********************************************
+**************generacion codigo**************
+*********************************************/
+FILE *file;
+TipoDato tipoTMP = 0;
+
+int temp = 0;
+int etiq = 0;
+int varPrinc = 1;
+int decIF = 0, decElse=0;
+int principal =1;
+
+char *temporal(){
+	char *cadena;
+	cadena = (char *) malloc(20);
+	sprintf(cadena, "temp%d", temp);
+	temp++;
+	return cadena;
+}
+
+char *etiqueta(){
+	char *cadena;
+	cadena = (char *) malloc(20);
+	sprintf(cadena, "etiqueta_%d", etiq);
+	etiq++;
+	return cadena;
+}
+
+// Abre un fichero para crear el código intermedio
+void generarFichero(){
+    file = fopen("generado.c", "w");
+	fputs("#include <stdio.h>\n", file);
+}
+
+// Cerrar fichero
+void cerrarFichero(){
+	fputs("}\n", file);
+    fclose(file);
+}
+
+void generarVariables(attrs a){
+	char *sent;
+	sent = (char *) malloc(1000);
+
+	if( principal ==1){
+	if (tipoTMP == ENTERO){
+		sprintf(sent,"int %s;\n", a.lex);
+		fputs(sent,file);
+	}
+	else if (tipoTMP == REAL){
+		sprintf(sent,"float %s;\n", a.lex);
+		fputs(sent,file);
+	}
+	else if (tipoTMP == CARACTER){
+		sprintf(sent,"char %s;\n", a.lex);
+		fputs(sent,file);
+	}
+	else if (tipoTMP == BOOLEANO){
+		
+		tablasimbolos[TOPE].tipo_entrada = DESCRIPT;
+		tablasimbolos[TOPE].lex = "??";
+		tablasimbolos[TOPE].descriptor.EtiquetaSalida = etiqueta();
+		TOPE++;
+		sprintf(sent, "int %s;\n", a.lex);
+		fputs(sent, file);
+		
+	}
+	}
+	//printTS();
+	free(sent);
+}
+
+void insertarCond(int type){
+
+	char * cadena, *sent;
+	int topeTMP = TOPE;
+	cadena = (char *) malloc(20);
+	sent = (char *) malloc(150);
+
+
+	while(TF[topeTMP].tipo_entrada != DESCRIPT){
+		topeTMP--;
+	}
+	if(type == 1){
+		sprintf(cadena, "temp%d",temp-1);
+		TF[topeTMP].lex = (char *) malloc(50);
+		strcpy(TF[topeTMP].lex,cadena);
+		sprintf(sent,"if(!%s) goto %s;\n",cadena,TF[topeTMP].descriptor.EtiquetaElse);
+	}
+	else if(type == 2){
+				sprintf(cadena, "temp%d",temp-1);
+				sprintf(sent,"if(!%s) goto %s;\n",cadena,TF[topeTMP].descriptor.EtiquetaSalida);
+			}
+
+	fputs(sent,file);
+	free(sent);
+	free(cadena);
+}
+
+void pintaTMP(){
+	char *cadena;
+	cadena = (char *) malloc(200);
+	sprintf(cadena, "valortmp = %i", tipoTMP);
+	printSemanticError(cadena);
 }

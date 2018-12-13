@@ -132,7 +132,7 @@ Lista_parametros: Lista_parametros SEPAR Parametro
 Parametro: TIPO IDENT {nParam++; setTipo($1); addParametro($2); };
 
 Sentencias: Sentencias Sentencia 
-          | Sentencia ;
+          | Sentencia {printTS();};
 
 Sentencia: Bloque
          | Sentencia_asig DELIMIT

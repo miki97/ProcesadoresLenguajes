@@ -89,11 +89,22 @@ void yyerror(const char *msg);
 %%
 
 // Producciones
-Programa: Cabecera Bloque ;
+Programa: { generarFichero(); }
+          Cabecera Bloque 
+          { cerrarFichero(); } ;
 
 Cabecera: INICIO PAREN_IZQ PAREN_DER ;
 
-Bloque: LLAVE_IZQ {addMarca();} Declar_variables_locales Declar_funciones Sentencias LLAVE_DER {limpiarBloque();} ;
+Bloque: LLAVE_IZQ { addMarca(); } 
+        Declar_variables_locales
+        {   
+            if (varPrinc == 1) {
+                varPrinc = 0;
+                fputs("int main(){\n", file);
+            }
+        }{principal = 0;} //revisar esto es solo para evitar la declaracion de variables dentro de funciones
+        Declar_funciones
+        Sentencias LLAVE_DER { limpiarBloque(); } ;
 
 Declar_variables_locales: VAR_IZQ Cuerpo_variables VAR_DER
                         | ;
@@ -101,7 +112,7 @@ Declar_variables_locales: VAR_IZQ Cuerpo_variables VAR_DER
 Cuerpo_variables: Cuerpo_variables Declar_variables
                 | Declar_variables ;
 
-Declar_variables: Tipo  {setTipo($1);} Lista_ident DELIMIT 
+Declar_variables: Tipo {tipoTMP = $1.type; setTipo($1);} Lista_ident DELIMIT 
                 | error;
 
 Tipo: Tipo_dato  {$$.type = $1.type;}
@@ -111,15 +122,20 @@ Tipo_dato: TIPO {$$.type = $1.type;};
 
 Tipo_lista: TIPO_LIST Tipo_dato {compruebaTipoLista($2,&$$);} ;
 
-Lista_ident: Lista_ident SEPAR IDENT {addVar($3);}
+Lista_ident: Lista_ident SEPAR IDENT {addVar($3);generarVariables($1);}
            | Lista_ident error IDENT
-           | IDENT {addVar($1);};
+           | IDENT {addVar($1);generarVariables($1);};
           
 Declar_funciones: Declar_funciones Declar_funcion
                 | ;
 
-Cabecera_funcion: TIPO IDENT {decParam=1;} {addFuncion($2);} PAREN_IZQ Lista_parametros PAREN_DER
-                { actualizarNparam($1); nParam = 0; decParam = 0; }
+Cabecera_funcion: TIPO IDENT 
+                  { decParam = 1; 
+                    addFuncion($2); } 
+                  PAREN_IZQ Lista_parametros PAREN_DER
+                  { actualizarNparam($1); 
+                    nParam = 0; 
+                    decParam = 0; }
                 | error;
                 
 Declar_funcion: Cabecera_funcion { funcion=1;} Bloque { funcion=0;};
@@ -132,9 +148,14 @@ Lista_parametros: Lista_parametros SEPAR Parametro
 Parametro: TIPO IDENT {nParam++; setTipo($1); addParametro($2); };
 
 Sentencias: Sentencias Sentencia 
-          | Sentencia ;
+          | Sentencia;
 
-Sentencia: Bloque
+Sentencia: {	if(decIF==1){
+						{insertaCond(1);}
+						fputs("{\n",file);
+						decIF++;
+					}
+				}Bloque
          | Sentencia_asig DELIMIT
          | Sentencia_if
          | Sentencia_while

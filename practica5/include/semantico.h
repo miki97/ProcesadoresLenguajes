@@ -2,23 +2,19 @@
 #include <stdio.h>
 #include <string.h>
 
-// MACROS
 #define true 1
 #define false 0
 #define bool int
 
-// ESTRUCTURAS Y ENUMERADOS
 typedef enum {
 	MARCA = 0, /* marca comienzo bloque */
 	FUNCION,   /* si es subprograma */
 	VAR,       /* si es variable */
 	PARAM,     /* si es parametro formal */
-	DESCRIPT,
-	CADENA
+	DESCRIPT
 } TipoEntrada;
 
 typedef enum {
-	NOT_ASIG = 0,
     BOOLEANO,
 	ENTERO,
 	REAL,
@@ -30,7 +26,8 @@ typedef enum {
 	LISTA_REAL,
 	LISTA_CARACTER,
 	LISTA_STRING,
-	NA
+	NA,	
+	NOT_ASIG = 0,
 } TipoDato;
 
 typedef struct {
@@ -49,35 +46,32 @@ typedef struct {
 	DescriptorDeInstrControl descriptor;
 } Entrada;
 
+//creo que esto por ahora no nos sirve
 typedef struct {
 	int attr;           /**/
 	char *lex;          /**/
 	TipoDato type;      /**/
 	unsigned int nDim;  /**/
 } attrs;
+/////////
 
-// VARIABLES GLOBALES
 #define YYSTYPE attrs
 #define MAX_IN 1000
 
-extern long int TOPE;
-
-extern Entrada tablasimbolos[MAX_IN];
-extern Entrada otraTabla[MAX_IN];
-
-extern int line;
-extern int decVar;
+Entrada tablasimbolos[MAX_IN];
+extern long int TOPE ;
+extern int line ;
 extern unsigned int funcion;
-extern int decParam;
-extern int decFuncion;
 extern TipoDato tipoGlobal;
+extern int currentFunction;
 extern int nParam;
+extern int decParam;
+extern int decVar;
 extern int nParamLlamada;
 
 ///////////////////////////////////
-extern int currentFunction;
-extern int aux;
-
+// GENERACIÓN DE CÓDIGO			 //
+///////////////////////////////////
 extern FILE *file;
 extern TipoDato tipoTMP;
 
@@ -85,19 +79,13 @@ extern int temp;
 extern int etiq;
 extern int varPrinc;
 extern int decIF, decELSE;
-///////////////////////////////////
-
-// FUNCIONES
-int  addEntrada(Entrada in);
+extern int principal;
+// Funciones
+int buscaEntrada(attrs e);
+int  addEntrada(Entrada);
+int addVar(attrs in);
 int  eliminarEntrada();
-void eliminarBloque();
-int  buscaEntrada(attrs e, TipoEntrada tp);
-
-
-
-
-int  addVar(attrs in);
-
+void limpiarBloque();
 void addMarca();
 int  setTipo(attrs);
 void addFuncion(attrs);
@@ -131,3 +119,27 @@ void compruebaTipoLista(attrs, attrs*);
 bool esLista(attrs con);
 TipoDato getTipoLista(const char* lex);
 TipoDato tipoDeListaATipoDeDato(TipoDato tipoLista);
+
+////////////////////////////////////////////////////////////
+void generarFichero();
+void cerrarFichero();
+
+void generarVariables(attrs a);
+void generar(int tipo, attrs dest, attrs o1, attrs op, attrs o2);
+
+void insertarDesc(int tipo);
+void eliminarDesc();
+
+void insertarCond(int tipo);
+void insertarEtiqElse();
+
+void insertarEtiqSalida();
+void insertarEtiqEntrada();
+
+void insertarGotoEntrada();
+
+void generarEntSal(int tipo, attrs a);
+
+
+void pintaTMP();
+//unsigned int compruebaTipos2(attrs a,attrs op, attrs b);

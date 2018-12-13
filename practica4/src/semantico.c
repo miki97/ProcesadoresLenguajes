@@ -24,7 +24,6 @@ int nParamLlamada =1;
 ///////////////////////////////////////////////////////////
 
 int buscaEntrada(attrs e){
-
     int i = TOPE -1;
 	int found = 0;
 	int finbloque=0;
