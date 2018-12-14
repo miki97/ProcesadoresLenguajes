@@ -10,7 +10,6 @@ para manejar la Tabla de Simbolos
 extern int yylineno;
 
 Entrada tablasimbolos[MAX_IN];
-Entrada TF[MAX_IN];
 long int TOPE = 0;
 int line = 1;
 unsigned int funcion=0;
@@ -865,7 +864,7 @@ TipoDato tipoDeListaATipoDeDato(TipoDato tipoLista) {
 /********************************************
 **************generacion codigo**************
 *********************************************/
-FILE *file;
+/*FILE *file;
 TipoDato tipoTMP = 0;
 
 int temp = 0;
@@ -966,4 +965,4 @@ void pintaTMP(){
 	cadena = (char *) malloc(200);
 	sprintf(cadena, "valortmp = %i", tipoTMP);
 	printSemanticError(cadena);
-}
+}*/

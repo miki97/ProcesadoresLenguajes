@@ -29,7 +29,10 @@ $(OBJ)/main.o : $(SRC)/main.c
 $(OBJ)/semantico.o: $(SRC)/semantico.c
 	gcc -c -o $@ $< $(INCLUDES) -g
 
-$(BIN)/sintactico :  $(OBJ)/semantico.o $(OBJ)/main.o  $(OBJ)/y.tab.o
+$(OBJ)/generacion.o: $(SRC)/generacion.c
+	gcc -c -o $@ $< $(INCLUDES) -g
+	
+$(BIN)/sintactico :  $(OBJ)/semantico.o $(OBJ)/main.o $(OBJ)/generacion.o  $(OBJ)/y.tab.o
 	gcc -o $@ $^ $(INCLUDES) -g
 
 try2 : $(BIN)/sintactico $(SRC)/helloworld.ber
@@ -38,7 +41,8 @@ try2 : $(BIN)/sintactico $(SRC)/helloworld.ber
 try : $(BIN)/sintactico $(SRC)/programaPrueba.ber
 	# $^ > 'output.txt' 
 	$^
-
+gen : $(BIN)/sintactico $(SRC)/gencodigo1.ber
+	$^
 ctry: $(BIN)/sintactico $(SRC)/programaPrueba.ber
 	make clean
 	clear

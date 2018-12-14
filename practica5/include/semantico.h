@@ -1,3 +1,6 @@
+#ifndef __SEMANTICO_INCL
+#define __SEMANTICO_INCL
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -31,11 +34,11 @@ typedef enum {
 } TipoDato;
 
 typedef struct {
-	char *EtiquetaEntrada;
-	char *EtiquetaSalida;
-	char *EtiquetaElse;
-	char *NombreVarControl;
-} DescriptorDeInstrControl;
+	char *EtiquetaEntrada ;
+	char *EtiquetaSalida ;
+	char *EtiquetaElse ;
+	char *NombreVarControl ;
+} DescriptorDeInstrControl ;
 
 typedef struct {
 	TipoEntrada tipo_entrada;
@@ -143,3 +146,5 @@ void generarEntSal(int tipo, attrs a);
 
 void pintaTMP();
 //unsigned int compruebaTipos2(attrs a,attrs op, attrs b);
+
+#endif

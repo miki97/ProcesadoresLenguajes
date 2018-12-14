@@ -38,7 +38,8 @@ try2 : $(BIN)/sintactico $(SRC)/helloworld.ber
 try : $(BIN)/sintactico $(SRC)/programaPrueba.ber
 	# $^ > 'output.txt' 
 	$^
-
+gen : $(BIN)/sintactico $(SRC)/gencodigo1.ber
+	$^
 ctry: $(BIN)/sintactico $(SRC)/programaPrueba.ber
 	make clean
 	clear

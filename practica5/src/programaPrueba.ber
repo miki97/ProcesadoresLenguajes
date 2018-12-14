@@ -1,7 +1,7 @@
 ent principal()
 {
     var:
-        ent  ve ;
+        ent  ve, asd;
         real vf ;
         car  vc ;
         bool vl ;

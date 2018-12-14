@@ -64,7 +64,9 @@ Identif ({Barra}|{Letra})({Barra}|{Letra}|{Numero})*
 "="					{ ECHO; return(IGUAL); } 
 "si"				{ ECHO; return(COND_SI); } 
 "otro"				{ ECHO; return(COND_OTRO); } 
-"mientras"			{ ECHO; return(BUCLE); } 
+"mientras"			{ ECHO;
+                        yylval.lex = "mientras";
+                        return(BUCLE); } 
 "para"				{ ECHO; return(FOR_INI); } 
 "hasta"				{ ECHO; return(FOR_STOP); } 
 "paso"				{ ECHO; return(FOR_STEP); } 
@@ -127,55 +129,68 @@ Identif ({Barra}|{Letra})({Barra}|{Letra}|{Numero})*
                         yylval.attr = 1;
                         return(OP_MULTI_DIV); 
                     }
-"&&"				{   ECHO; 
+"&&"				{   ECHO;
+                        yylval.lex ="&&";
                         yylval.attr = 0;
                         return(OP_AND); 
                     }
-"y"					{   ECHO; 
+"y"					{   ECHO;
+                        yylval.lex ="y";
                         yylval.attr = 1;
                         return(OP_AND);
                     }
-"||"				{   ECHO; 
+"||"				{   ECHO;
+                        yylval.lex ="||";
                         yylval.attr = 0;
                         return(OP_OR); 
                     }
-"o"					{   ECHO; 
+"o"					{   ECHO;
+                        yylval.lex ="o";
                         yylval.attr = 1;
                         return(OP_OR); 
                     }
-"^^"				{   ECHO; 
+"^^"				{   ECHO;
+                        yylval.lex ="^^";
                         yylval.attr = 0;
                         return(OP_XOR); 
                     }
-"ox"				{   ECHO; 
+"ox"				{   ECHO;
+                        yylval.lex ="ox";                            
                         yylval.attr = 1;
                         return(OP_XOR); 
                     }
-"=="				{   ECHO; 
+"=="				{   ECHO;
+                        yylval.lex ="==";
                         yylval.attr = 0;
                         return(OP_IGUALDAD); 
                     }
 "!="				{   ECHO; 
+                        yylval.lex ="!=";
                         yylval.attr = 1;
                         return(OP_IGUALDAD); 
                     }
-"<"					{   ECHO; 
+"<"					{   ECHO;
+                        yylval.lex ="<";
                         yylval.attr = 0;
                         return(OP_RELACION); 
                     }
-"<="				{   ECHO; 
+"<="				{   ECHO;
+                        yylval.lex ="<=";
                         yylval.attr = 1;
                         return(OP_RELACION); 
                     }
-">"					{   ECHO; 
+">"					{   ECHO;
+                        yylval.lex =">";
                         yylval.attr = 2;
                         return(OP_RELACION); 
                     }
-">="				{   ECHO; 
+">="				{   ECHO;
+                        yylval.lex =">=";
                         yylval.attr = 3;
                         return(OP_RELACION); 
                     }
-"**"				{   ECHO; 
+"**"				{   ECHO;
+                        yylval.lex ="**";
                         yylval.attr = 0;
                         return(OP_LIST_CONCA); 
                     }
@@ -185,15 +200,18 @@ Identif ({Barra}|{Letra})({Barra}|{Letra}|{Numero})*
                         return(OP_GET_LIST); 
                     }
 
-"$"					{   ECHO; 
+"$"					{   ECHO;
+                        yylval.lex ="$";
                         yylval.attr = 0;
                         return(OP_INI_LIST); 
                     }
-"<<"				{   ECHO; 
+"<<"				{   ECHO;
+                        yylval.lex ="<<";
                         yylval.attr = 0;
                         return(OP_AVR_RETR); 
                     }
-">>"				{   ECHO; 
+">>"				{   ECHO;
+                        yylval.lex =">>";
                         yylval.attr = 1;
                         return(OP_AVR_RETR); 
                     }

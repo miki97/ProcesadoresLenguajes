@@ -7,6 +7,7 @@
 //#include "y.tab.h"
 #include "semantico.h"
 #include "colores.h"
+#include "generacion.h"
 
 // Declaramos ’yyerror’ para que se pueda invocar desde lex (lexico.l)
 int yylex();
@@ -89,30 +90,24 @@ void yyerror(const char *msg);
 %%
 
 // Producciones
-Programa: { generarFichero(); }
-          Cabecera Bloque 
-          { cerrarFichero(); } ;
+Programa: { generarFichero(); } Cabecera { escribirLibrerias(); } Bloque { cerrarFichero(); };
 
 Cabecera: INICIO PAREN_IZQ PAREN_DER ;
 
-Bloque: LLAVE_IZQ { addMarca(); } 
+Bloque: LLAVE_IZQ { addMarca(); abrirBloque();} 
         Declar_variables_locales
-        {   
-            if (varPrinc == 1) {
-                varPrinc = 0;
-                fputs("int main(){\n", file);
-            }
-        }{principal = 0;} //revisar esto es solo para evitar la declaracion de variables dentro de funciones
+        //{ intercambiaFichero(); }
         Declar_funciones
-        Sentencias LLAVE_DER { limpiarBloque(); } ;
+        //{ intercambiaFichero(); }
+        Sentencias LLAVE_DER { limpiarBloque(); cerrarBloque(); } ;
 
-Declar_variables_locales: VAR_IZQ Cuerpo_variables VAR_DER
-                        | ;
+Declar_variables_locales: VAR_IZQ Cuerpo_variables VAR_DER{if (!hay_principal) introducirMain();}
+                        | {if (!hay_principal) introducirMain();};
 
 Cuerpo_variables: Cuerpo_variables Declar_variables
                 | Declar_variables ;
 
-Declar_variables: Tipo {tipoTMP = $1.type; setTipo($1);} Lista_ident DELIMIT 
+Declar_variables: Tipo {declararTipo($1); setTipo($1);} Lista_ident DELIMIT {escribirPuntoYComa();}
                 | error;
 
 Tipo: Tipo_dato  {$$.type = $1.type;}
@@ -122,10 +117,10 @@ Tipo_dato: TIPO {$$.type = $1.type;};
 
 Tipo_lista: TIPO_LIST Tipo_dato {compruebaTipoLista($2,&$$);} ;
 
-Lista_ident: Lista_ident SEPAR IDENT {addVar($3);generarVariables($1);}
+Lista_ident: Lista_ident SEPAR IDENT {addVar($3);escribirComa();declararVariable($3);leer($1);}
            | Lista_ident error IDENT
-           | IDENT {addVar($1);generarVariables($1);};
-          
+           | IDENT {addVar($1);declararVariable($1);leer($1);};
+
 Declar_funciones: Declar_funciones Declar_funcion
                 | ;
 
@@ -148,14 +143,9 @@ Lista_parametros: Lista_parametros SEPAR Parametro
 Parametro: TIPO IDENT {nParam++; setTipo($1); addParametro($2); };
 
 Sentencias: Sentencias Sentencia 
-          | Sentencia;
+          | Sentencia ;
 
-Sentencia: {	if(decIF==1){
-						{insertaCond(1);}
-						fputs("{\n",file);
-						decIF++;
-					}
-				}Bloque
+Sentencia: Bloque
          | Sentencia_asig DELIMIT
          | Sentencia_if
          | Sentencia_while
@@ -166,24 +156,24 @@ Sentencia: {	if(decIF==1){
          | Sentencia_iterar DELIMIT
          | Sentencia_comienzo DELIMIT ;
 
-Sentencia_asig: IDENT IGUAL Expresion {compruebaAsignacion($1,$2,$3,&$$);};
+Sentencia_asig: IDENT IGUAL Expresion {compruebaAsignacion($1,$2,$3,&$$);generarAsignacion($1, $3);};
 
 Lista_expresiones: Lista_expresiones SEPAR Expresion {nParam++;addPar($3);}
                  | Lista_expresiones error Expresion {nParam++;addPar($3);}
                  | Expresion {nParam =1; addPar($1);};                
 
 Expresion: PAREN_IZQ Expresion PAREN_DER { $$.type = $2.type;}
-         | OP_UNARIO Expresion{compruebaUnario($1, $2, &$$); }
+         | OP_UNARIO Expresion{compruebaUnario($1, $2, &$$); generarUnario($1, $2, &$$);}
          | MAS_MENOS Expresion {compruebaSigno($1, $2, &$$); }%prec OP_UNARIO
-         | Expresion MAS_MENOS Expresion{compruebaSumaBin($1, $2, $3, &$$); }
-         | Expresion OP_BIN_LISTA Expresion{compruebaListaBin($1, $2, $3, &$$); }
-         | Expresion OP_LIST_CONCA Expresion{compruebaListaConca($1, $2, $3, &$$); }
-         | Expresion OP_OR Expresion{compruebaBooleanos($1, $2, $3, &$$); }
-         | Expresion OP_XOR Expresion{compruebaBooleanos($1, $2, $3, &$$); }
-         | Expresion OP_AND Expresion{compruebaBooleanos($1, $2, $3, &$$); }
-         | Expresion OP_RELACION Expresion{compruebaRel($1, $2, $3, &$$); }
-         | Expresion OP_IGUALDAD Expresion{compruebaRel($1, $2, $3, &$$); }
-         | Expresion OP_MULTI_DIV Expresion{compruebaProducto($1, $2, $3, &$$); }
+         | Expresion MAS_MENOS Expresion{compruebaSumaBin($1, $2, $3, &$$); generarBinario($2, $1, $3, &$$);}
+         | Expresion OP_BIN_LISTA Expresion{compruebaListaBin($1, $2, $3, &$$); generarBinario($2, $1, $3, &$$);}
+         | Expresion OP_LIST_CONCA Expresion{compruebaListaConca($1, $2, $3, &$$); generarBinario($2, $1, $3, &$$);}
+         | Expresion OP_OR Expresion{compruebaBooleanos($1, $2, $3, &$$); generarBinario($2, $1, $3, &$$);}
+         | Expresion OP_XOR Expresion{compruebaBooleanos($1, $2, $3, &$$); generarBinario($2, $1, $3, &$$);}
+         | Expresion OP_AND Expresion{compruebaBooleanos($1, $2, $3, &$$); generarBinario($2, $1, $3, &$$);}
+         | Expresion OP_RELACION Expresion{compruebaRel($1, $2, $3, &$$); generarBinario($2, $1, $3, &$$);}
+         | Expresion OP_IGUALDAD Expresion{compruebaRel($1, $2, $3, &$$);generarBinario($2, $1, $3, &$$);} 
+         | Expresion OP_MULTI_DIV Expresion{compruebaProducto($1, $2, $3, &$$); generarBinario($2, $1, $3, &$$);}
          | Expresion MAS_MAS Expresion OP_GET_LIST Expresion{compruebaListaGet($1, $3, $5, &$$); }
          | IDENT {decVar = 0; compruebaTipoIdentificador($1,&$$);}
          | Funcion{$$.type = $1.type;}
@@ -217,10 +207,13 @@ Lista_ent: Lista_ent SEPAR CONST_ENT
 Lista_real: Lista_real SEPAR CONST_REAL
           | CONST_REAL {$$.type = $1.type;};
 
-Sentencia_if: COND_SI PAREN_IZQ Expresion PAREN_DER Sentencia{compruebaCondicion($3);}
-            | COND_SI PAREN_IZQ Expresion PAREN_DER Sentencia COND_OTRO Sentencia {compruebaCondicion($3);};
+condicion_if: COND_SI PAREN_IZQ Expresion PAREN_DER{compruebaCondicion($3);addATabla($3); emitirSaltoElse();};
+Sentencia_if: condicion_if Sentencia {escribirEtiquetaElse(); quitarDeTabla();}
+            | condicion_if Sentencia COND_OTRO {emitirSaltoSalida(); escribirEtiquetaElse(); abrirBloque(); }Sentencia {cerrarBloque(); escribirEtiquetaSalida(); quitarDeTabla(); };
 
-Sentencia_while: BUCLE PAREN_IZQ Expresion PAREN_DER Sentencia{compruebaCondicion($3);};
+Sentencia_while: BUCLE {addATablaWhileRepeat($1);  escribirEtiquetaEntrada(); abrirBloque();printTS();}
+                PAREN_IZQ Expresion PAREN_DER{compruebaCondicion($4);escribirNombreExpresionControl($4);saltoSalidaWhile();}
+                 Sentencia{saltoEntradaWhileRepeat(); cerrarBloque(); escribirEtiquetaSalida(); quitarDeTabla();};
 
 Sentencia_for: FOR_INI Sentencia_asig FOR_STOP Expresion FOR_STEP Expresion FOR_DO Sentencia ;
 
@@ -231,8 +224,8 @@ Sentencia_salida: SALIDA Lista_expr_cadena ;
 Lista_expr_cadena: Lista_expr_cadena SEPAR Expr_cadena
                  | Expr_cadena;
 
-Expr_cadena: Expresion
-           | CONST_CADENA;
+Expr_cadena: Expresion {escribir($1);}
+           | CONST_CADENA {escribir($1);};
 
 Sentencia_return: DEVUELVE Expresion {compruebaDevuelve($2,&$$);} ;
 
