@@ -1,0 +1,2704 @@
+Estado 162 conflictos: 1 desplazamiento/reducción
+
+
+Gramática
+
+    0 $accept: Programa $end
+
+    1 Programa: Cabecera Bloque
+
+    2 Cabecera: INICIO PAREN_IZQ PAREN_DER
+
+    3 $@1: %empty
+
+    4 Bloque: LLAVE_IZQ $@1 Declar_variables_locales Declar_funciones Sentencias LLAVE_DER
+
+    5 Declar_variables_locales: VAR_IZQ Cuerpo_variables VAR_DER
+    6                         | %empty
+
+    7 Cuerpo_variables: Cuerpo_variables Declar_variables
+    8                 | Declar_variables
+
+    9 $@2: %empty
+
+   10 Declar_variables: Tipo $@2 Lista_ident DELIMIT
+   11                 | error
+
+   12 Tipo: Tipo_dato
+   13     | Tipo_lista
+
+   14 Tipo_dato: TIPO
+
+   15 Tipo_lista: TIPO_LIST Tipo_dato
+
+   16 Lista_ident: Lista_ident SEPAR IDENT
+   17            | Lista_ident error IDENT
+   18            | IDENT
+
+   19 Declar_funciones: Declar_funciones Declar_funcion
+   20                 | %empty
+
+   21 $@3: %empty
+
+   22 $@4: %empty
+
+   23 Cabecera_funcion: TIPO IDENT $@3 $@4 PAREN_IZQ Lista_parametros PAREN_DER
+   24                 | error
+
+   25 $@5: %empty
+
+   26 Declar_funcion: Cabecera_funcion $@5 Bloque
+
+   27 Lista_parametros: Lista_parametros SEPAR Parametro
+   28                 | Lista_parametros error Parametro
+   29                 | Parametro
+   30                 | %empty
+
+   31 Parametro: TIPO IDENT
+
+   32 Sentencias: Sentencias Sentencia
+   33           | Sentencia
+
+   34 Sentencia: Bloque
+   35          | Sentencia_asig DELIMIT
+   36          | Sentencia_if
+   37          | Sentencia_while
+   38          | Sentencia_for
+   39          | Sentencia_entrada DELIMIT
+   40          | Sentencia_salida DELIMIT
+   41          | Sentencia_return DELIMIT
+   42          | Sentencia_iterar DELIMIT
+   43          | Sentencia_comienzo DELIMIT
+
+   44 Sentencia_asig: IDENT IGUAL Expresion
+
+   45 Lista_expresiones: Lista_expresiones SEPAR Expresion
+   46                  | Lista_expresiones error Expresion
+   47                  | Expresion
+
+   48 Expresion: PAREN_IZQ Expresion PAREN_DER
+   49          | OP_UNARIO Expresion
+   50          | MAS_MENOS Expresion
+   51          | Expresion MAS_MENOS Expresion
+   52          | Expresion OP_BIN_LISTA Expresion
+   53          | Expresion OP_LIST_CONCA Expresion
+   54          | Expresion OP_OR Expresion
+   55          | Expresion OP_XOR Expresion
+   56          | Expresion OP_AND Expresion
+   57          | Expresion OP_RELACION Expresion
+   58          | Expresion OP_IGUALDAD Expresion
+   59          | Expresion OP_MULTI_DIV Expresion
+   60          | Expresion MAS_MAS Expresion OP_GET_LIST Expresion
+   61          | IDENT
+   62          | Funcion
+   63          | Constante
+   64          | error
+
+   65 Funcion: IDENT PAREN_IZQ Lista_expresiones PAREN_DER
+   66        | IDENT PAREN_IZQ PAREN_DER
+
+   67 Constante: CONST_BOOL
+   68          | CONST_CAR
+   69          | CONST_ENT
+   70          | CONST_REAL
+   71          | Constante_lista
+
+   72 Constante_lista: CORCH_IZQ Lista_bool CORCH_DER
+   73                | CORCH_IZQ Lista_car CORCH_DER
+   74                | CORCH_IZQ Lista_ent CORCH_DER
+   75                | CORCH_IZQ Lista_real CORCH_DER
+   76                | CORCH_IZQ CORCH_DER
+
+   77 Lista_bool: Lista_bool SEPAR CONST_BOOL
+   78           | CONST_BOOL
+
+   79 Lista_car: Lista_car SEPAR CONST_CAR
+   80          | CONST_CAR
+
+   81 Lista_ent: Lista_ent SEPAR CONST_ENT
+   82          | CONST_ENT
+
+   83 Lista_real: Lista_real SEPAR CONST_REAL
+   84           | CONST_REAL
+
+   85 Sentencia_if: COND_SI PAREN_IZQ Expresion PAREN_DER Sentencia
+   86             | COND_SI PAREN_IZQ Expresion PAREN_DER Sentencia COND_OTRO Sentencia
+
+   87 Sentencia_while: BUCLE PAREN_IZQ Expresion PAREN_DER Sentencia
+
+   88 Sentencia_for: FOR_INI Sentencia_asig FOR_STOP Expresion FOR_STEP Expresion FOR_DO Sentencia
+
+   89 $@6: %empty
+
+   90 Sentencia_entrada: ENTRADA $@6 Lista_ident
+
+   91 Sentencia_salida: SALIDA Lista_expr_cadena
+
+   92 Lista_expr_cadena: Lista_expr_cadena SEPAR Expr_cadena
+   93                  | Expr_cadena
+
+   94 Expr_cadena: Expresion
+   95            | CONST_CADENA
+
+   96 Sentencia_return: DEVUELVE Expresion
+
+   97 Sentencia_iterar: Expresion OP_AVR_RETR
+
+   98 Sentencia_comienzo: OP_INI_LIST Expresion
+
+
+Terminales con las reglas donde aparecen
+
+$end (0) 0
+error (256) 11 17 24 28 46 64
+OP_OR (258) 54
+OP_XOR (259) 55
+OP_AND (260) 56
+OP_IGUALDAD (261) 58
+OP_RELACION (262) 57
+MAS_MENOS (263) 50 51
+MAS_MAS (264) 60
+OP_LIST_CONCA (265) 53
+OP_BIN_LISTA (266) 52
+OP_GET_LIST (267) 60
+OP_MULTI_DIV (268) 59
+OP_UNARIO (269) 49
+INICIO (270) 2
+PAREN_IZQ (271) 2 23 48 65 66 85 86 87
+PAREN_DER (272) 2 23 48 65 66 85 86 87
+CORCH_IZQ (273) 72 73 74 75 76
+CORCH_DER (274) 72 73 74 75 76
+LLAVE_IZQ (275) 4
+LLAVE_DER (276) 4
+VAR_IZQ (277) 5
+VAR_DER (278) 5
+DELIMIT (279) 10 35 39 40 41 42 43
+SEPAR (280) 16 27 45 77 79 81 83 92
+TIPO (281) 14 23 31
+TIPO_LIST (282) 15
+IDENT (283) 16 17 18 23 31 44 61 65 66
+CONST_BOOL (284) 67 77 78
+CONST_CAR (285) 68 79 80
+CONST_CADENA (286) 95
+CONST_ENT (287) 69 81 82
+CONST_REAL (288) 70 83 84
+IGUAL (289) 44
+COND_SI (290) 85 86
+COND_OTRO (291) 86
+BUCLE (292) 87
+FOR_INI (293) 88
+FOR_STOP (294) 88
+FOR_STEP (295) 88
+FOR_DO (296) 88
+ENTRADA (297) 90
+SALIDA (298) 91
+DEVUELVE (299) 96
+OP_INI_LIST (300) 98
+OP_AVR_RETR (301) 97
+
+
+No terminales con las reglas donde aparecen
+
+$accept (47)
+    en la izquierda: 0
+Programa (48)
+    en la izquierda: 1, en la derecha: 0
+Cabecera (49)
+    en la izquierda: 2, en la derecha: 1
+Bloque (50)
+    en la izquierda: 4, en la derecha: 1 26 34
+$@1 (51)
+    en la izquierda: 3, en la derecha: 4
+Declar_variables_locales (52)
+    en la izquierda: 5 6, en la derecha: 4
+Cuerpo_variables (53)
+    en la izquierda: 7 8, en la derecha: 5 7
+Declar_variables (54)
+    en la izquierda: 10 11, en la derecha: 7 8
+$@2 (55)
+    en la izquierda: 9, en la derecha: 10
+Tipo (56)
+    en la izquierda: 12 13, en la derecha: 10
+Tipo_dato (57)
+    en la izquierda: 14, en la derecha: 12 15
+Tipo_lista (58)
+    en la izquierda: 15, en la derecha: 13
+Lista_ident (59)
+    en la izquierda: 16 17 18, en la derecha: 10 16 17 90
+Declar_funciones (60)
+    en la izquierda: 19 20, en la derecha: 4 19
+Cabecera_funcion (61)
+    en la izquierda: 23 24, en la derecha: 26
+$@3 (62)
+    en la izquierda: 21, en la derecha: 23
+$@4 (63)
+    en la izquierda: 22, en la derecha: 23
+Declar_funcion (64)
+    en la izquierda: 26, en la derecha: 19
+$@5 (65)
+    en la izquierda: 25, en la derecha: 26
+Lista_parametros (66)
+    en la izquierda: 27 28 29 30, en la derecha: 23 27 28
+Parametro (67)
+    en la izquierda: 31, en la derecha: 27 28 29
+Sentencias (68)
+    en la izquierda: 32 33, en la derecha: 4 32
+Sentencia (69)
+    en la izquierda: 34 35 36 37 38 39 40 41 42 43, en la derecha:
+    32 33 85 86 87 88
+Sentencia_asig (70)
+    en la izquierda: 44, en la derecha: 35 88
+Lista_expresiones (71)
+    en la izquierda: 45 46 47, en la derecha: 45 46 65
+Expresion (72)
+    en la izquierda: 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63
+    64, en la derecha: 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58
+    59 60 85 86 87 88 94 96 97 98
+Funcion (73)
+    en la izquierda: 65 66, en la derecha: 62
+Constante (74)
+    en la izquierda: 67 68 69 70 71, en la derecha: 63
+Constante_lista (75)
+    en la izquierda: 72 73 74 75 76, en la derecha: 71
+Lista_bool (76)
+    en la izquierda: 77 78, en la derecha: 72 77
+Lista_car (77)
+    en la izquierda: 79 80, en la derecha: 73 79
+Lista_ent (78)
+    en la izquierda: 81 82, en la derecha: 74 81
+Lista_real (79)
+    en la izquierda: 83 84, en la derecha: 75 83
+Sentencia_if (80)
+    en la izquierda: 85 86, en la derecha: 36
+Sentencia_while (81)
+    en la izquierda: 87, en la derecha: 37
+Sentencia_for (82)
+    en la izquierda: 88, en la derecha: 38
+Sentencia_entrada (83)
+    en la izquierda: 90, en la derecha: 39
+$@6 (84)
+    en la izquierda: 89, en la derecha: 90
+Sentencia_salida (85)
+    en la izquierda: 91, en la derecha: 40
+Lista_expr_cadena (86)
+    en la izquierda: 92 93, en la derecha: 91 92
+Expr_cadena (87)
+    en la izquierda: 94 95, en la derecha: 92 93
+Sentencia_return (88)
+    en la izquierda: 96, en la derecha: 41
+Sentencia_iterar (89)
+    en la izquierda: 97, en la derecha: 42
+Sentencia_comienzo (90)
+    en la izquierda: 98, en la derecha: 43
+
+
+Estado 0
+
+    0 $accept: . Programa $end
+
+    INICIO  desplazar e ir al estado 1
+
+    Programa  ir al estado 2
+    Cabecera  ir al estado 3
+
+
+Estado 1
+
+    2 Cabecera: INICIO . PAREN_IZQ PAREN_DER
+
+    PAREN_IZQ  desplazar e ir al estado 4
+
+
+Estado 2
+
+    0 $accept: Programa . $end
+
+    $end  desplazar e ir al estado 5
+
+
+Estado 3
+
+    1 Programa: Cabecera . Bloque
+
+    LLAVE_IZQ  desplazar e ir al estado 6
+
+    Bloque  ir al estado 7
+
+
+Estado 4
+
+    2 Cabecera: INICIO PAREN_IZQ . PAREN_DER
+
+    PAREN_DER  desplazar e ir al estado 8
+
+
+Estado 5
+
+    0 $accept: Programa $end .
+
+    $default  aceptar
+
+
+Estado 6
+
+    4 Bloque: LLAVE_IZQ . $@1 Declar_variables_locales Declar_funciones Sentencias LLAVE_DER
+
+    $default  reduce usando la regla 3 ($@1)
+
+    $@1  ir al estado 9
+
+
+Estado 7
+
+    1 Programa: Cabecera Bloque .
+
+    $default  reduce usando la regla 1 (Programa)
+
+
+Estado 8
+
+    2 Cabecera: INICIO PAREN_IZQ PAREN_DER .
+
+    $default  reduce usando la regla 2 (Cabecera)
+
+
+Estado 9
+
+    4 Bloque: LLAVE_IZQ $@1 . Declar_variables_locales Declar_funciones Sentencias LLAVE_DER
+
+    VAR_IZQ  desplazar e ir al estado 10
+
+    $default  reduce usando la regla 6 (Declar_variables_locales)
+
+    Declar_variables_locales  ir al estado 11
+
+
+Estado 10
+
+    5 Declar_variables_locales: VAR_IZQ . Cuerpo_variables VAR_DER
+
+    error      desplazar e ir al estado 12
+    TIPO       desplazar e ir al estado 13
+    TIPO_LIST  desplazar e ir al estado 14
+
+    Cuerpo_variables  ir al estado 15
+    Declar_variables  ir al estado 16
+    Tipo              ir al estado 17
+    Tipo_dato         ir al estado 18
+    Tipo_lista        ir al estado 19
+
+
+Estado 11
+
+    4 Bloque: LLAVE_IZQ $@1 Declar_variables_locales . Declar_funciones Sentencias LLAVE_DER
+
+    $default  reduce usando la regla 20 (Declar_funciones)
+
+    Declar_funciones  ir al estado 20
+
+
+Estado 12
+
+   11 Declar_variables: error .
+
+    $default  reduce usando la regla 11 (Declar_variables)
+
+
+Estado 13
+
+   14 Tipo_dato: TIPO .
+
+    $default  reduce usando la regla 14 (Tipo_dato)
+
+
+Estado 14
+
+   15 Tipo_lista: TIPO_LIST . Tipo_dato
+
+    TIPO  desplazar e ir al estado 13
+
+    Tipo_dato  ir al estado 21
+
+
+Estado 15
+
+    5 Declar_variables_locales: VAR_IZQ Cuerpo_variables . VAR_DER
+    7 Cuerpo_variables: Cuerpo_variables . Declar_variables
+
+    error      desplazar e ir al estado 12
+    VAR_DER    desplazar e ir al estado 22
+    TIPO       desplazar e ir al estado 13
+    TIPO_LIST  desplazar e ir al estado 14
+
+    Declar_variables  ir al estado 23
+    Tipo              ir al estado 17
+    Tipo_dato         ir al estado 18
+    Tipo_lista        ir al estado 19
+
+
+Estado 16
+
+    8 Cuerpo_variables: Declar_variables .
+
+    $default  reduce usando la regla 8 (Cuerpo_variables)
+
+
+Estado 17
+
+   10 Declar_variables: Tipo . $@2 Lista_ident DELIMIT
+
+    $default  reduce usando la regla 9 ($@2)
+
+    $@2  ir al estado 24
+
+
+Estado 18
+
+   12 Tipo: Tipo_dato .
+
+    $default  reduce usando la regla 12 (Tipo)
+
+
+Estado 19
+
+   13 Tipo: Tipo_lista .
+
+    $default  reduce usando la regla 13 (Tipo)
+
+
+Estado 20
+
+    4 Bloque: LLAVE_IZQ $@1 Declar_variables_locales Declar_funciones . Sentencias LLAVE_DER
+   19 Declar_funciones: Declar_funciones . Declar_funcion
+
+    error        desplazar e ir al estado 25
+    MAS_MENOS    desplazar e ir al estado 26
+    OP_UNARIO    desplazar e ir al estado 27
+    PAREN_IZQ    desplazar e ir al estado 28
+    CORCH_IZQ    desplazar e ir al estado 29
+    LLAVE_IZQ    desplazar e ir al estado 6
+    TIPO         desplazar e ir al estado 30
+    IDENT        desplazar e ir al estado 31
+    CONST_BOOL   desplazar e ir al estado 32
+    CONST_CAR    desplazar e ir al estado 33
+    CONST_ENT    desplazar e ir al estado 34
+    CONST_REAL   desplazar e ir al estado 35
+    COND_SI      desplazar e ir al estado 36
+    BUCLE        desplazar e ir al estado 37
+    FOR_INI      desplazar e ir al estado 38
+    ENTRADA      desplazar e ir al estado 39
+    SALIDA       desplazar e ir al estado 40
+    DEVUELVE     desplazar e ir al estado 41
+    OP_INI_LIST  desplazar e ir al estado 42
+
+    Bloque              ir al estado 43
+    Cabecera_funcion    ir al estado 44
+    Declar_funcion      ir al estado 45
+    Sentencias          ir al estado 46
+    Sentencia           ir al estado 47
+    Sentencia_asig      ir al estado 48
+    Expresion           ir al estado 49
+    Funcion             ir al estado 50
+    Constante           ir al estado 51
+    Constante_lista     ir al estado 52
+    Sentencia_if        ir al estado 53
+    Sentencia_while     ir al estado 54
+    Sentencia_for       ir al estado 55
+    Sentencia_entrada   ir al estado 56
+    Sentencia_salida    ir al estado 57
+    Sentencia_return    ir al estado 58
+    Sentencia_iterar    ir al estado 59
+    Sentencia_comienzo  ir al estado 60
+
+
+Estado 21
+
+   15 Tipo_lista: TIPO_LIST Tipo_dato .
+
+    $default  reduce usando la regla 15 (Tipo_lista)
+
+
+Estado 22
+
+    5 Declar_variables_locales: VAR_IZQ Cuerpo_variables VAR_DER .
+
+    $default  reduce usando la regla 5 (Declar_variables_locales)
+
+
+Estado 23
+
+    7 Cuerpo_variables: Cuerpo_variables Declar_variables .
+
+    $default  reduce usando la regla 7 (Cuerpo_variables)
+
+
+Estado 24
+
+   10 Declar_variables: Tipo $@2 . Lista_ident DELIMIT
+
+    IDENT  desplazar e ir al estado 61
+
+    Lista_ident  ir al estado 62
+
+
+Estado 25
+
+   24 Cabecera_funcion: error .
+   64 Expresion: error .
+
+    LLAVE_IZQ  reduce usando la regla 24 (Cabecera_funcion)
+    $default   reduce usando la regla 64 (Expresion)
+
+
+Estado 26
+
+   50 Expresion: MAS_MENOS . Expresion
+
+    error       desplazar e ir al estado 63
+    MAS_MENOS   desplazar e ir al estado 26
+    OP_UNARIO   desplazar e ir al estado 27
+    PAREN_IZQ   desplazar e ir al estado 28
+    CORCH_IZQ   desplazar e ir al estado 29
+    IDENT       desplazar e ir al estado 64
+    CONST_BOOL  desplazar e ir al estado 32
+    CONST_CAR   desplazar e ir al estado 33
+    CONST_ENT   desplazar e ir al estado 34
+    CONST_REAL  desplazar e ir al estado 35
+
+    Expresion        ir al estado 65
+    Funcion          ir al estado 50
+    Constante        ir al estado 51
+    Constante_lista  ir al estado 52
+
+
+Estado 27
+
+   49 Expresion: OP_UNARIO . Expresion
+
+    error       desplazar e ir al estado 63
+    MAS_MENOS   desplazar e ir al estado 26
+    OP_UNARIO   desplazar e ir al estado 27
+    PAREN_IZQ   desplazar e ir al estado 28
+    CORCH_IZQ   desplazar e ir al estado 29
+    IDENT       desplazar e ir al estado 64
+    CONST_BOOL  desplazar e ir al estado 32
+    CONST_CAR   desplazar e ir al estado 33
+    CONST_ENT   desplazar e ir al estado 34
+    CONST_REAL  desplazar e ir al estado 35
+
+    Expresion        ir al estado 66
+    Funcion          ir al estado 50
+    Constante        ir al estado 51
+    Constante_lista  ir al estado 52
+
+
+Estado 28
+
+   48 Expresion: PAREN_IZQ . Expresion PAREN_DER
+
+    error       desplazar e ir al estado 63
+    MAS_MENOS   desplazar e ir al estado 26
+    OP_UNARIO   desplazar e ir al estado 27
+    PAREN_IZQ   desplazar e ir al estado 28
+    CORCH_IZQ   desplazar e ir al estado 29
+    IDENT       desplazar e ir al estado 64
+    CONST_BOOL  desplazar e ir al estado 32
+    CONST_CAR   desplazar e ir al estado 33
+    CONST_ENT   desplazar e ir al estado 34
+    CONST_REAL  desplazar e ir al estado 35
+
+    Expresion        ir al estado 67
+    Funcion          ir al estado 50
+    Constante        ir al estado 51
+    Constante_lista  ir al estado 52
+
+
+Estado 29
+
+   72 Constante_lista: CORCH_IZQ . Lista_bool CORCH_DER
+   73                | CORCH_IZQ . Lista_car CORCH_DER
+   74                | CORCH_IZQ . Lista_ent CORCH_DER
+   75                | CORCH_IZQ . Lista_real CORCH_DER
+   76                | CORCH_IZQ . CORCH_DER
+
+    CORCH_DER   desplazar e ir al estado 68
+    CONST_BOOL  desplazar e ir al estado 69
+    CONST_CAR   desplazar e ir al estado 70
+    CONST_ENT   desplazar e ir al estado 71
+    CONST_REAL  desplazar e ir al estado 72
+
+    Lista_bool  ir al estado 73
+    Lista_car   ir al estado 74
+    Lista_ent   ir al estado 75
+    Lista_real  ir al estado 76
+
+
+Estado 30
+
+   23 Cabecera_funcion: TIPO . IDENT $@3 $@4 PAREN_IZQ Lista_parametros PAREN_DER
+
+    IDENT  desplazar e ir al estado 77
+
+
+Estado 31
+
+   44 Sentencia_asig: IDENT . IGUAL Expresion
+   61 Expresion: IDENT .
+   65 Funcion: IDENT . PAREN_IZQ Lista_expresiones PAREN_DER
+   66        | IDENT . PAREN_IZQ PAREN_DER
+
+    PAREN_IZQ  desplazar e ir al estado 78
+    IGUAL      desplazar e ir al estado 79
+
+    $default  reduce usando la regla 61 (Expresion)
+
+
+Estado 32
+
+   67 Constante: CONST_BOOL .
+
+    $default  reduce usando la regla 67 (Constante)
+
+
+Estado 33
+
+   68 Constante: CONST_CAR .
+
+    $default  reduce usando la regla 68 (Constante)
+
+
+Estado 34
+
+   69 Constante: CONST_ENT .
+
+    $default  reduce usando la regla 69 (Constante)
+
+
+Estado 35
+
+   70 Constante: CONST_REAL .
+
+    $default  reduce usando la regla 70 (Constante)
+
+
+Estado 36
+
+   85 Sentencia_if: COND_SI . PAREN_IZQ Expresion PAREN_DER Sentencia
+   86             | COND_SI . PAREN_IZQ Expresion PAREN_DER Sentencia COND_OTRO Sentencia
+
+    PAREN_IZQ  desplazar e ir al estado 80
+
+
+Estado 37
+
+   87 Sentencia_while: BUCLE . PAREN_IZQ Expresion PAREN_DER Sentencia
+
+    PAREN_IZQ  desplazar e ir al estado 81
+
+
+Estado 38
+
+   88 Sentencia_for: FOR_INI . Sentencia_asig FOR_STOP Expresion FOR_STEP Expresion FOR_DO Sentencia
+
+    IDENT  desplazar e ir al estado 82
+
+    Sentencia_asig  ir al estado 83
+
+
+Estado 39
+
+   90 Sentencia_entrada: ENTRADA . $@6 Lista_ident
+
+    $default  reduce usando la regla 89 ($@6)
+
+    $@6  ir al estado 84
+
+
+Estado 40
+
+   91 Sentencia_salida: SALIDA . Lista_expr_cadena
+
+    error         desplazar e ir al estado 63
+    MAS_MENOS     desplazar e ir al estado 26
+    OP_UNARIO     desplazar e ir al estado 27
+    PAREN_IZQ     desplazar e ir al estado 28
+    CORCH_IZQ     desplazar e ir al estado 29
+    IDENT         desplazar e ir al estado 64
+    CONST_BOOL    desplazar e ir al estado 32
+    CONST_CAR     desplazar e ir al estado 33
+    CONST_CADENA  desplazar e ir al estado 85
+    CONST_ENT     desplazar e ir al estado 34
+    CONST_REAL    desplazar e ir al estado 35
+
+    Expresion          ir al estado 86
+    Funcion            ir al estado 50
+    Constante          ir al estado 51
+    Constante_lista    ir al estado 52
+    Lista_expr_cadena  ir al estado 87
+    Expr_cadena        ir al estado 88
+
+
+Estado 41
+
+   96 Sentencia_return: DEVUELVE . Expresion
+
+    error       desplazar e ir al estado 63
+    MAS_MENOS   desplazar e ir al estado 26
+    OP_UNARIO   desplazar e ir al estado 27
+    PAREN_IZQ   desplazar e ir al estado 28
+    CORCH_IZQ   desplazar e ir al estado 29
+    IDENT       desplazar e ir al estado 64
+    CONST_BOOL  desplazar e ir al estado 32
+    CONST_CAR   desplazar e ir al estado 33
+    CONST_ENT   desplazar e ir al estado 34
+    CONST_REAL  desplazar e ir al estado 35
+
+    Expresion        ir al estado 89
+    Funcion          ir al estado 50
+    Constante        ir al estado 51
+    Constante_lista  ir al estado 52
+
+
+Estado 42
+
+   98 Sentencia_comienzo: OP_INI_LIST . Expresion
+
+    error       desplazar e ir al estado 63
+    MAS_MENOS   desplazar e ir al estado 26
+    OP_UNARIO   desplazar e ir al estado 27
+    PAREN_IZQ   desplazar e ir al estado 28
+    CORCH_IZQ   desplazar e ir al estado 29
+    IDENT       desplazar e ir al estado 64
+    CONST_BOOL  desplazar e ir al estado 32
+    CONST_CAR   desplazar e ir al estado 33
+    CONST_ENT   desplazar e ir al estado 34
+    CONST_REAL  desplazar e ir al estado 35
+
+    Expresion        ir al estado 90
+    Funcion          ir al estado 50
+    Constante        ir al estado 51
+    Constante_lista  ir al estado 52
+
+
+Estado 43
+
+   34 Sentencia: Bloque .
+
+    $default  reduce usando la regla 34 (Sentencia)
+
+
+Estado 44
+
+   26 Declar_funcion: Cabecera_funcion . $@5 Bloque
+
+    $default  reduce usando la regla 25 ($@5)
+
+    $@5  ir al estado 91
+
+
+Estado 45
+
+   19 Declar_funciones: Declar_funciones Declar_funcion .
+
+    $default  reduce usando la regla 19 (Declar_funciones)
+
+
+Estado 46
+
+    4 Bloque: LLAVE_IZQ $@1 Declar_variables_locales Declar_funciones Sentencias . LLAVE_DER
+   32 Sentencias: Sentencias . Sentencia
+
+    error        desplazar e ir al estado 63
+    MAS_MENOS    desplazar e ir al estado 26
+    OP_UNARIO    desplazar e ir al estado 27
+    PAREN_IZQ    desplazar e ir al estado 28
+    CORCH_IZQ    desplazar e ir al estado 29
+    LLAVE_IZQ    desplazar e ir al estado 6
+    LLAVE_DER    desplazar e ir al estado 92
+    IDENT        desplazar e ir al estado 31
+    CONST_BOOL   desplazar e ir al estado 32
+    CONST_CAR    desplazar e ir al estado 33
+    CONST_ENT    desplazar e ir al estado 34
+    CONST_REAL   desplazar e ir al estado 35
+    COND_SI      desplazar e ir al estado 36
+    BUCLE        desplazar e ir al estado 37
+    FOR_INI      desplazar e ir al estado 38
+    ENTRADA      desplazar e ir al estado 39
+    SALIDA       desplazar e ir al estado 40
+    DEVUELVE     desplazar e ir al estado 41
+    OP_INI_LIST  desplazar e ir al estado 42
+
+    Bloque              ir al estado 43
+    Sentencia           ir al estado 93
+    Sentencia_asig      ir al estado 48
+    Expresion           ir al estado 49
+    Funcion             ir al estado 50
+    Constante           ir al estado 51
+    Constante_lista     ir al estado 52
+    Sentencia_if        ir al estado 53
+    Sentencia_while     ir al estado 54
+    Sentencia_for       ir al estado 55
+    Sentencia_entrada   ir al estado 56
+    Sentencia_salida    ir al estado 57
+    Sentencia_return    ir al estado 58
+    Sentencia_iterar    ir al estado 59
+    Sentencia_comienzo  ir al estado 60
+
+
+Estado 47
+
+   33 Sentencias: Sentencia .
+
+    $default  reduce usando la regla 33 (Sentencias)
+
+
+Estado 48
+
+   35 Sentencia: Sentencia_asig . DELIMIT
+
+    DELIMIT  desplazar e ir al estado 94
+
+
+Estado 49
+
+   51 Expresion: Expresion . MAS_MENOS Expresion
+   52          | Expresion . OP_BIN_LISTA Expresion
+   53          | Expresion . OP_LIST_CONCA Expresion
+   54          | Expresion . OP_OR Expresion
+   55          | Expresion . OP_XOR Expresion
+   56          | Expresion . OP_AND Expresion
+   57          | Expresion . OP_RELACION Expresion
+   58          | Expresion . OP_IGUALDAD Expresion
+   59          | Expresion . OP_MULTI_DIV Expresion
+   60          | Expresion . MAS_MAS Expresion OP_GET_LIST Expresion
+   97 Sentencia_iterar: Expresion . OP_AVR_RETR
+
+    OP_OR          desplazar e ir al estado 95
+    OP_XOR         desplazar e ir al estado 96
+    OP_AND         desplazar e ir al estado 97
+    OP_IGUALDAD    desplazar e ir al estado 98
+    OP_RELACION    desplazar e ir al estado 99
+    MAS_MENOS      desplazar e ir al estado 100
+    MAS_MAS        desplazar e ir al estado 101
+    OP_LIST_CONCA  desplazar e ir al estado 102
+    OP_BIN_LISTA   desplazar e ir al estado 103
+    OP_MULTI_DIV   desplazar e ir al estado 104
+    OP_AVR_RETR    desplazar e ir al estado 105
+
+
+Estado 50
+
+   62 Expresion: Funcion .
+
+    $default  reduce usando la regla 62 (Expresion)
+
+
+Estado 51
+
+   63 Expresion: Constante .
+
+    $default  reduce usando la regla 63 (Expresion)
+
+
+Estado 52
+
+   71 Constante: Constante_lista .
+
+    $default  reduce usando la regla 71 (Constante)
+
+
+Estado 53
+
+   36 Sentencia: Sentencia_if .
+
+    $default  reduce usando la regla 36 (Sentencia)
+
+
+Estado 54
+
+   37 Sentencia: Sentencia_while .
+
+    $default  reduce usando la regla 37 (Sentencia)
+
+
+Estado 55
+
+   38 Sentencia: Sentencia_for .
+
+    $default  reduce usando la regla 38 (Sentencia)
+
+
+Estado 56
+
+   39 Sentencia: Sentencia_entrada . DELIMIT
+
+    DELIMIT  desplazar e ir al estado 106
+
+
+Estado 57
+
+   40 Sentencia: Sentencia_salida . DELIMIT
+
+    DELIMIT  desplazar e ir al estado 107
+
+
+Estado 58
+
+   41 Sentencia: Sentencia_return . DELIMIT
+
+    DELIMIT  desplazar e ir al estado 108
+
+
+Estado 59
+
+   42 Sentencia: Sentencia_iterar . DELIMIT
+
+    DELIMIT  desplazar e ir al estado 109
+
+
+Estado 60
+
+   43 Sentencia: Sentencia_comienzo . DELIMIT
+
+    DELIMIT  desplazar e ir al estado 110
+
+
+Estado 61
+
+   18 Lista_ident: IDENT .
+
+    $default  reduce usando la regla 18 (Lista_ident)
+
+
+Estado 62
+
+   10 Declar_variables: Tipo $@2 Lista_ident . DELIMIT
+   16 Lista_ident: Lista_ident . SEPAR IDENT
+   17            | Lista_ident . error IDENT
+
+    error    desplazar e ir al estado 111
+    DELIMIT  desplazar e ir al estado 112
+    SEPAR    desplazar e ir al estado 113
+
+
+Estado 63
+
+   64 Expresion: error .
+
+    $default  reduce usando la regla 64 (Expresion)
+
+
+Estado 64
+
+   61 Expresion: IDENT .
+   65 Funcion: IDENT . PAREN_IZQ Lista_expresiones PAREN_DER
+   66        | IDENT . PAREN_IZQ PAREN_DER
+
+    PAREN_IZQ  desplazar e ir al estado 78
+
+    $default  reduce usando la regla 61 (Expresion)
+
+
+Estado 65
+
+   50 Expresion: MAS_MENOS Expresion .
+   51          | Expresion . MAS_MENOS Expresion
+   52          | Expresion . OP_BIN_LISTA Expresion
+   53          | Expresion . OP_LIST_CONCA Expresion
+   54          | Expresion . OP_OR Expresion
+   55          | Expresion . OP_XOR Expresion
+   56          | Expresion . OP_AND Expresion
+   57          | Expresion . OP_RELACION Expresion
+   58          | Expresion . OP_IGUALDAD Expresion
+   59          | Expresion . OP_MULTI_DIV Expresion
+   60          | Expresion . MAS_MAS Expresion OP_GET_LIST Expresion
+
+    $default  reduce usando la regla 50 (Expresion)
+
+
+Estado 66
+
+   49 Expresion: OP_UNARIO Expresion .
+   51          | Expresion . MAS_MENOS Expresion
+   52          | Expresion . OP_BIN_LISTA Expresion
+   53          | Expresion . OP_LIST_CONCA Expresion
+   54          | Expresion . OP_OR Expresion
+   55          | Expresion . OP_XOR Expresion
+   56          | Expresion . OP_AND Expresion
+   57          | Expresion . OP_RELACION Expresion
+   58          | Expresion . OP_IGUALDAD Expresion
+   59          | Expresion . OP_MULTI_DIV Expresion
+   60          | Expresion . MAS_MAS Expresion OP_GET_LIST Expresion
+
+    $default  reduce usando la regla 49 (Expresion)
+
+
+Estado 67
+
+   48 Expresion: PAREN_IZQ Expresion . PAREN_DER
+   51          | Expresion . MAS_MENOS Expresion
+   52          | Expresion . OP_BIN_LISTA Expresion
+   53          | Expresion . OP_LIST_CONCA Expresion
+   54          | Expresion . OP_OR Expresion
+   55          | Expresion . OP_XOR Expresion
+   56          | Expresion . OP_AND Expresion
+   57          | Expresion . OP_RELACION Expresion
+   58          | Expresion . OP_IGUALDAD Expresion
+   59          | Expresion . OP_MULTI_DIV Expresion
+   60          | Expresion . MAS_MAS Expresion OP_GET_LIST Expresion
+
+    OP_OR          desplazar e ir al estado 95
+    OP_XOR         desplazar e ir al estado 96
+    OP_AND         desplazar e ir al estado 97
+    OP_IGUALDAD    desplazar e ir al estado 98
+    OP_RELACION    desplazar e ir al estado 99
+    MAS_MENOS      desplazar e ir al estado 100
+    MAS_MAS        desplazar e ir al estado 101
+    OP_LIST_CONCA  desplazar e ir al estado 102
+    OP_BIN_LISTA   desplazar e ir al estado 103
+    OP_MULTI_DIV   desplazar e ir al estado 104
+    PAREN_DER      desplazar e ir al estado 114
+
+
+Estado 68
+
+   76 Constante_lista: CORCH_IZQ CORCH_DER .
+
+    $default  reduce usando la regla 76 (Constante_lista)
+
+
+Estado 69
+
+   78 Lista_bool: CONST_BOOL .
+
+    $default  reduce usando la regla 78 (Lista_bool)
+
+
+Estado 70
+
+   80 Lista_car: CONST_CAR .
+
+    $default  reduce usando la regla 80 (Lista_car)
+
+
+Estado 71
+
+   82 Lista_ent: CONST_ENT .
+
+    $default  reduce usando la regla 82 (Lista_ent)
+
+
+Estado 72
+
+   84 Lista_real: CONST_REAL .
+
+    $default  reduce usando la regla 84 (Lista_real)
+
+
+Estado 73
+
+   72 Constante_lista: CORCH_IZQ Lista_bool . CORCH_DER
+   77 Lista_bool: Lista_bool . SEPAR CONST_BOOL
+
+    CORCH_DER  desplazar e ir al estado 115
+    SEPAR      desplazar e ir al estado 116
+
+
+Estado 74
+
+   73 Constante_lista: CORCH_IZQ Lista_car . CORCH_DER
+   79 Lista_car: Lista_car . SEPAR CONST_CAR
+
+    CORCH_DER  desplazar e ir al estado 117
+    SEPAR      desplazar e ir al estado 118
+
+
+Estado 75
+
+   74 Constante_lista: CORCH_IZQ Lista_ent . CORCH_DER
+   81 Lista_ent: Lista_ent . SEPAR CONST_ENT
+
+    CORCH_DER  desplazar e ir al estado 119
+    SEPAR      desplazar e ir al estado 120
+
+
+Estado 76
+
+   75 Constante_lista: CORCH_IZQ Lista_real . CORCH_DER
+   83 Lista_real: Lista_real . SEPAR CONST_REAL
+
+    CORCH_DER  desplazar e ir al estado 121
+    SEPAR      desplazar e ir al estado 122
+
+
+Estado 77
+
+   23 Cabecera_funcion: TIPO IDENT . $@3 $@4 PAREN_IZQ Lista_parametros PAREN_DER
+
+    $default  reduce usando la regla 21 ($@3)
+
+    $@3  ir al estado 123
+
+
+Estado 78
+
+   65 Funcion: IDENT PAREN_IZQ . Lista_expresiones PAREN_DER
+   66        | IDENT PAREN_IZQ . PAREN_DER
+
+    error       desplazar e ir al estado 63
+    MAS_MENOS   desplazar e ir al estado 26
+    OP_UNARIO   desplazar e ir al estado 27
+    PAREN_IZQ   desplazar e ir al estado 28
+    PAREN_DER   desplazar e ir al estado 124
+    CORCH_IZQ   desplazar e ir al estado 29
+    IDENT       desplazar e ir al estado 64
+    CONST_BOOL  desplazar e ir al estado 32
+    CONST_CAR   desplazar e ir al estado 33
+    CONST_ENT   desplazar e ir al estado 34
+    CONST_REAL  desplazar e ir al estado 35
+
+    Lista_expresiones  ir al estado 125
+    Expresion          ir al estado 126
+    Funcion            ir al estado 50
+    Constante          ir al estado 51
+    Constante_lista    ir al estado 52
+
+
+Estado 79
+
+   44 Sentencia_asig: IDENT IGUAL . Expresion
+
+    error       desplazar e ir al estado 63
+    MAS_MENOS   desplazar e ir al estado 26
+    OP_UNARIO   desplazar e ir al estado 27
+    PAREN_IZQ   desplazar e ir al estado 28
+    CORCH_IZQ   desplazar e ir al estado 29
+    IDENT       desplazar e ir al estado 64
+    CONST_BOOL  desplazar e ir al estado 32
+    CONST_CAR   desplazar e ir al estado 33
+    CONST_ENT   desplazar e ir al estado 34
+    CONST_REAL  desplazar e ir al estado 35
+
+    Expresion        ir al estado 127
+    Funcion          ir al estado 50
+    Constante        ir al estado 51
+    Constante_lista  ir al estado 52
+
+
+Estado 80
+
+   85 Sentencia_if: COND_SI PAREN_IZQ . Expresion PAREN_DER Sentencia
+   86             | COND_SI PAREN_IZQ . Expresion PAREN_DER Sentencia COND_OTRO Sentencia
+
+    error       desplazar e ir al estado 63
+    MAS_MENOS   desplazar e ir al estado 26
+    OP_UNARIO   desplazar e ir al estado 27
+    PAREN_IZQ   desplazar e ir al estado 28
+    CORCH_IZQ   desplazar e ir al estado 29
+    IDENT       desplazar e ir al estado 64
+    CONST_BOOL  desplazar e ir al estado 32
+    CONST_CAR   desplazar e ir al estado 33
+    CONST_ENT   desplazar e ir al estado 34
+    CONST_REAL  desplazar e ir al estado 35
+
+    Expresion        ir al estado 128
+    Funcion          ir al estado 50
+    Constante        ir al estado 51
+    Constante_lista  ir al estado 52
+
+
+Estado 81
+
+   87 Sentencia_while: BUCLE PAREN_IZQ . Expresion PAREN_DER Sentencia
+
+    error       desplazar e ir al estado 63
+    MAS_MENOS   desplazar e ir al estado 26
+    OP_UNARIO   desplazar e ir al estado 27
+    PAREN_IZQ   desplazar e ir al estado 28
+    CORCH_IZQ   desplazar e ir al estado 29
+    IDENT       desplazar e ir al estado 64
+    CONST_BOOL  desplazar e ir al estado 32
+    CONST_CAR   desplazar e ir al estado 33
+    CONST_ENT   desplazar e ir al estado 34
+    CONST_REAL  desplazar e ir al estado 35
+
+    Expresion        ir al estado 129
+    Funcion          ir al estado 50
+    Constante        ir al estado 51
+    Constante_lista  ir al estado 52
+
+
+Estado 82
+
+   44 Sentencia_asig: IDENT . IGUAL Expresion
+
+    IGUAL  desplazar e ir al estado 79
+
+
+Estado 83
+
+   88 Sentencia_for: FOR_INI Sentencia_asig . FOR_STOP Expresion FOR_STEP Expresion FOR_DO Sentencia
+
+    FOR_STOP  desplazar e ir al estado 130
+
+
+Estado 84
+
+   90 Sentencia_entrada: ENTRADA $@6 . Lista_ident
+
+    IDENT  desplazar e ir al estado 61
+
+    Lista_ident  ir al estado 131
+
+
+Estado 85
+
+   95 Expr_cadena: CONST_CADENA .
+
+    $default  reduce usando la regla 95 (Expr_cadena)
+
+
+Estado 86
+
+   51 Expresion: Expresion . MAS_MENOS Expresion
+   52          | Expresion . OP_BIN_LISTA Expresion
+   53          | Expresion . OP_LIST_CONCA Expresion
+   54          | Expresion . OP_OR Expresion
+   55          | Expresion . OP_XOR Expresion
+   56          | Expresion . OP_AND Expresion
+   57          | Expresion . OP_RELACION Expresion
+   58          | Expresion . OP_IGUALDAD Expresion
+   59          | Expresion . OP_MULTI_DIV Expresion
+   60          | Expresion . MAS_MAS Expresion OP_GET_LIST Expresion
+   94 Expr_cadena: Expresion .
+
+    OP_OR          desplazar e ir al estado 95
+    OP_XOR         desplazar e ir al estado 96
+    OP_AND         desplazar e ir al estado 97
+    OP_IGUALDAD    desplazar e ir al estado 98
+    OP_RELACION    desplazar e ir al estado 99
+    MAS_MENOS      desplazar e ir al estado 100
+    MAS_MAS        desplazar e ir al estado 101
+    OP_LIST_CONCA  desplazar e ir al estado 102
+    OP_BIN_LISTA   desplazar e ir al estado 103
+    OP_MULTI_DIV   desplazar e ir al estado 104
+
+    $default  reduce usando la regla 94 (Expr_cadena)
+
+
+Estado 87
+
+   91 Sentencia_salida: SALIDA Lista_expr_cadena .
+   92 Lista_expr_cadena: Lista_expr_cadena . SEPAR Expr_cadena
+
+    SEPAR  desplazar e ir al estado 132
+
+    $default  reduce usando la regla 91 (Sentencia_salida)
+
+
+Estado 88
+
+   93 Lista_expr_cadena: Expr_cadena .
+
+    $default  reduce usando la regla 93 (Lista_expr_cadena)
+
+
+Estado 89
+
+   51 Expresion: Expresion . MAS_MENOS Expresion
+   52          | Expresion . OP_BIN_LISTA Expresion
+   53          | Expresion . OP_LIST_CONCA Expresion
+   54          | Expresion . OP_OR Expresion
+   55          | Expresion . OP_XOR Expresion
+   56          | Expresion . OP_AND Expresion
+   57          | Expresion . OP_RELACION Expresion
+   58          | Expresion . OP_IGUALDAD Expresion
+   59          | Expresion . OP_MULTI_DIV Expresion
+   60          | Expresion . MAS_MAS Expresion OP_GET_LIST Expresion
+   96 Sentencia_return: DEVUELVE Expresion .
+
+    OP_OR          desplazar e ir al estado 95
+    OP_XOR         desplazar e ir al estado 96
+    OP_AND         desplazar e ir al estado 97
+    OP_IGUALDAD    desplazar e ir al estado 98
+    OP_RELACION    desplazar e ir al estado 99
+    MAS_MENOS      desplazar e ir al estado 100
+    MAS_MAS        desplazar e ir al estado 101
+    OP_LIST_CONCA  desplazar e ir al estado 102
+    OP_BIN_LISTA   desplazar e ir al estado 103
+    OP_MULTI_DIV   desplazar e ir al estado 104
+
+    $default  reduce usando la regla 96 (Sentencia_return)
+
+
+Estado 90
+
+   51 Expresion: Expresion . MAS_MENOS Expresion
+   52          | Expresion . OP_BIN_LISTA Expresion
+   53          | Expresion . OP_LIST_CONCA Expresion
+   54          | Expresion . OP_OR Expresion
+   55          | Expresion . OP_XOR Expresion
+   56          | Expresion . OP_AND Expresion
+   57          | Expresion . OP_RELACION Expresion
+   58          | Expresion . OP_IGUALDAD Expresion
+   59          | Expresion . OP_MULTI_DIV Expresion
+   60          | Expresion . MAS_MAS Expresion OP_GET_LIST Expresion
+   98 Sentencia_comienzo: OP_INI_LIST Expresion .
+
+    OP_OR          desplazar e ir al estado 95
+    OP_XOR         desplazar e ir al estado 96
+    OP_AND         desplazar e ir al estado 97
+    OP_IGUALDAD    desplazar e ir al estado 98
+    OP_RELACION    desplazar e ir al estado 99
+    MAS_MENOS      desplazar e ir al estado 100
+    MAS_MAS        desplazar e ir al estado 101
+    OP_LIST_CONCA  desplazar e ir al estado 102
+    OP_BIN_LISTA   desplazar e ir al estado 103
+    OP_MULTI_DIV   desplazar e ir al estado 104
+
+    $default  reduce usando la regla 98 (Sentencia_comienzo)
+
+
+Estado 91
+
+   26 Declar_funcion: Cabecera_funcion $@5 . Bloque
+
+    LLAVE_IZQ  desplazar e ir al estado 6
+
+    Bloque  ir al estado 133
+
+
+Estado 92
+
+    4 Bloque: LLAVE_IZQ $@1 Declar_variables_locales Declar_funciones Sentencias LLAVE_DER .
+
+    $default  reduce usando la regla 4 (Bloque)
+
+
+Estado 93
+
+   32 Sentencias: Sentencias Sentencia .
+
+    $default  reduce usando la regla 32 (Sentencias)
+
+
+Estado 94
+
+   35 Sentencia: Sentencia_asig DELIMIT .
+
+    $default  reduce usando la regla 35 (Sentencia)
+
+
+Estado 95
+
+   54 Expresion: Expresion OP_OR . Expresion
+
+    error       desplazar e ir al estado 63
+    MAS_MENOS   desplazar e ir al estado 26
+    OP_UNARIO   desplazar e ir al estado 27
+    PAREN_IZQ   desplazar e ir al estado 28
+    CORCH_IZQ   desplazar e ir al estado 29
+    IDENT       desplazar e ir al estado 64
+    CONST_BOOL  desplazar e ir al estado 32
+    CONST_CAR   desplazar e ir al estado 33
+    CONST_ENT   desplazar e ir al estado 34
+    CONST_REAL  desplazar e ir al estado 35
+
+    Expresion        ir al estado 134
+    Funcion          ir al estado 50
+    Constante        ir al estado 51
+    Constante_lista  ir al estado 52
+
+
+Estado 96
+
+   55 Expresion: Expresion OP_XOR . Expresion
+
+    error       desplazar e ir al estado 63
+    MAS_MENOS   desplazar e ir al estado 26
+    OP_UNARIO   desplazar e ir al estado 27
+    PAREN_IZQ   desplazar e ir al estado 28
+    CORCH_IZQ   desplazar e ir al estado 29
+    IDENT       desplazar e ir al estado 64
+    CONST_BOOL  desplazar e ir al estado 32
+    CONST_CAR   desplazar e ir al estado 33
+    CONST_ENT   desplazar e ir al estado 34
+    CONST_REAL  desplazar e ir al estado 35
+
+    Expresion        ir al estado 135
+    Funcion          ir al estado 50
+    Constante        ir al estado 51
+    Constante_lista  ir al estado 52
+
+
+Estado 97
+
+   56 Expresion: Expresion OP_AND . Expresion
+
+    error       desplazar e ir al estado 63
+    MAS_MENOS   desplazar e ir al estado 26
+    OP_UNARIO   desplazar e ir al estado 27
+    PAREN_IZQ   desplazar e ir al estado 28
+    CORCH_IZQ   desplazar e ir al estado 29
+    IDENT       desplazar e ir al estado 64
+    CONST_BOOL  desplazar e ir al estado 32
+    CONST_CAR   desplazar e ir al estado 33
+    CONST_ENT   desplazar e ir al estado 34
+    CONST_REAL  desplazar e ir al estado 35
+
+    Expresion        ir al estado 136
+    Funcion          ir al estado 50
+    Constante        ir al estado 51
+    Constante_lista  ir al estado 52
+
+
+Estado 98
+
+   58 Expresion: Expresion OP_IGUALDAD . Expresion
+
+    error       desplazar e ir al estado 63
+    MAS_MENOS   desplazar e ir al estado 26
+    OP_UNARIO   desplazar e ir al estado 27
+    PAREN_IZQ   desplazar e ir al estado 28
+    CORCH_IZQ   desplazar e ir al estado 29
+    IDENT       desplazar e ir al estado 64
+    CONST_BOOL  desplazar e ir al estado 32
+    CONST_CAR   desplazar e ir al estado 33
+    CONST_ENT   desplazar e ir al estado 34
+    CONST_REAL  desplazar e ir al estado 35
+
+    Expresion        ir al estado 137
+    Funcion          ir al estado 50
+    Constante        ir al estado 51
+    Constante_lista  ir al estado 52
+
+
+Estado 99
+
+   57 Expresion: Expresion OP_RELACION . Expresion
+
+    error       desplazar e ir al estado 63
+    MAS_MENOS   desplazar e ir al estado 26
+    OP_UNARIO   desplazar e ir al estado 27
+    PAREN_IZQ   desplazar e ir al estado 28
+    CORCH_IZQ   desplazar e ir al estado 29
+    IDENT       desplazar e ir al estado 64
+    CONST_BOOL  desplazar e ir al estado 32
+    CONST_CAR   desplazar e ir al estado 33
+    CONST_ENT   desplazar e ir al estado 34
+    CONST_REAL  desplazar e ir al estado 35
+
+    Expresion        ir al estado 138
+    Funcion          ir al estado 50
+    Constante        ir al estado 51
+    Constante_lista  ir al estado 52
+
+
+Estado 100
+
+   51 Expresion: Expresion MAS_MENOS . Expresion
+
+    error       desplazar e ir al estado 63
+    MAS_MENOS   desplazar e ir al estado 26
+    OP_UNARIO   desplazar e ir al estado 27
+    PAREN_IZQ   desplazar e ir al estado 28
+    CORCH_IZQ   desplazar e ir al estado 29
+    IDENT       desplazar e ir al estado 64
+    CONST_BOOL  desplazar e ir al estado 32
+    CONST_CAR   desplazar e ir al estado 33
+    CONST_ENT   desplazar e ir al estado 34
+    CONST_REAL  desplazar e ir al estado 35
+
+    Expresion        ir al estado 139
+    Funcion          ir al estado 50
+    Constante        ir al estado 51
+    Constante_lista  ir al estado 52
+
+
+Estado 101
+
+   60 Expresion: Expresion MAS_MAS . Expresion OP_GET_LIST Expresion
+
+    error       desplazar e ir al estado 63
+    MAS_MENOS   desplazar e ir al estado 26
+    OP_UNARIO   desplazar e ir al estado 27
+    PAREN_IZQ   desplazar e ir al estado 28
+    CORCH_IZQ   desplazar e ir al estado 29
+    IDENT       desplazar e ir al estado 64
+    CONST_BOOL  desplazar e ir al estado 32
+    CONST_CAR   desplazar e ir al estado 33
+    CONST_ENT   desplazar e ir al estado 34
+    CONST_REAL  desplazar e ir al estado 35
+
+    Expresion        ir al estado 140
+    Funcion          ir al estado 50
+    Constante        ir al estado 51
+    Constante_lista  ir al estado 52
+
+
+Estado 102
+
+   53 Expresion: Expresion OP_LIST_CONCA . Expresion
+
+    error       desplazar e ir al estado 63
+    MAS_MENOS   desplazar e ir al estado 26
+    OP_UNARIO   desplazar e ir al estado 27
+    PAREN_IZQ   desplazar e ir al estado 28
+    CORCH_IZQ   desplazar e ir al estado 29
+    IDENT       desplazar e ir al estado 64
+    CONST_BOOL  desplazar e ir al estado 32
+    CONST_CAR   desplazar e ir al estado 33
+    CONST_ENT   desplazar e ir al estado 34
+    CONST_REAL  desplazar e ir al estado 35
+
+    Expresion        ir al estado 141
+    Funcion          ir al estado 50
+    Constante        ir al estado 51
+    Constante_lista  ir al estado 52
+
+
+Estado 103
+
+   52 Expresion: Expresion OP_BIN_LISTA . Expresion
+
+    error       desplazar e ir al estado 63
+    MAS_MENOS   desplazar e ir al estado 26
+    OP_UNARIO   desplazar e ir al estado 27
+    PAREN_IZQ   desplazar e ir al estado 28
+    CORCH_IZQ   desplazar e ir al estado 29
+    IDENT       desplazar e ir al estado 64
+    CONST_BOOL  desplazar e ir al estado 32
+    CONST_CAR   desplazar e ir al estado 33
+    CONST_ENT   desplazar e ir al estado 34
+    CONST_REAL  desplazar e ir al estado 35
+
+    Expresion        ir al estado 142
+    Funcion          ir al estado 50
+    Constante        ir al estado 51
+    Constante_lista  ir al estado 52
+
+
+Estado 104
+
+   59 Expresion: Expresion OP_MULTI_DIV . Expresion
+
+    error       desplazar e ir al estado 63
+    MAS_MENOS   desplazar e ir al estado 26
+    OP_UNARIO   desplazar e ir al estado 27
+    PAREN_IZQ   desplazar e ir al estado 28
+    CORCH_IZQ   desplazar e ir al estado 29
+    IDENT       desplazar e ir al estado 64
+    CONST_BOOL  desplazar e ir al estado 32
+    CONST_CAR   desplazar e ir al estado 33
+    CONST_ENT   desplazar e ir al estado 34
+    CONST_REAL  desplazar e ir al estado 35
+
+    Expresion        ir al estado 143
+    Funcion          ir al estado 50
+    Constante        ir al estado 51
+    Constante_lista  ir al estado 52
+
+
+Estado 105
+
+   97 Sentencia_iterar: Expresion OP_AVR_RETR .
+
+    $default  reduce usando la regla 97 (Sentencia_iterar)
+
+
+Estado 106
+
+   39 Sentencia: Sentencia_entrada DELIMIT .
+
+    $default  reduce usando la regla 39 (Sentencia)
+
+
+Estado 107
+
+   40 Sentencia: Sentencia_salida DELIMIT .
+
+    $default  reduce usando la regla 40 (Sentencia)
+
+
+Estado 108
+
+   41 Sentencia: Sentencia_return DELIMIT .
+
+    $default  reduce usando la regla 41 (Sentencia)
+
+
+Estado 109
+
+   42 Sentencia: Sentencia_iterar DELIMIT .
+
+    $default  reduce usando la regla 42 (Sentencia)
+
+
+Estado 110
+
+   43 Sentencia: Sentencia_comienzo DELIMIT .
+
+    $default  reduce usando la regla 43 (Sentencia)
+
+
+Estado 111
+
+   17 Lista_ident: Lista_ident error . IDENT
+
+    IDENT  desplazar e ir al estado 144
+
+
+Estado 112
+
+   10 Declar_variables: Tipo $@2 Lista_ident DELIMIT .
+
+    $default  reduce usando la regla 10 (Declar_variables)
+
+
+Estado 113
+
+   16 Lista_ident: Lista_ident SEPAR . IDENT
+
+    IDENT  desplazar e ir al estado 145
+
+
+Estado 114
+
+   48 Expresion: PAREN_IZQ Expresion PAREN_DER .
+
+    $default  reduce usando la regla 48 (Expresion)
+
+
+Estado 115
+
+   72 Constante_lista: CORCH_IZQ Lista_bool CORCH_DER .
+
+    $default  reduce usando la regla 72 (Constante_lista)
+
+
+Estado 116
+
+   77 Lista_bool: Lista_bool SEPAR . CONST_BOOL
+
+    CONST_BOOL  desplazar e ir al estado 146
+
+
+Estado 117
+
+   73 Constante_lista: CORCH_IZQ Lista_car CORCH_DER .
+
+    $default  reduce usando la regla 73 (Constante_lista)
+
+
+Estado 118
+
+   79 Lista_car: Lista_car SEPAR . CONST_CAR
+
+    CONST_CAR  desplazar e ir al estado 147
+
+
+Estado 119
+
+   74 Constante_lista: CORCH_IZQ Lista_ent CORCH_DER .
+
+    $default  reduce usando la regla 74 (Constante_lista)
+
+
+Estado 120
+
+   81 Lista_ent: Lista_ent SEPAR . CONST_ENT
+
+    CONST_ENT  desplazar e ir al estado 148
+
+
+Estado 121
+
+   75 Constante_lista: CORCH_IZQ Lista_real CORCH_DER .
+
+    $default  reduce usando la regla 75 (Constante_lista)
+
+
+Estado 122
+
+   83 Lista_real: Lista_real SEPAR . CONST_REAL
+
+    CONST_REAL  desplazar e ir al estado 149
+
+
+Estado 123
+
+   23 Cabecera_funcion: TIPO IDENT $@3 . $@4 PAREN_IZQ Lista_parametros PAREN_DER
+
+    $default  reduce usando la regla 22 ($@4)
+
+    $@4  ir al estado 150
+
+
+Estado 124
+
+   66 Funcion: IDENT PAREN_IZQ PAREN_DER .
+
+    $default  reduce usando la regla 66 (Funcion)
+
+
+Estado 125
+
+   45 Lista_expresiones: Lista_expresiones . SEPAR Expresion
+   46                  | Lista_expresiones . error Expresion
+   65 Funcion: IDENT PAREN_IZQ Lista_expresiones . PAREN_DER
+
+    error      desplazar e ir al estado 151
+    PAREN_DER  desplazar e ir al estado 152
+    SEPAR      desplazar e ir al estado 153
+
+
+Estado 126
+
+   47 Lista_expresiones: Expresion .
+   51 Expresion: Expresion . MAS_MENOS Expresion
+   52          | Expresion . OP_BIN_LISTA Expresion
+   53          | Expresion . OP_LIST_CONCA Expresion
+   54          | Expresion . OP_OR Expresion
+   55          | Expresion . OP_XOR Expresion
+   56          | Expresion . OP_AND Expresion
+   57          | Expresion . OP_RELACION Expresion
+   58          | Expresion . OP_IGUALDAD Expresion
+   59          | Expresion . OP_MULTI_DIV Expresion
+   60          | Expresion . MAS_MAS Expresion OP_GET_LIST Expresion
+
+    OP_OR          desplazar e ir al estado 95
+    OP_XOR         desplazar e ir al estado 96
+    OP_AND         desplazar e ir al estado 97
+    OP_IGUALDAD    desplazar e ir al estado 98
+    OP_RELACION    desplazar e ir al estado 99
+    MAS_MENOS      desplazar e ir al estado 100
+    MAS_MAS        desplazar e ir al estado 101
+    OP_LIST_CONCA  desplazar e ir al estado 102
+    OP_BIN_LISTA   desplazar e ir al estado 103
+    OP_MULTI_DIV   desplazar e ir al estado 104
+
+    $default  reduce usando la regla 47 (Lista_expresiones)
+
+
+Estado 127
+
+   44 Sentencia_asig: IDENT IGUAL Expresion .
+   51 Expresion: Expresion . MAS_MENOS Expresion
+   52          | Expresion . OP_BIN_LISTA Expresion
+   53          | Expresion . OP_LIST_CONCA Expresion
+   54          | Expresion . OP_OR Expresion
+   55          | Expresion . OP_XOR Expresion
+   56          | Expresion . OP_AND Expresion
+   57          | Expresion . OP_RELACION Expresion
+   58          | Expresion . OP_IGUALDAD Expresion
+   59          | Expresion . OP_MULTI_DIV Expresion
+   60          | Expresion . MAS_MAS Expresion OP_GET_LIST Expresion
+
+    OP_OR          desplazar e ir al estado 95
+    OP_XOR         desplazar e ir al estado 96
+    OP_AND         desplazar e ir al estado 97
+    OP_IGUALDAD    desplazar e ir al estado 98
+    OP_RELACION    desplazar e ir al estado 99
+    MAS_MENOS      desplazar e ir al estado 100
+    MAS_MAS        desplazar e ir al estado 101
+    OP_LIST_CONCA  desplazar e ir al estado 102
+    OP_BIN_LISTA   desplazar e ir al estado 103
+    OP_MULTI_DIV   desplazar e ir al estado 104
+
+    $default  reduce usando la regla 44 (Sentencia_asig)
+
+
+Estado 128
+
+   51 Expresion: Expresion . MAS_MENOS Expresion
+   52          | Expresion . OP_BIN_LISTA Expresion
+   53          | Expresion . OP_LIST_CONCA Expresion
+   54          | Expresion . OP_OR Expresion
+   55          | Expresion . OP_XOR Expresion
+   56          | Expresion . OP_AND Expresion
+   57          | Expresion . OP_RELACION Expresion
+   58          | Expresion . OP_IGUALDAD Expresion
+   59          | Expresion . OP_MULTI_DIV Expresion
+   60          | Expresion . MAS_MAS Expresion OP_GET_LIST Expresion
+   85 Sentencia_if: COND_SI PAREN_IZQ Expresion . PAREN_DER Sentencia
+   86             | COND_SI PAREN_IZQ Expresion . PAREN_DER Sentencia COND_OTRO Sentencia
+
+    OP_OR          desplazar e ir al estado 95
+    OP_XOR         desplazar e ir al estado 96
+    OP_AND         desplazar e ir al estado 97
+    OP_IGUALDAD    desplazar e ir al estado 98
+    OP_RELACION    desplazar e ir al estado 99
+    MAS_MENOS      desplazar e ir al estado 100
+    MAS_MAS        desplazar e ir al estado 101
+    OP_LIST_CONCA  desplazar e ir al estado 102
+    OP_BIN_LISTA   desplazar e ir al estado 103
+    OP_MULTI_DIV   desplazar e ir al estado 104
+    PAREN_DER      desplazar e ir al estado 154
+
+
+Estado 129
+
+   51 Expresion: Expresion . MAS_MENOS Expresion
+   52          | Expresion . OP_BIN_LISTA Expresion
+   53          | Expresion . OP_LIST_CONCA Expresion
+   54          | Expresion . OP_OR Expresion
+   55          | Expresion . OP_XOR Expresion
+   56          | Expresion . OP_AND Expresion
+   57          | Expresion . OP_RELACION Expresion
+   58          | Expresion . OP_IGUALDAD Expresion
+   59          | Expresion . OP_MULTI_DIV Expresion
+   60          | Expresion . MAS_MAS Expresion OP_GET_LIST Expresion
+   87 Sentencia_while: BUCLE PAREN_IZQ Expresion . PAREN_DER Sentencia
+
+    OP_OR          desplazar e ir al estado 95
+    OP_XOR         desplazar e ir al estado 96
+    OP_AND         desplazar e ir al estado 97
+    OP_IGUALDAD    desplazar e ir al estado 98
+    OP_RELACION    desplazar e ir al estado 99
+    MAS_MENOS      desplazar e ir al estado 100
+    MAS_MAS        desplazar e ir al estado 101
+    OP_LIST_CONCA  desplazar e ir al estado 102
+    OP_BIN_LISTA   desplazar e ir al estado 103
+    OP_MULTI_DIV   desplazar e ir al estado 104
+    PAREN_DER      desplazar e ir al estado 155
+
+
+Estado 130
+
+   88 Sentencia_for: FOR_INI Sentencia_asig FOR_STOP . Expresion FOR_STEP Expresion FOR_DO Sentencia
+
+    error       desplazar e ir al estado 63
+    MAS_MENOS   desplazar e ir al estado 26
+    OP_UNARIO   desplazar e ir al estado 27
+    PAREN_IZQ   desplazar e ir al estado 28
+    CORCH_IZQ   desplazar e ir al estado 29
+    IDENT       desplazar e ir al estado 64
+    CONST_BOOL  desplazar e ir al estado 32
+    CONST_CAR   desplazar e ir al estado 33
+    CONST_ENT   desplazar e ir al estado 34
+    CONST_REAL  desplazar e ir al estado 35
+
+    Expresion        ir al estado 156
+    Funcion          ir al estado 50
+    Constante        ir al estado 51
+    Constante_lista  ir al estado 52
+
+
+Estado 131
+
+   16 Lista_ident: Lista_ident . SEPAR IDENT
+   17            | Lista_ident . error IDENT
+   90 Sentencia_entrada: ENTRADA $@6 Lista_ident .
+
+    error  desplazar e ir al estado 111
+    SEPAR  desplazar e ir al estado 113
+
+    DELIMIT  reduce usando la regla 90 (Sentencia_entrada)
+
+
+Estado 132
+
+   92 Lista_expr_cadena: Lista_expr_cadena SEPAR . Expr_cadena
+
+    error         desplazar e ir al estado 63
+    MAS_MENOS     desplazar e ir al estado 26
+    OP_UNARIO     desplazar e ir al estado 27
+    PAREN_IZQ     desplazar e ir al estado 28
+    CORCH_IZQ     desplazar e ir al estado 29
+    IDENT         desplazar e ir al estado 64
+    CONST_BOOL    desplazar e ir al estado 32
+    CONST_CAR     desplazar e ir al estado 33
+    CONST_CADENA  desplazar e ir al estado 85
+    CONST_ENT     desplazar e ir al estado 34
+    CONST_REAL    desplazar e ir al estado 35
+
+    Expresion        ir al estado 86
+    Funcion          ir al estado 50
+    Constante        ir al estado 51
+    Constante_lista  ir al estado 52
+    Expr_cadena      ir al estado 157
+
+
+Estado 133
+
+   26 Declar_funcion: Cabecera_funcion $@5 Bloque .
+
+    $default  reduce usando la regla 26 (Declar_funcion)
+
+
+Estado 134
+
+   51 Expresion: Expresion . MAS_MENOS Expresion
+   52          | Expresion . OP_BIN_LISTA Expresion
+   53          | Expresion . OP_LIST_CONCA Expresion
+   54          | Expresion . OP_OR Expresion
+   54          | Expresion OP_OR Expresion .
+   55          | Expresion . OP_XOR Expresion
+   56          | Expresion . OP_AND Expresion
+   57          | Expresion . OP_RELACION Expresion
+   58          | Expresion . OP_IGUALDAD Expresion
+   59          | Expresion . OP_MULTI_DIV Expresion
+   60          | Expresion . MAS_MAS Expresion OP_GET_LIST Expresion
+
+    OP_XOR         desplazar e ir al estado 96
+    OP_AND         desplazar e ir al estado 97
+    OP_IGUALDAD    desplazar e ir al estado 98
+    OP_RELACION    desplazar e ir al estado 99
+    MAS_MENOS      desplazar e ir al estado 100
+    MAS_MAS        desplazar e ir al estado 101
+    OP_LIST_CONCA  desplazar e ir al estado 102
+    OP_BIN_LISTA   desplazar e ir al estado 103
+    OP_MULTI_DIV   desplazar e ir al estado 104
+
+    $default  reduce usando la regla 54 (Expresion)
+
+
+Estado 135
+
+   51 Expresion: Expresion . MAS_MENOS Expresion
+   52          | Expresion . OP_BIN_LISTA Expresion
+   53          | Expresion . OP_LIST_CONCA Expresion
+   54          | Expresion . OP_OR Expresion
+   55          | Expresion . OP_XOR Expresion
+   55          | Expresion OP_XOR Expresion .
+   56          | Expresion . OP_AND Expresion
+   57          | Expresion . OP_RELACION Expresion
+   58          | Expresion . OP_IGUALDAD Expresion
+   59          | Expresion . OP_MULTI_DIV Expresion
+   60          | Expresion . MAS_MAS Expresion OP_GET_LIST Expresion
+
+    OP_AND         desplazar e ir al estado 97
+    OP_IGUALDAD    desplazar e ir al estado 98
+    OP_RELACION    desplazar e ir al estado 99
+    MAS_MENOS      desplazar e ir al estado 100
+    MAS_MAS        desplazar e ir al estado 101
+    OP_LIST_CONCA  desplazar e ir al estado 102
+    OP_BIN_LISTA   desplazar e ir al estado 103
+    OP_MULTI_DIV   desplazar e ir al estado 104
+
+    $default  reduce usando la regla 55 (Expresion)
+
+
+Estado 136
+
+   51 Expresion: Expresion . MAS_MENOS Expresion
+   52          | Expresion . OP_BIN_LISTA Expresion
+   53          | Expresion . OP_LIST_CONCA Expresion
+   54          | Expresion . OP_OR Expresion
+   55          | Expresion . OP_XOR Expresion
+   56          | Expresion . OP_AND Expresion
+   56          | Expresion OP_AND Expresion .
+   57          | Expresion . OP_RELACION Expresion
+   58          | Expresion . OP_IGUALDAD Expresion
+   59          | Expresion . OP_MULTI_DIV Expresion
+   60          | Expresion . MAS_MAS Expresion OP_GET_LIST Expresion
+
+    OP_IGUALDAD    desplazar e ir al estado 98
+    OP_RELACION    desplazar e ir al estado 99
+    MAS_MENOS      desplazar e ir al estado 100
+    MAS_MAS        desplazar e ir al estado 101
+    OP_LIST_CONCA  desplazar e ir al estado 102
+    OP_BIN_LISTA   desplazar e ir al estado 103
+    OP_MULTI_DIV   desplazar e ir al estado 104
+
+    $default  reduce usando la regla 56 (Expresion)
+
+
+Estado 137
+
+   51 Expresion: Expresion . MAS_MENOS Expresion
+   52          | Expresion . OP_BIN_LISTA Expresion
+   53          | Expresion . OP_LIST_CONCA Expresion
+   54          | Expresion . OP_OR Expresion
+   55          | Expresion . OP_XOR Expresion
+   56          | Expresion . OP_AND Expresion
+   57          | Expresion . OP_RELACION Expresion
+   58          | Expresion . OP_IGUALDAD Expresion
+   58          | Expresion OP_IGUALDAD Expresion .
+   59          | Expresion . OP_MULTI_DIV Expresion
+   60          | Expresion . MAS_MAS Expresion OP_GET_LIST Expresion
+
+    OP_RELACION    desplazar e ir al estado 99
+    MAS_MENOS      desplazar e ir al estado 100
+    MAS_MAS        desplazar e ir al estado 101
+    OP_LIST_CONCA  desplazar e ir al estado 102
+    OP_BIN_LISTA   desplazar e ir al estado 103
+    OP_MULTI_DIV   desplazar e ir al estado 104
+
+    $default  reduce usando la regla 58 (Expresion)
+
+
+Estado 138
+
+   51 Expresion: Expresion . MAS_MENOS Expresion
+   52          | Expresion . OP_BIN_LISTA Expresion
+   53          | Expresion . OP_LIST_CONCA Expresion
+   54          | Expresion . OP_OR Expresion
+   55          | Expresion . OP_XOR Expresion
+   56          | Expresion . OP_AND Expresion
+   57          | Expresion . OP_RELACION Expresion
+   57          | Expresion OP_RELACION Expresion .
+   58          | Expresion . OP_IGUALDAD Expresion
+   59          | Expresion . OP_MULTI_DIV Expresion
+   60          | Expresion . MAS_MAS Expresion OP_GET_LIST Expresion
+
+    MAS_MENOS      desplazar e ir al estado 100
+    MAS_MAS        desplazar e ir al estado 101
+    OP_LIST_CONCA  desplazar e ir al estado 102
+    OP_BIN_LISTA   desplazar e ir al estado 103
+    OP_MULTI_DIV   desplazar e ir al estado 104
+
+    $default  reduce usando la regla 57 (Expresion)
+
+
+Estado 139
+
+   51 Expresion: Expresion . MAS_MENOS Expresion
+   51          | Expresion MAS_MENOS Expresion .
+   52          | Expresion . OP_BIN_LISTA Expresion
+   53          | Expresion . OP_LIST_CONCA Expresion
+   54          | Expresion . OP_OR Expresion
+   55          | Expresion . OP_XOR Expresion
+   56          | Expresion . OP_AND Expresion
+   57          | Expresion . OP_RELACION Expresion
+   58          | Expresion . OP_IGUALDAD Expresion
+   59          | Expresion . OP_MULTI_DIV Expresion
+   60          | Expresion . MAS_MAS Expresion OP_GET_LIST Expresion
+
+    OP_MULTI_DIV  desplazar e ir al estado 104
+
+    $default  reduce usando la regla 51 (Expresion)
+
+
+Estado 140
+
+   51 Expresion: Expresion . MAS_MENOS Expresion
+   52          | Expresion . OP_BIN_LISTA Expresion
+   53          | Expresion . OP_LIST_CONCA Expresion
+   54          | Expresion . OP_OR Expresion
+   55          | Expresion . OP_XOR Expresion
+   56          | Expresion . OP_AND Expresion
+   57          | Expresion . OP_RELACION Expresion
+   58          | Expresion . OP_IGUALDAD Expresion
+   59          | Expresion . OP_MULTI_DIV Expresion
+   60          | Expresion . MAS_MAS Expresion OP_GET_LIST Expresion
+   60          | Expresion MAS_MAS Expresion . OP_GET_LIST Expresion
+
+    OP_OR          desplazar e ir al estado 95
+    OP_XOR         desplazar e ir al estado 96
+    OP_AND         desplazar e ir al estado 97
+    OP_IGUALDAD    desplazar e ir al estado 98
+    OP_RELACION    desplazar e ir al estado 99
+    MAS_MENOS      desplazar e ir al estado 100
+    MAS_MAS        desplazar e ir al estado 101
+    OP_LIST_CONCA  desplazar e ir al estado 102
+    OP_BIN_LISTA   desplazar e ir al estado 103
+    OP_GET_LIST    desplazar e ir al estado 158
+    OP_MULTI_DIV   desplazar e ir al estado 104
+
+
+Estado 141
+
+   51 Expresion: Expresion . MAS_MENOS Expresion
+   52          | Expresion . OP_BIN_LISTA Expresion
+   53          | Expresion . OP_LIST_CONCA Expresion
+   53          | Expresion OP_LIST_CONCA Expresion .
+   54          | Expresion . OP_OR Expresion
+   55          | Expresion . OP_XOR Expresion
+   56          | Expresion . OP_AND Expresion
+   57          | Expresion . OP_RELACION Expresion
+   58          | Expresion . OP_IGUALDAD Expresion
+   59          | Expresion . OP_MULTI_DIV Expresion
+   60          | Expresion . MAS_MAS Expresion OP_GET_LIST Expresion
+
+    OP_MULTI_DIV  desplazar e ir al estado 104
+
+    $default  reduce usando la regla 53 (Expresion)
+
+
+Estado 142
+
+   51 Expresion: Expresion . MAS_MENOS Expresion
+   52          | Expresion . OP_BIN_LISTA Expresion
+   52          | Expresion OP_BIN_LISTA Expresion .
+   53          | Expresion . OP_LIST_CONCA Expresion
+   54          | Expresion . OP_OR Expresion
+   55          | Expresion . OP_XOR Expresion
+   56          | Expresion . OP_AND Expresion
+   57          | Expresion . OP_RELACION Expresion
+   58          | Expresion . OP_IGUALDAD Expresion
+   59          | Expresion . OP_MULTI_DIV Expresion
+   60          | Expresion . MAS_MAS Expresion OP_GET_LIST Expresion
+
+    OP_MULTI_DIV  desplazar e ir al estado 104
+
+    $default  reduce usando la regla 52 (Expresion)
+
+
+Estado 143
+
+   51 Expresion: Expresion . MAS_MENOS Expresion
+   52          | Expresion . OP_BIN_LISTA Expresion
+   53          | Expresion . OP_LIST_CONCA Expresion
+   54          | Expresion . OP_OR Expresion
+   55          | Expresion . OP_XOR Expresion
+   56          | Expresion . OP_AND Expresion
+   57          | Expresion . OP_RELACION Expresion
+   58          | Expresion . OP_IGUALDAD Expresion
+   59          | Expresion . OP_MULTI_DIV Expresion
+   59          | Expresion OP_MULTI_DIV Expresion .
+   60          | Expresion . MAS_MAS Expresion OP_GET_LIST Expresion
+
+    $default  reduce usando la regla 59 (Expresion)
+
+
+Estado 144
+
+   17 Lista_ident: Lista_ident error IDENT .
+
+    $default  reduce usando la regla 17 (Lista_ident)
+
+
+Estado 145
+
+   16 Lista_ident: Lista_ident SEPAR IDENT .
+
+    $default  reduce usando la regla 16 (Lista_ident)
+
+
+Estado 146
+
+   77 Lista_bool: Lista_bool SEPAR CONST_BOOL .
+
+    $default  reduce usando la regla 77 (Lista_bool)
+
+
+Estado 147
+
+   79 Lista_car: Lista_car SEPAR CONST_CAR .
+
+    $default  reduce usando la regla 79 (Lista_car)
+
+
+Estado 148
+
+   81 Lista_ent: Lista_ent SEPAR CONST_ENT .
+
+    $default  reduce usando la regla 81 (Lista_ent)
+
+
+Estado 149
+
+   83 Lista_real: Lista_real SEPAR CONST_REAL .
+
+    $default  reduce usando la regla 83 (Lista_real)
+
+
+Estado 150
+
+   23 Cabecera_funcion: TIPO IDENT $@3 $@4 . PAREN_IZQ Lista_parametros PAREN_DER
+
+    PAREN_IZQ  desplazar e ir al estado 159
+
+
+Estado 151
+
+   46 Lista_expresiones: Lista_expresiones error . Expresion
+
+    error       desplazar e ir al estado 63
+    MAS_MENOS   desplazar e ir al estado 26
+    OP_UNARIO   desplazar e ir al estado 27
+    PAREN_IZQ   desplazar e ir al estado 28
+    CORCH_IZQ   desplazar e ir al estado 29
+    IDENT       desplazar e ir al estado 64
+    CONST_BOOL  desplazar e ir al estado 32
+    CONST_CAR   desplazar e ir al estado 33
+    CONST_ENT   desplazar e ir al estado 34
+    CONST_REAL  desplazar e ir al estado 35
+
+    Expresion        ir al estado 160
+    Funcion          ir al estado 50
+    Constante        ir al estado 51
+    Constante_lista  ir al estado 52
+
+
+Estado 152
+
+   65 Funcion: IDENT PAREN_IZQ Lista_expresiones PAREN_DER .
+
+    $default  reduce usando la regla 65 (Funcion)
+
+
+Estado 153
+
+   45 Lista_expresiones: Lista_expresiones SEPAR . Expresion
+
+    error       desplazar e ir al estado 63
+    MAS_MENOS   desplazar e ir al estado 26
+    OP_UNARIO   desplazar e ir al estado 27
+    PAREN_IZQ   desplazar e ir al estado 28
+    CORCH_IZQ   desplazar e ir al estado 29
+    IDENT       desplazar e ir al estado 64
+    CONST_BOOL  desplazar e ir al estado 32
+    CONST_CAR   desplazar e ir al estado 33
+    CONST_ENT   desplazar e ir al estado 34
+    CONST_REAL  desplazar e ir al estado 35
+
+    Expresion        ir al estado 161
+    Funcion          ir al estado 50
+    Constante        ir al estado 51
+    Constante_lista  ir al estado 52
+
+
+Estado 154
+
+   85 Sentencia_if: COND_SI PAREN_IZQ Expresion PAREN_DER . Sentencia
+   86             | COND_SI PAREN_IZQ Expresion PAREN_DER . Sentencia COND_OTRO Sentencia
+
+    error        desplazar e ir al estado 63
+    MAS_MENOS    desplazar e ir al estado 26
+    OP_UNARIO    desplazar e ir al estado 27
+    PAREN_IZQ    desplazar e ir al estado 28
+    CORCH_IZQ    desplazar e ir al estado 29
+    LLAVE_IZQ    desplazar e ir al estado 6
+    IDENT        desplazar e ir al estado 31
+    CONST_BOOL   desplazar e ir al estado 32
+    CONST_CAR    desplazar e ir al estado 33
+    CONST_ENT    desplazar e ir al estado 34
+    CONST_REAL   desplazar e ir al estado 35
+    COND_SI      desplazar e ir al estado 36
+    BUCLE        desplazar e ir al estado 37
+    FOR_INI      desplazar e ir al estado 38
+    ENTRADA      desplazar e ir al estado 39
+    SALIDA       desplazar e ir al estado 40
+    DEVUELVE     desplazar e ir al estado 41
+    OP_INI_LIST  desplazar e ir al estado 42
+
+    Bloque              ir al estado 43
+    Sentencia           ir al estado 162
+    Sentencia_asig      ir al estado 48
+    Expresion           ir al estado 49
+    Funcion             ir al estado 50
+    Constante           ir al estado 51
+    Constante_lista     ir al estado 52
+    Sentencia_if        ir al estado 53
+    Sentencia_while     ir al estado 54
+    Sentencia_for       ir al estado 55
+    Sentencia_entrada   ir al estado 56
+    Sentencia_salida    ir al estado 57
+    Sentencia_return    ir al estado 58
+    Sentencia_iterar    ir al estado 59
+    Sentencia_comienzo  ir al estado 60
+
+
+Estado 155
+
+   87 Sentencia_while: BUCLE PAREN_IZQ Expresion PAREN_DER . Sentencia
+
+    error        desplazar e ir al estado 63
+    MAS_MENOS    desplazar e ir al estado 26
+    OP_UNARIO    desplazar e ir al estado 27
+    PAREN_IZQ    desplazar e ir al estado 28
+    CORCH_IZQ    desplazar e ir al estado 29
+    LLAVE_IZQ    desplazar e ir al estado 6
+    IDENT        desplazar e ir al estado 31
+    CONST_BOOL   desplazar e ir al estado 32
+    CONST_CAR    desplazar e ir al estado 33
+    CONST_ENT    desplazar e ir al estado 34
+    CONST_REAL   desplazar e ir al estado 35
+    COND_SI      desplazar e ir al estado 36
+    BUCLE        desplazar e ir al estado 37
+    FOR_INI      desplazar e ir al estado 38
+    ENTRADA      desplazar e ir al estado 39
+    SALIDA       desplazar e ir al estado 40
+    DEVUELVE     desplazar e ir al estado 41
+    OP_INI_LIST  desplazar e ir al estado 42
+
+    Bloque              ir al estado 43
+    Sentencia           ir al estado 163
+    Sentencia_asig      ir al estado 48
+    Expresion           ir al estado 49
+    Funcion             ir al estado 50
+    Constante           ir al estado 51
+    Constante_lista     ir al estado 52
+    Sentencia_if        ir al estado 53
+    Sentencia_while     ir al estado 54
+    Sentencia_for       ir al estado 55
+    Sentencia_entrada   ir al estado 56
+    Sentencia_salida    ir al estado 57
+    Sentencia_return    ir al estado 58
+    Sentencia_iterar    ir al estado 59
+    Sentencia_comienzo  ir al estado 60
+
+
+Estado 156
+
+   51 Expresion: Expresion . MAS_MENOS Expresion
+   52          | Expresion . OP_BIN_LISTA Expresion
+   53          | Expresion . OP_LIST_CONCA Expresion
+   54          | Expresion . OP_OR Expresion
+   55          | Expresion . OP_XOR Expresion
+   56          | Expresion . OP_AND Expresion
+   57          | Expresion . OP_RELACION Expresion
+   58          | Expresion . OP_IGUALDAD Expresion
+   59          | Expresion . OP_MULTI_DIV Expresion
+   60          | Expresion . MAS_MAS Expresion OP_GET_LIST Expresion
+   88 Sentencia_for: FOR_INI Sentencia_asig FOR_STOP Expresion . FOR_STEP Expresion FOR_DO Sentencia
+
+    OP_OR          desplazar e ir al estado 95
+    OP_XOR         desplazar e ir al estado 96
+    OP_AND         desplazar e ir al estado 97
+    OP_IGUALDAD    desplazar e ir al estado 98
+    OP_RELACION    desplazar e ir al estado 99
+    MAS_MENOS      desplazar e ir al estado 100
+    MAS_MAS        desplazar e ir al estado 101
+    OP_LIST_CONCA  desplazar e ir al estado 102
+    OP_BIN_LISTA   desplazar e ir al estado 103
+    OP_MULTI_DIV   desplazar e ir al estado 104
+    FOR_STEP       desplazar e ir al estado 164
+
+
+Estado 157
+
+   92 Lista_expr_cadena: Lista_expr_cadena SEPAR Expr_cadena .
+
+    $default  reduce usando la regla 92 (Lista_expr_cadena)
+
+
+Estado 158
+
+   60 Expresion: Expresion MAS_MAS Expresion OP_GET_LIST . Expresion
+
+    error       desplazar e ir al estado 63
+    MAS_MENOS   desplazar e ir al estado 26
+    OP_UNARIO   desplazar e ir al estado 27
+    PAREN_IZQ   desplazar e ir al estado 28
+    CORCH_IZQ   desplazar e ir al estado 29
+    IDENT       desplazar e ir al estado 64
+    CONST_BOOL  desplazar e ir al estado 32
+    CONST_CAR   desplazar e ir al estado 33
+    CONST_ENT   desplazar e ir al estado 34
+    CONST_REAL  desplazar e ir al estado 35
+
+    Expresion        ir al estado 165
+    Funcion          ir al estado 50
+    Constante        ir al estado 51
+    Constante_lista  ir al estado 52
+
+
+Estado 159
+
+   23 Cabecera_funcion: TIPO IDENT $@3 $@4 PAREN_IZQ . Lista_parametros PAREN_DER
+
+    TIPO  desplazar e ir al estado 166
+
+    $default  reduce usando la regla 30 (Lista_parametros)
+
+    Lista_parametros  ir al estado 167
+    Parametro         ir al estado 168
+
+
+Estado 160
+
+   46 Lista_expresiones: Lista_expresiones error Expresion .
+   51 Expresion: Expresion . MAS_MENOS Expresion
+   52          | Expresion . OP_BIN_LISTA Expresion
+   53          | Expresion . OP_LIST_CONCA Expresion
+   54          | Expresion . OP_OR Expresion
+   55          | Expresion . OP_XOR Expresion
+   56          | Expresion . OP_AND Expresion
+   57          | Expresion . OP_RELACION Expresion
+   58          | Expresion . OP_IGUALDAD Expresion
+   59          | Expresion . OP_MULTI_DIV Expresion
+   60          | Expresion . MAS_MAS Expresion OP_GET_LIST Expresion
+
+    OP_OR          desplazar e ir al estado 95
+    OP_XOR         desplazar e ir al estado 96
+    OP_AND         desplazar e ir al estado 97
+    OP_IGUALDAD    desplazar e ir al estado 98
+    OP_RELACION    desplazar e ir al estado 99
+    MAS_MENOS      desplazar e ir al estado 100
+    MAS_MAS        desplazar e ir al estado 101
+    OP_LIST_CONCA  desplazar e ir al estado 102
+    OP_BIN_LISTA   desplazar e ir al estado 103
+    OP_MULTI_DIV   desplazar e ir al estado 104
+
+    $default  reduce usando la regla 46 (Lista_expresiones)
+
+
+Estado 161
+
+   45 Lista_expresiones: Lista_expresiones SEPAR Expresion .
+   51 Expresion: Expresion . MAS_MENOS Expresion
+   52          | Expresion . OP_BIN_LISTA Expresion
+   53          | Expresion . OP_LIST_CONCA Expresion
+   54          | Expresion . OP_OR Expresion
+   55          | Expresion . OP_XOR Expresion
+   56          | Expresion . OP_AND Expresion
+   57          | Expresion . OP_RELACION Expresion
+   58          | Expresion . OP_IGUALDAD Expresion
+   59          | Expresion . OP_MULTI_DIV Expresion
+   60          | Expresion . MAS_MAS Expresion OP_GET_LIST Expresion
+
+    OP_OR          desplazar e ir al estado 95
+    OP_XOR         desplazar e ir al estado 96
+    OP_AND         desplazar e ir al estado 97
+    OP_IGUALDAD    desplazar e ir al estado 98
+    OP_RELACION    desplazar e ir al estado 99
+    MAS_MENOS      desplazar e ir al estado 100
+    MAS_MAS        desplazar e ir al estado 101
+    OP_LIST_CONCA  desplazar e ir al estado 102
+    OP_BIN_LISTA   desplazar e ir al estado 103
+    OP_MULTI_DIV   desplazar e ir al estado 104
+
+    $default  reduce usando la regla 45 (Lista_expresiones)
+
+
+Estado 162
+
+   85 Sentencia_if: COND_SI PAREN_IZQ Expresion PAREN_DER Sentencia .
+   86             | COND_SI PAREN_IZQ Expresion PAREN_DER Sentencia . COND_OTRO Sentencia
+
+    COND_OTRO  desplazar e ir al estado 169
+
+    COND_OTRO  [reduce usando la regla 85 (Sentencia_if)]
+    $default   reduce usando la regla 85 (Sentencia_if)
+
+
+Estado 163
+
+   87 Sentencia_while: BUCLE PAREN_IZQ Expresion PAREN_DER Sentencia .
+
+    $default  reduce usando la regla 87 (Sentencia_while)
+
+
+Estado 164
+
+   88 Sentencia_for: FOR_INI Sentencia_asig FOR_STOP Expresion FOR_STEP . Expresion FOR_DO Sentencia
+
+    error       desplazar e ir al estado 63
+    MAS_MENOS   desplazar e ir al estado 26
+    OP_UNARIO   desplazar e ir al estado 27
+    PAREN_IZQ   desplazar e ir al estado 28
+    CORCH_IZQ   desplazar e ir al estado 29
+    IDENT       desplazar e ir al estado 64
+    CONST_BOOL  desplazar e ir al estado 32
+    CONST_CAR   desplazar e ir al estado 33
+    CONST_ENT   desplazar e ir al estado 34
+    CONST_REAL  desplazar e ir al estado 35
+
+    Expresion        ir al estado 170
+    Funcion          ir al estado 50
+    Constante        ir al estado 51
+    Constante_lista  ir al estado 52
+
+
+Estado 165
+
+   51 Expresion: Expresion . MAS_MENOS Expresion
+   52          | Expresion . OP_BIN_LISTA Expresion
+   53          | Expresion . OP_LIST_CONCA Expresion
+   54          | Expresion . OP_OR Expresion
+   55          | Expresion . OP_XOR Expresion
+   56          | Expresion . OP_AND Expresion
+   57          | Expresion . OP_RELACION Expresion
+   58          | Expresion . OP_IGUALDAD Expresion
+   59          | Expresion . OP_MULTI_DIV Expresion
+   60          | Expresion . MAS_MAS Expresion OP_GET_LIST Expresion
+   60          | Expresion MAS_MAS Expresion OP_GET_LIST Expresion .
+
+    OP_MULTI_DIV  desplazar e ir al estado 104
+
+    $default  reduce usando la regla 60 (Expresion)
+
+
+Estado 166
+
+   31 Parametro: TIPO . IDENT
+
+    IDENT  desplazar e ir al estado 171
+
+
+Estado 167
+
+   23 Cabecera_funcion: TIPO IDENT $@3 $@4 PAREN_IZQ Lista_parametros . PAREN_DER
+   27 Lista_parametros: Lista_parametros . SEPAR Parametro
+   28                 | Lista_parametros . error Parametro
+
+    error      desplazar e ir al estado 172
+    PAREN_DER  desplazar e ir al estado 173
+    SEPAR      desplazar e ir al estado 174
+
+
+Estado 168
+
+   29 Lista_parametros: Parametro .
+
+    $default  reduce usando la regla 29 (Lista_parametros)
+
+
+Estado 169
+
+   86 Sentencia_if: COND_SI PAREN_IZQ Expresion PAREN_DER Sentencia COND_OTRO . Sentencia
+
+    error        desplazar e ir al estado 63
+    MAS_MENOS    desplazar e ir al estado 26
+    OP_UNARIO    desplazar e ir al estado 27
+    PAREN_IZQ    desplazar e ir al estado 28
+    CORCH_IZQ    desplazar e ir al estado 29
+    LLAVE_IZQ    desplazar e ir al estado 6
+    IDENT        desplazar e ir al estado 31
+    CONST_BOOL   desplazar e ir al estado 32
+    CONST_CAR    desplazar e ir al estado 33
+    CONST_ENT    desplazar e ir al estado 34
+    CONST_REAL   desplazar e ir al estado 35
+    COND_SI      desplazar e ir al estado 36
+    BUCLE        desplazar e ir al estado 37
+    FOR_INI      desplazar e ir al estado 38
+    ENTRADA      desplazar e ir al estado 39
+    SALIDA       desplazar e ir al estado 40
+    DEVUELVE     desplazar e ir al estado 41
+    OP_INI_LIST  desplazar e ir al estado 42
+
+    Bloque              ir al estado 43
+    Sentencia           ir al estado 175
+    Sentencia_asig      ir al estado 48
+    Expresion           ir al estado 49
+    Funcion             ir al estado 50
+    Constante           ir al estado 51
+    Constante_lista     ir al estado 52
+    Sentencia_if        ir al estado 53
+    Sentencia_while     ir al estado 54
+    Sentencia_for       ir al estado 55
+    Sentencia_entrada   ir al estado 56
+    Sentencia_salida    ir al estado 57
+    Sentencia_return    ir al estado 58
+    Sentencia_iterar    ir al estado 59
+    Sentencia_comienzo  ir al estado 60
+
+
+Estado 170
+
+   51 Expresion: Expresion . MAS_MENOS Expresion
+   52          | Expresion . OP_BIN_LISTA Expresion
+   53          | Expresion . OP_LIST_CONCA Expresion
+   54          | Expresion . OP_OR Expresion
+   55          | Expresion . OP_XOR Expresion
+   56          | Expresion . OP_AND Expresion
+   57          | Expresion . OP_RELACION Expresion
+   58          | Expresion . OP_IGUALDAD Expresion
+   59          | Expresion . OP_MULTI_DIV Expresion
+   60          | Expresion . MAS_MAS Expresion OP_GET_LIST Expresion
+   88 Sentencia_for: FOR_INI Sentencia_asig FOR_STOP Expresion FOR_STEP Expresion . FOR_DO Sentencia
+
+    OP_OR          desplazar e ir al estado 95
+    OP_XOR         desplazar e ir al estado 96
+    OP_AND         desplazar e ir al estado 97
+    OP_IGUALDAD    desplazar e ir al estado 98
+    OP_RELACION    desplazar e ir al estado 99
+    MAS_MENOS      desplazar e ir al estado 100
+    MAS_MAS        desplazar e ir al estado 101
+    OP_LIST_CONCA  desplazar e ir al estado 102
+    OP_BIN_LISTA   desplazar e ir al estado 103
+    OP_MULTI_DIV   desplazar e ir al estado 104
+    FOR_DO         desplazar e ir al estado 176
+
+
+Estado 171
+
+   31 Parametro: TIPO IDENT .
+
+    $default  reduce usando la regla 31 (Parametro)
+
+
+Estado 172
+
+   28 Lista_parametros: Lista_parametros error . Parametro
+
+    TIPO  desplazar e ir al estado 166
+
+    Parametro  ir al estado 177
+
+
+Estado 173
+
+   23 Cabecera_funcion: TIPO IDENT $@3 $@4 PAREN_IZQ Lista_parametros PAREN_DER .
+
+    $default  reduce usando la regla 23 (Cabecera_funcion)
+
+
+Estado 174
+
+   27 Lista_parametros: Lista_parametros SEPAR . Parametro
+
+    TIPO  desplazar e ir al estado 166
+
+    Parametro  ir al estado 178
+
+
+Estado 175
+
+   86 Sentencia_if: COND_SI PAREN_IZQ Expresion PAREN_DER Sentencia COND_OTRO Sentencia .
+
+    $default  reduce usando la regla 86 (Sentencia_if)
+
+
+Estado 176
+
+   88 Sentencia_for: FOR_INI Sentencia_asig FOR_STOP Expresion FOR_STEP Expresion FOR_DO . Sentencia
+
+    error        desplazar e ir al estado 63
+    MAS_MENOS    desplazar e ir al estado 26
+    OP_UNARIO    desplazar e ir al estado 27
+    PAREN_IZQ    desplazar e ir al estado 28
+    CORCH_IZQ    desplazar e ir al estado 29
+    LLAVE_IZQ    desplazar e ir al estado 6
+    IDENT        desplazar e ir al estado 31
+    CONST_BOOL   desplazar e ir al estado 32
+    CONST_CAR    desplazar e ir al estado 33
+    CONST_ENT    desplazar e ir al estado 34
+    CONST_REAL   desplazar e ir al estado 35
+    COND_SI      desplazar e ir al estado 36
+    BUCLE        desplazar e ir al estado 37
+    FOR_INI      desplazar e ir al estado 38
+    ENTRADA      desplazar e ir al estado 39
+    SALIDA       desplazar e ir al estado 40
+    DEVUELVE     desplazar e ir al estado 41
+    OP_INI_LIST  desplazar e ir al estado 42
+
+    Bloque              ir al estado 43
+    Sentencia           ir al estado 179
+    Sentencia_asig      ir al estado 48
+    Expresion           ir al estado 49
+    Funcion             ir al estado 50
+    Constante           ir al estado 51
+    Constante_lista     ir al estado 52
+    Sentencia_if        ir al estado 53
+    Sentencia_while     ir al estado 54
+    Sentencia_for       ir al estado 55
+    Sentencia_entrada   ir al estado 56
+    Sentencia_salida    ir al estado 57
+    Sentencia_return    ir al estado 58
+    Sentencia_iterar    ir al estado 59
+    Sentencia_comienzo  ir al estado 60
+
+
+Estado 177
+
+   28 Lista_parametros: Lista_parametros error Parametro .
+
+    $default  reduce usando la regla 28 (Lista_parametros)
+
+
+Estado 178
+
+   27 Lista_parametros: Lista_parametros SEPAR Parametro .
+
+    $default  reduce usando la regla 27 (Lista_parametros)
+
+
+Estado 179
+
+   88 Sentencia_for: FOR_INI Sentencia_asig FOR_STOP Expresion FOR_STEP Expresion FOR_DO Sentencia .
+
+    $default  reduce usando la regla 88 (Sentencia_for)

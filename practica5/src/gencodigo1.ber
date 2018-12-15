@@ -1,0 +1,29 @@
+ent principal(){
+	var:
+		ent  n, curr;
+	:var
+
+	salida "Introduce un número: ";
+	entrada n;
+	salida "\n", n, " ==";
+
+	curr = 2;
+
+
+	mientras (curr <= n){
+		var: 
+			ent d;
+		:var
+
+		d = n/curr;
+
+		si (d * curr == n){
+			salida " * ", curr;
+			n = d;
+		}
+		otro
+			curr = 1+curr;
+	}
+
+	salida "\n";
+}
