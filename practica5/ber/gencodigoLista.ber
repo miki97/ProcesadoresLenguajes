@@ -3,24 +3,98 @@ ent principal() {
     ent posicion;
 	lista de ent pe,pe2;
 	:var
+    pe = [2,3,4];
+    salida "Inicializar lista pe";
+    salida pe;
+    salida "\n";
+
+    pe2 = [20,30];
+    salida "Inicializar lista pe2";
+    salida pe2;
 
     pe++10@2;
+    salida "Prueba insertar 10 en pos 2";
+    salida pe;
+    salida "\n";
+
     pe++1@1;
+    salida "Prueba insertar 1 en pos 1";
+    salida pe;
+    salida "\n";
+
     pe++3@2;
-	si(#pe > 2)
+    salida "Prueba insertar 3 en pos 2";
+    salida pe;
+    salida "\n";
+
+	si(#pe > 2){
         pe = pe--2;
-    si( ?pe == 1)
+        salida "Prueba de la longitud y eliminar pos 2";
+        salida pe;
+        salida "\n";
+    }
+
+    $pe;
+    si( ?pe == 1){
         pe = pe%1;
+        salida "No funciona elento actual";
+        salida pe;
+        salida "\n";
+    }
+
+
+    pe>>;
+    si( ?pe == 1){
+        salida "Probar avanzar y elemento actual =1 en pos 1";
+        salida pe;
+        salida "\n";
+    }
+
+    pe<<;
+    si( ?pe == 2){
+        salida "Probar retrocede y elemento actual =2 en pos 0";
+        salida pe;
+        salida "\n";
+    }
+    
 
     posicion = pe@@2;
+    salida "Prueba posicion 2 =  ";
+    salida posicion;
+    salida "\n";
 
     pe = pe**pe2;
+    salida "Prueba concatenar pe y pe2";
+    salida pe;
+    salida "\n";
 
     pe  = pe + 5;
-    pe = 2 + pe;
-    pe = pe - 4;
-    pe = pe *3;
-    pe = 3* pe;
-    pe = pe /7;
+    salida "Prueba sumar cinco l+e";
     salida pe;
+    salida "\n";
+
+    pe = 2 + pe;
+    salida "Prueba sumar dos e+l";
+    salida pe;
+    salida "\n";
+
+    pe = pe - 4;
+    salida "Prueba restar cuatro l-e";
+    salida pe;
+    salida "\n";
+
+    pe = pe *3;
+    salida "Prueba multiplicar tres l*e";
+    salida pe;
+    salida "\n";
+
+    pe = 3* pe;
+    salida "Prueba multiplicar tres e*l";
+    salida pe;
+    salida "\n";
+
+    pe = pe /7;
+    salida "Prueba dividir 7 l/e";
+    salida pe;
+    salida "\n";
 }

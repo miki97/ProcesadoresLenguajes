@@ -183,10 +183,10 @@ Constante: CONST_BOOL      { $$.type = $1.type; }
          | CONST_REAL      { $$.type = $1.type; }
          | Constante_lista { $$.type = $1.type; };
 
-Constante_lista: CORCH_IZQ Lista_bool CORCH_DER { $$.type = $2.type; }
-               | CORCH_IZQ Lista_car  CORCH_DER { $$.type = $2.type; }
-               | CORCH_IZQ Lista_ent  CORCH_DER { $$.type = $2.type; }
-               | CORCH_IZQ Lista_real CORCH_DER { $$.type = $2.type; }
+Constante_lista: CORCH_IZQ Lista_bool CORCH_DER { $$.type = LISTA_BOOLEANO; $$.lex = $2.lex; }
+               | CORCH_IZQ Lista_car  CORCH_DER { $$.type = LISTA_CARACTER; $$.lex = $2.lex; }
+               | CORCH_IZQ Lista_ent  CORCH_DER { $$.type = LISTA_ENTERO; $$.lex = $2.lex; }
+               | CORCH_IZQ Lista_real CORCH_DER { $$.type = LISTA_REAL; $$.lex = $2.lex; }
                | CORCH_IZQ CORCH_DER ;
 
 Lista_bool: Lista_bool SEPAR CONST_BOOL
@@ -196,10 +196,48 @@ Lista_car: Lista_car SEPAR CONST_CAR
          | CONST_CAR { $$.type = $1.type; };
 
 Lista_ent: Lista_ent SEPAR CONST_ENT
-         | CONST_ENT { $$.type = $1.type; };
+        { 
+	 	    if (esLista($3))  {
+        	    printSemanticError("no se pueden tener listas de listas.\n");
+	 	    }
+	 	    else if ($3.type == tipoDeListaATipoDeDato($1.type)) {
+                $3.type = LISTA_ENTERO; 
+	 		    addValorALista($1, $3);
+                $$.type = ENTERO;
+	 	    }
+	 	    else {
+	 		    printSemanticError("no coinciden los tipos del agregado de la lista.\n");
+	 	    }
+
+	    }
+         | CONST_ENT {
+                $1.type = LISTA_ENTERO;      	    
+         	    generarListaTemporal($1, &$$);
+                $$.type = LISTA_ENTERO;
+            }
+        ;
 
 Lista_real: Lista_real SEPAR CONST_REAL
-          | CONST_REAL { $$.type = $1.type; };
+        { 
+	 	    if (esLista($3))  {
+        	    printSemanticError("no se pueden tener listas de listas.\n");
+	 	    }
+	 	    else if ($3.type == tipoDeListaATipoDeDato($1.type)) {
+                $3.type = LISTA_REAL; 
+	 		    addValorALista($1, $3);
+                $$.type = REAL;
+	 	    }
+	 	    else {
+	 		    printSemanticError("no coinciden los tipos del agregado de la lista.\n");
+	 	    }
+
+	    }
+          | CONST_REAL{
+                $1.type = LISTA_REAL;      	    
+         	    generarListaTemporal($1, &$$);
+                $$.type = LISTA_REAL;
+            }
+        ;
 
 Condicion_if: COND_SI PAREN_IZQ Expresion PAREN_DER { compruebaCondicion($3); addATabla($3); emitirSaltoElse(); abrirBloque();/**/ };
 

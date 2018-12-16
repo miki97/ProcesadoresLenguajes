@@ -492,3 +492,25 @@ void moverposicionlista(attrs op, attrs lista) {
 void comienzolista(attrs lista) {
 	fprintf(archivo_compilado, "comienzo(&%s);\n",lista.lex);
 }
+
+
+void generarListaTemporal(attrs expresion, attrs* lista) {
+	char* nombre = temporal();
+	char* nombre2 = temporal();
+	char* tipo = listaToChar(expresion.type);
+	fprintf(archivo_compilado, "Lista %s = inicializar();\n", nombre);
+	//fprintf(archivo_compilado, "inicializar(&%s);\n", nombre);
+	fprintf(archivo_compilado, "%s.tipo_lista = %s;\n", nombre, tipo);
+	fprintf(archivo_compilado, "EntradaLista %s;\n", nombre2);
+	fprintf(archivo_compilado, "%s.%s = %s;\n", nombre2, tipo, expresion.lex);
+	fprintf(archivo_compilado, "%s = add_elemento_posicion(&%s, %s, longitud(&%s));\n", nombre, nombre, nombre2, nombre);
+	lista->lex = nombre;
+}
+
+void addValorALista(attrs lista, attrs valor) {
+	char* nombre = temporal();
+	char* tipo = listaToChar(valor.type);
+	fprintf(archivo_compilado, "EntradaLista %s;\n", nombre);
+	fprintf(archivo_compilado, "%s.%s = %s;\n", nombre, tipo, valor.lex);
+	fprintf(archivo_compilado, "%s = add_elemento_posicion(&%s, %s, longitud(&%s));\n", lista.lex, lista.lex, nombre, lista.lex);
+}

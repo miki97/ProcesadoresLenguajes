@@ -75,4 +75,9 @@ char* etiqueta();
 
 void moverposicionlista(attrs op, attrs lista);
 void comienzolista(attrs lista);
+
+
+
+void generarListaTemporal(attrs expresion, attrs* lista);
+void addValorALista(attrs lista, attrs valor);
 #endif
