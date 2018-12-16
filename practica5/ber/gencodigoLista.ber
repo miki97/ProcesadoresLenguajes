@@ -1,0 +1,26 @@
+ent principal() {
+	var:
+    ent posicion;
+	lista de ent pe,pe2;
+	:var
+
+    pe++10@2;
+    pe++1@1;
+    pe++3@2;
+	si(#pe > 2)
+        pe = pe--2;
+    si( ?pe == 1)
+        pe = pe%1;
+
+    posicion = pe@@2;
+
+    pe = pe**pe2;
+
+    pe  = pe + 5;
+    pe = 2 + pe;
+    pe = pe - 4;
+    pe = pe *3;
+    pe = 3* pe;
+    pe = pe /7;
+    salida pe;
+}
