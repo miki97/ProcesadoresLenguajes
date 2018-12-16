@@ -1,6 +1,6 @@
 #include "generacion.h"
 
-FILE *archivo_compilado, *aux;
+FILE *archivo_compilado, *aux, *aux2;
 int hay_principal = 0;
 int contador_temporales = 0;
 int contador_etiquetas = 0;
@@ -17,6 +17,10 @@ attrs coma;
 // Abre un fichero para crear el código intermedio
 void generarFichero(){
     archivo_compilado = fopen("./gen/generado.c", "w");
+	aux2 = fopen("./gen/dec_fun.c", "w");
+	fclose(aux2);
+	//aux2 = fopen("./gen/dec_dat.c", "w");
+	//fclose(aux2);
 	coma.lex = ", ";
 	//archivo_compilado2 = fopen("dec_fun.c", "w");
 }
@@ -103,7 +107,7 @@ void compruebaTipos(attrs izq, attrs der){
 }
 
 void escribirLibrerias() {
-	fprintf(archivo_compilado, "#include <stdlib.h>\n#include <stdio.h>\n\n");
+	fprintf(archivo_compilado, "#include <stdlib.h>\n#include <stdio.h>\n#include \"dec_fun.c\"\n#include \"dec_dat.c\"\n\n");
 }
 
 void escribirSaltoLinea() {
@@ -166,6 +170,9 @@ void declararTipo(attrs tip) {
 	}
 	else if (tipo == CARACTER) {
 		fprintf(archivo_compilado, "char ");
+	}
+	else if (esLista(tip)) {
+		fprintf(archivo_compilado, "Lista ");
 	}
 
 	// TO-DO: Parte optativa: añadir listas
@@ -273,6 +280,9 @@ void escribir(attrs expresion) {
 	else if (expresion.type== REAL) {
 		fprintf(archivo_compilado, "printf(\"%%f\", %s);\n", expresion.lex);
 	}
+	else if (esLista(expresion)) {
+		fprintf(archivo_compilado, "escribir(&%s);\n", expresion.lex);
+	}
 }
 
 void leer(attrs expresion) {
@@ -301,22 +311,137 @@ void generarBinario(attrs op, attrs exp1, attrs exp2, attrs* exp) {
 	// 1. Cogemos la siguiente variable temporal
 	char *variable = temporal();
 
-	// 2. La declaramos
-	declararTipo(exp1);
-	fprintf(archivo_compilado, "%s;\n",  variable);
-	escribirTabulaciones();
-    fprintf(archivo_compilado, "%s = %s %s %s;\n", variable, exp1.lex, op.lex, exp2.lex);
+	//printSemanticError(op.lex);
+	if (strcmp(op.lex, "--") == 0) {
+		// Borra de una posición de una lista
+		declararTipo(exp1);
+		fprintf(archivo_compilado, "%s;\n",  variable);
+		fprintf(archivo_compilado, "%s = borrar_elemento_posicion(&%s, %s);\n", variable, exp1.lex, exp2.lex);
+	}
+	else if (strcmp(op.lex, "%") == 0) {
+		// Borra de una lista a partir de la posición.
+		declararTipo(exp1);
+		fprintf(archivo_compilado, "%s;\n",  variable);
+		fprintf(archivo_compilado, "%s = borrar_lista_posicion(&%s, %s);\n", variable, exp1.lex, exp2.lex);
+	}
+	else if (strcmp(op.lex, "**") == 0) {
+		// Concatena dos listas
+		declararTipo(exp1);
+		fprintf(archivo_compilado, "%s;\n",  variable);
+		fprintf(archivo_compilado, "%s = concatenar_listas(&%s, &%s);\n", variable, exp1.lex, exp2.lex);
+	}
+	else if (strcmp(op.lex, "@@") == 0) {
+		// Devuelve el elemento en una posición
+		attrs aux;
+		aux.type = tipoDeListaATipoDeDato(exp1.type);
+		declararTipo(aux);
+		char* entradalista = temporal();
+		fprintf(archivo_compilado, "%s;\n",  variable);
+		fprintf(archivo_compilado, "EntradaLista %s;\n",  entradalista);
+		fprintf(archivo_compilado, "%s = elemento_posicion(&%s, %s);\n", entradalista, exp1.lex, exp2.lex);
+		fprintf(archivo_compilado, "%s = %s.%s;\n", variable, entradalista, listaToChar(exp1.type));
+	}
+	else if (strcmp(op.lex, "+")==0 && esLista(exp1) && tipoDeListaATipoDeDato(exp1.type) == exp2.type) {
+		declararTipo(exp1);
+		fprintf(archivo_compilado, "%s;\n",  variable);
+		char* entradalista = temporal();
+		fprintf(archivo_compilado, "EntradaLista %s;\n",  entradalista);
+		char* tipo = listaToChar(exp1.type);
+		fprintf(archivo_compilado, "%s.%s = %s;\n", entradalista, tipo, exp2.lex);
+		fprintf(archivo_compilado, "%s = sumar(&%s, %s);\n", variable, exp1.lex, entradalista);
+	}
+	else if (strcmp(op.lex, "+")==0 && esLista(exp2) && tipoDeListaATipoDeDato(exp2.type) == exp1.type) {
+		declararTipo(exp2);
+		fprintf(archivo_compilado, "%s;\n",  variable);
+		char* entradalista = temporal();
+		fprintf(archivo_compilado, "EntradaLista %s;\n",  entradalista);
+		char* tipo = listaToChar(exp2.type);
+		fprintf(archivo_compilado, "%s.%s = %s;\n", entradalista, tipo, exp1.lex);
+		fprintf(archivo_compilado, "%s = sumar(&%s, %s);\n", variable, exp2.lex, entradalista);
+	}
+	else if (strcmp(op.lex, "*")==0 && esLista(exp1) && tipoDeListaATipoDeDato(exp1.type) == exp2.type) {
+		declararTipo(exp1);
+		fprintf(archivo_compilado, "%s;\n",  variable);
+		char* entradalista = temporal();
+		fprintf(archivo_compilado, "EntradaLista %s;\n",  entradalista);
+		char* tipo = listaToChar(exp1.type);
+		fprintf(archivo_compilado, "%s.%s = %s;\n", entradalista, tipo, exp2.lex);
+		fprintf(archivo_compilado, "%s = multiplicar(&%s, %s);\n", variable, exp1.lex, entradalista);
+	}
+	else if (strcmp(op.lex, "*")==0 && esLista(exp2) && tipoDeListaATipoDeDato(exp2.type) == exp1.type) {
+		declararTipo(exp2);
+		fprintf(archivo_compilado, "%s;\n",  variable);
+		char* entradalista = temporal();
+		fprintf(archivo_compilado, "EntradaLista %s;\n",  entradalista);
+		char* tipo = listaToChar(exp2.type);
+		fprintf(archivo_compilado, "%s.%s = %s;\n", entradalista, tipo, exp1.lex);
+		fprintf(archivo_compilado, "%s = multiplicar(&%s, %s);\n", variable, exp2.lex, entradalista);
+	}
+	else if (strcmp(op.lex, "-")==0 && esLista(exp1) && tipoDeListaATipoDeDato(exp1.type) == exp2.type) {
+		declararTipo(exp1);
+		fprintf(archivo_compilado, "%s;\n",  variable);
+		char* entradalista = temporal();
+		fprintf(archivo_compilado, "EntradaLista %s;\n",  entradalista);
+		char* tipo = listaToChar(exp1.type);
+		fprintf(archivo_compilado, "%s.%s = %s;\n", entradalista, tipo, exp2.lex);
+		fprintf(archivo_compilado, "%s = restar(&%s, %s);\n", variable, exp1.lex, entradalista);
+	}
+	else if (strcmp(op.lex, "/")==0 && esLista(exp1) && tipoDeListaATipoDeDato(exp1.type) == exp2.type) {
+		declararTipo(exp1);
+		fprintf(archivo_compilado, "%s;\n",  variable);
+		char* entradalista = temporal();
+		fprintf(archivo_compilado, "EntradaLista %s;\n",  entradalista);
+		char* tipo = listaToChar(exp1.type);
+		fprintf(archivo_compilado, "%s.%s = %s;\n", entradalista, tipo, exp2.lex);
+		fprintf(archivo_compilado, "%s = dividir(&%s, %s);\n", variable, exp1.lex, entradalista);
+	}
+	else{
+		// 2. La declaramos
+		declararTipo(exp1);
+		fprintf(archivo_compilado, "%s;\n",  variable);
+		escribirTabulaciones();
+    	fprintf(archivo_compilado, "%s = %s %s %s;\n", variable, exp1.lex, op.lex, exp2.lex);
+
+	}
 	exp->lex = variable;
+	
+}
+
+void generarTernario(attrs lista, attrs valor, attrs posicion) {
+	char* nombre = temporal();
+	
+	char* tipo = listaToChar(lista.type);
+
+	fprintf(archivo_compilado, "EntradaLista %s;\n", nombre);
+	fprintf(archivo_compilado, "%s.%s = %s;\n", nombre, tipo, valor.lex);
+	fprintf(archivo_compilado, "%s = add_elemento_posicion(&%s, %s, %s);\n", lista.lex, lista.lex, nombre, posicion.lex);
 }
 
 void generarUnario(attrs op, attrs exp1, attrs* exp) {
 	char* variable = temporal();
 
-	declararTipo(exp1);
-	fprintf(archivo_compilado, "%s; \n", variable);
-	escribirTabulaciones();
-	fprintf(archivo_compilado, "%s = %s%s", variable, op.lex, exp1.lex);
+	if (strcmp(op.lex, "#") == 0) {
+		fprintf(archivo_compilado, "int %s = longitud(&%s);\n", variable, exp1.lex);
+	}
+	else if (strcmp(op.lex, "?") == 0) {
+		char* entradalista = temporal();
+		fprintf(archivo_compilado, "EntradaLista %s;\n", entradalista);
+		fprintf(archivo_compilado, "%s = elemento_actual(&%s);\n", entradalista, exp1.lex);
+		attrs aux;
+		aux.type = tipoDeListaATipoDeDato(exp1.type);
+		declararTipo(aux);
+		fprintf(archivo_compilado, "%s; \n", variable);
+		fprintf(archivo_compilado, "%s = %s.%s;\n", variable, entradalista, listaToChar(exp1.type));
+
+	}
+	else{
+		declararTipo(exp1);
+		fprintf(archivo_compilado, "%s; \n", variable);
+		escribirTabulaciones();
+		fprintf(archivo_compilado, "%s = %s%s", variable, op.lex, exp1.lex);
+	}
 	exp->lex = variable;
+
 }
 
 void addATablaWhileRepeat(attrs expresion) {
@@ -355,4 +480,15 @@ void saltoEntradaWhileRepeat() {
 	int pos = encontrarUltimoControl();
 	escribirTabulaciones();
 	fprintf(archivo_compilado, "goto %s;\n", tablasimbolos[pos].descriptor.EtiquetaEntrada);
+}
+
+void moverposicionlista(attrs op, attrs lista) {
+	if (strcmp(op.lex, ">>") == 0)
+		fprintf(archivo_compilado, "avanzar(&%s);\n",lista.lex);
+	else
+		fprintf(archivo_compilado, "retroceder(&%s);\n",lista.lex);
+
+}
+void comienzolista(attrs lista) {
+	fprintf(archivo_compilado, "comienzo(&%s);\n",lista.lex);
 }

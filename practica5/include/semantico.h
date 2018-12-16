@@ -122,29 +122,8 @@ void compruebaTipoLista(attrs, attrs*);
 bool esLista(attrs con);
 TipoDato getTipoLista(const char* lex);
 TipoDato tipoDeListaATipoDeDato(TipoDato tipoLista);
-
+char * listaToChar(TipoDato tipoLista);
 ////////////////////////////////////////////////////////////
-void generarFichero();
-void cerrarFichero();
 
-void generarVariables(attrs a);
-void generar(int tipo, attrs dest, attrs o1, attrs op, attrs o2);
-
-void insertarDesc(int tipo);
-void eliminarDesc();
-
-void insertarCond(int tipo);
-void insertarEtiqElse();
-
-void insertarEtiqSalida();
-void insertarEtiqEntrada();
-
-void insertarGotoEntrada();
-
-void generarEntSal(int tipo, attrs a);
-
-
-void pintaTMP();
-//unsigned int compruebaTipos2(attrs a,attrs op, attrs b);
 
 #endif

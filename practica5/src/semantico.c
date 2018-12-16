@@ -861,6 +861,20 @@ TipoDato tipoDeListaATipoDeDato(TipoDato tipoLista) {
 	}
 }
 
+char* listaToChar(TipoDato tipoLista) {
+	char * tipo = malloc(100);
+	if (tipoLista == LISTA_BOOLEANO) {
+		tipo = "entero";
+	} else if (tipoLista == LISTA_ENTERO) {
+		tipo = "entero";
+	} else if (tipoLista == LISTA_REAL) {
+		tipo = "real";
+	} else if (tipoLista == LISTA_CARACTER) {
+		tipo = "caracter";
+	}
+	return tipo;
+}
+
 /********************************************
 **************generacion codigo**************
 *********************************************/

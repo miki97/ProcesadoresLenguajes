@@ -68,7 +68,10 @@ genFULL : $(BIN)/compiler $(BER)/programaPrueba.ber
 genFULLtxt : $(BIN)/compiler $(BER)/programaPrueba.ber
 	$^ > output_genFULL.txt
 
-
+genLista : $(BIN)/compiler $(BER)/gencodigoLista.ber
+	$^
+genListatxt : $(BIN)/compiler $(BER)/gencodigoLista.ber
+	$^ > output_genLISTA.txt
 #***************************C_COMPIL***************************#
 compile : $(GEN)/generado.c
 	gcc $^ -o $(BIN)/generado 
@@ -95,7 +98,8 @@ clean_temp :
 	rm -f -r $(GEN)/temp.c
 
 clean_gen : clean_temp
-	rm -f -r $(GEN)/*
+	rm -f -r $(GEN)/dec_fun.c
+	rm -f -r $(GEN)/generado.c
 
 mrproper : clean clean_gen
 	rm -f -r $(BIN)/*

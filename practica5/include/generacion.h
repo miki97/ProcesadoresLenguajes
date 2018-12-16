@@ -51,6 +51,7 @@ void generarAsignacion(attrs id, attrs exp);
 
 void generarIDoConst(attrs atrib);
 void generarBinario(attrs op, attrs exp1, attrs exp2, attrs* exp);
+void generarTernario(attrs lista, attrs valor, attrs posicion);
 void generarUnario(attrs op, attrs exp1, attrs* exp);
 void escribir(attrs expresion);
 void leer(attrs expresion);
@@ -72,4 +73,6 @@ void escribirNombreExpresionControl(attrs expresion);
 char* temporal();
 char* etiqueta();
 
+void moverposicionlista(attrs op, attrs lista);
+void comienzolista(attrs lista);
 #endif

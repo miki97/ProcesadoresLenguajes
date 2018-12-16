@@ -110,14 +110,17 @@ Identif ({Barra}|{Letra})({Barra}|{Letra}|{Numero})*
                     }
 "++"				{   ECHO; 
                         yylval.attr = 0;
+                        yylval.lex ="++";
                         return(MAS_MAS); 
                     }
 "--"				{   ECHO; 
                         yylval.attr = 0;
+                        yylval.lex ="--";
                         return(OP_BIN_LISTA); 
                     }
 "%"					{   ECHO;
                         yylval.attr = 1;
+                        yylval.lex ="%";
                         return(OP_BIN_LISTA); 
                     }
 "@@"                {   ECHO;

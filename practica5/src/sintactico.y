@@ -147,7 +147,8 @@ Sentencia: Bloque
          | Sentencia_salida DELIMIT
          | Sentencia_return DELIMIT
          | Sentencia_iterar DELIMIT
-         | Sentencia_comienzo DELIMIT ;
+         | Sentencia_comienzo DELIMIT
+         | Expresion DELIMIT;
 
 Sentencia_asig: IDENT IGUAL Expresion { compruebaAsignacion($1, $2, $3, &$$); generarAsignacion($1, $3); if (var_control) guardarControl($1);/**/ escribirSaltoLinea(); };
 
@@ -167,7 +168,7 @@ Expresion: PAREN_IZQ Expresion PAREN_DER { $$.type = $2.type; }
          | Expresion OP_RELACION Expresion { compruebaRel($1, $2, $3, &$$); generarBinario($2, $1, $3, &$$); }
          | Expresion OP_IGUALDAD Expresion { compruebaRel($1, $2, $3, &$$); generarBinario($2, $1, $3, &$$); } 
          | Expresion OP_MULTI_DIV Expresion { compruebaProducto($1, $2, $3, &$$); generarBinario($2, $1, $3, &$$); }
-         | Expresion MAS_MAS Expresion OP_GET_LIST Expresion { compruebaListaGet($1, $3, $5, &$$); }
+         | Expresion MAS_MAS Expresion OP_GET_LIST Expresion { compruebaListaGet($1, $3, $5, &$$);generarTernario($1, $3, $5); }
          | IDENT { decVar = 0; compruebaTipoIdentificador($1, &$$); }
          | Funcion { $$.type = $1.type; }
          | Constante { $$.type = $1.type; }
@@ -178,7 +179,7 @@ Funcion: IDENT PAREN_IZQ Lista_expresiones PAREN_DER { compruebaLlamada($1, &$$)
 
 Constante: CONST_BOOL      { $$.type = $1.type; }
          | CONST_CAR       { $$.type = $1.type; }
-         | CONST_ENT       { $$.type = $1.type; }
+         | CONST_ENT       { $$ = $1; }
          | CONST_REAL      { $$.type = $1.type; }
          | Constante_lista { $$.type = $1.type; };
 
@@ -226,9 +227,9 @@ Expr_cadena: Expresion { escribir($1); }
 
 Sentencia_return: DEVUELVE Expresion { compruebaDevuelve($2, &$$); escribirReturn($2); };
 
-Sentencia_iterar: Expresion OP_AVR_RETR;
+Sentencia_iterar: Expresion OP_AVR_RETR { moverposicionlista($2, $1);};
 
-Sentencia_comienzo: OP_INI_LIST Expresion;
+Sentencia_comienzo: OP_INI_LIST Expresion{comienzolista($2);};
 
 %%
 

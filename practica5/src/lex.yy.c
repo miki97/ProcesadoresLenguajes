@@ -1097,28 +1097,31 @@ YY_RULE_SETUP
 #line 111 "src/lexico.l"
 {   ECHO; 
                         yylval.attr = 0;
+                        yylval.lex ="++";
                         return(MAS_MAS); 
                     }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 115 "src/lexico.l"
+#line 116 "src/lexico.l"
 {   ECHO; 
                         yylval.attr = 0;
+                        yylval.lex ="--";
                         return(OP_BIN_LISTA); 
                     }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 119 "src/lexico.l"
+#line 121 "src/lexico.l"
 {   ECHO;
                         yylval.attr = 1;
+                        yylval.lex ="%";
                         return(OP_BIN_LISTA); 
                     }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 123 "src/lexico.l"
+#line 126 "src/lexico.l"
 {   ECHO;
                         yylval.lex ="@@";
                         yylval.attr = 2;
@@ -1127,7 +1130,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 128 "src/lexico.l"
+#line 131 "src/lexico.l"
 {   ECHO; 
                         yylval.lex ="*";
                         yylval.attr = 0;
@@ -1136,7 +1139,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 133 "src/lexico.l"
+#line 136 "src/lexico.l"
 {   ECHO; 
                         yylval.lex ="/";
                         yylval.attr = 1;
@@ -1145,7 +1148,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 138 "src/lexico.l"
+#line 141 "src/lexico.l"
 {   ECHO;
                         yylval.lex ="&&";
                         yylval.attr = 0;
@@ -1154,7 +1157,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 143 "src/lexico.l"
+#line 146 "src/lexico.l"
 {   ECHO;
                         yylval.lex ="y";
                         yylval.attr = 1;
@@ -1163,7 +1166,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 148 "src/lexico.l"
+#line 151 "src/lexico.l"
 {   ECHO;
                         yylval.lex ="||";
                         yylval.attr = 0;
@@ -1172,7 +1175,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 153 "src/lexico.l"
+#line 156 "src/lexico.l"
 {   ECHO;
                         yylval.lex ="o";
                         yylval.attr = 1;
@@ -1181,7 +1184,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 158 "src/lexico.l"
+#line 161 "src/lexico.l"
 {   ECHO;
                         yylval.lex ="^^";
                         yylval.attr = 0;
@@ -1190,7 +1193,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 163 "src/lexico.l"
+#line 166 "src/lexico.l"
 {   ECHO;
                         yylval.lex ="ox";                            
                         yylval.attr = 1;
@@ -1199,7 +1202,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 168 "src/lexico.l"
+#line 171 "src/lexico.l"
 {   ECHO;
                         yylval.lex ="==";
                         yylval.attr = 0;
@@ -1208,7 +1211,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 173 "src/lexico.l"
+#line 176 "src/lexico.l"
 {   ECHO; 
                         yylval.lex ="!=";
                         yylval.attr = 1;
@@ -1217,7 +1220,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 178 "src/lexico.l"
+#line 181 "src/lexico.l"
 {   ECHO;
                         yylval.lex ="<";
                         yylval.attr = 0;
@@ -1226,7 +1229,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 183 "src/lexico.l"
+#line 186 "src/lexico.l"
 {   ECHO;
                         yylval.lex ="<=";
                         yylval.attr = 1;
@@ -1235,7 +1238,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 188 "src/lexico.l"
+#line 191 "src/lexico.l"
 {   ECHO;
                         yylval.lex =">";
                         yylval.attr = 2;
@@ -1244,7 +1247,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 193 "src/lexico.l"
+#line 196 "src/lexico.l"
 {   ECHO;
                         yylval.lex =">=";
                         yylval.attr = 3;
@@ -1253,7 +1256,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 198 "src/lexico.l"
+#line 201 "src/lexico.l"
 {   ECHO;
                         yylval.lex ="**";
                         yylval.attr = 0;
@@ -1262,7 +1265,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 203 "src/lexico.l"
+#line 206 "src/lexico.l"
 {   ECHO; 
                         yylval.lex ="@";
                         yylval.attr = 0;
@@ -1271,7 +1274,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 209 "src/lexico.l"
+#line 212 "src/lexico.l"
 {   ECHO;
                         yylval.lex ="$";
                         yylval.attr = 0;
@@ -1280,7 +1283,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 214 "src/lexico.l"
+#line 217 "src/lexico.l"
 {   ECHO;
                         yylval.lex ="<<";
                         yylval.attr = 0;
@@ -1289,7 +1292,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 219 "src/lexico.l"
+#line 222 "src/lexico.l"
 {   ECHO;
                         yylval.lex =">>";
                         yylval.attr = 1;
@@ -1298,7 +1301,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 224 "src/lexico.l"
+#line 227 "src/lexico.l"
 {   ECHO; 
                         yylval.attr = 0;
                         yylval.type = BOOLEANO;
@@ -1309,7 +1312,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 231 "src/lexico.l"
+#line 234 "src/lexico.l"
 {   ECHO; 
                         yylval.attr = 1;
                         yylval.type = BOOLEANO;
@@ -1320,7 +1323,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 238 "src/lexico.l"
+#line 241 "src/lexico.l"
 {   ECHO; 
                         yylval.attr = 2;
                         yylval.type = BOOLEANO;
@@ -1331,7 +1334,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 245 "src/lexico.l"
+#line 248 "src/lexico.l"
 {   ECHO; 
                         yylval.attr = 3;
                         yylval.type = BOOLEANO;
@@ -1343,7 +1346,7 @@ YY_RULE_SETUP
 case 61:
 /* rule 61 can match eol */
 YY_RULE_SETUP
-#line 252 "src/lexico.l"
+#line 255 "src/lexico.l"
 {   ECHO;
                         yylval.type = CARACTER; 
                         yylval.attr = 0;
@@ -1354,7 +1357,7 @@ YY_RULE_SETUP
 case 62:
 /* rule 62 can match eol */
 YY_RULE_SETUP
-#line 258 "src/lexico.l"
+#line 261 "src/lexico.l"
 {   ECHO;
                         yylval.type = STRING;
                         yylval.attr = 1;
@@ -1364,7 +1367,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 264 "src/lexico.l"
+#line 267 "src/lexico.l"
 {   ECHO;
                         yylval.type = ENTERO; 
                         yylval.attr = 2;
@@ -1374,7 +1377,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 270 "src/lexico.l"
+#line 273 "src/lexico.l"
 {   ECHO;
                         yylval.type = REAL;
                         yylval.attr = 3;
@@ -1384,7 +1387,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 276 "src/lexico.l"
+#line 279 "src/lexico.l"
 {   ECHO;
                         yylval.lex = strdup(yytext);
                         return(IDENT); 
@@ -1393,20 +1396,20 @@ YY_RULE_SETUP
 case 66:
 /* rule 66 can match eol */
 YY_RULE_SETUP
-#line 280 "src/lexico.l"
+#line 283 "src/lexico.l"
 { ECHO; }
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 281 "src/lexico.l"
+#line 284 "src/lexico.l"
 { printf("\n%sLínea %d:%s error léxico, simbolo inválido: '%s'.", _CC_RED, yylineno, _CC_RESET, yytext); }
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 283 "src/lexico.l"
+#line 286 "src/lexico.l"
 ECHO;
 	YY_BREAK
-#line 1410 "src/lex.yy.c"
+#line 1413 "src/lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2423,7 +2426,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 283 "src/lexico.l"
+#line 286 "src/lexico.l"
 
 
 // /* Programa principal */
