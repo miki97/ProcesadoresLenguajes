@@ -5,10 +5,9 @@ ent principal(){
 
 	salida "Introduce un número: ";
 	entrada n;
-	salida "\n", n, " ==";
+	salida "\n", n, " == 1";
 
 	curr = 2;
-
 
 	mientras (curr <= n){
 		var: 

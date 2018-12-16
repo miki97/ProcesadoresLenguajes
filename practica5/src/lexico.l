@@ -32,8 +32,12 @@ Identif ({Barra}|{Letra})({Barra}|{Letra}|{Numero})*
 %%
 
 "ent principal"		{ ECHO; return(INICIO); }
-"("					{ ECHO; return(PAREN_IZQ); }
-")"					{ ECHO; return(PAREN_DER); }
+"("					{ ECHO; 
+                        yylval.lex = "(";
+                        return(PAREN_IZQ); }
+")"					{ ECHO;
+                        yylval.lex = ")";
+                        return(PAREN_DER); }
 "["					{ ECHO; return(CORCH_IZQ); }
 "]"					{ ECHO; return(CORCH_DER); }
 "{"					{ ECHO; return(LLAVE_IZQ); }
@@ -67,7 +71,9 @@ Identif ({Barra}|{Letra})({Barra}|{Letra}|{Numero})*
 "mientras"			{ ECHO;
                         yylval.lex = "mientras";
                         return(BUCLE); } 
-"para"				{ ECHO; return(FOR_INI); } 
+"para"				{ ECHO;
+                        yylval.lex = "for";
+                        return(FOR_INI); } 
 "hasta"				{ ECHO; return(FOR_STOP); } 
 "paso"				{ ECHO; return(FOR_STEP); } 
 "hacer"				{ ECHO; return(FOR_DO); } 
@@ -218,25 +224,29 @@ Identif ({Barra}|{Letra})({Barra}|{Letra}|{Numero})*
 "falso"				{   ECHO; 
                         yylval.attr = 0;
                         yylval.type = BOOLEANO;
-                        yylval.lex = strdup(yytext);
+                        //yylval.lex = strdup(yytext);
+                        yylval.lex = "0";
                         return(CONST_BOOL); 
                     } 
 "FALSO"				{   ECHO; 
                         yylval.attr = 1;
                         yylval.type = BOOLEANO;
-                        yylval.lex = strdup(yytext);
+                        //yylval.lex = strdup(yytext);
+                        yylval.lex = "0";
                         return(CONST_BOOL); 
                     } 
 "verdadero"			{   ECHO; 
                         yylval.attr = 2;
                         yylval.type = BOOLEANO;
-                        yylval.lex = strdup(yytext);
+                        //yylval.lex = strdup(yytext);
+                        yylval.lex = "1";
                         return(CONST_BOOL); 
                     } 
 "VERDADERO"			{   ECHO; 
                         yylval.attr = 3;
                         yylval.type = BOOLEANO;
-                        yylval.lex = strdup(yytext);
+                        //yylval.lex = strdup(yytext);
+                        yylval.lex = "1";
                         return(CONST_BOOL); 
                     }
 {Caract}			{   ECHO;

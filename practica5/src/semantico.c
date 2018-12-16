@@ -227,7 +227,7 @@ int encontrarSiguienteFuncion(){
 }
 
 //funcion para comprobar una sentencia de asignacion
-void compruebaAsignacion(attrs o1, attrs op, attrs o2,attrs* res  ){
+void compruebaAsignacion(attrs o1, attrs op, attrs o2, attrs* res  ){
 	compruebaTipoIdentificador(o1,res);
     if(res->type != o2.type) {
         //printTS();
@@ -326,7 +326,7 @@ int buscaNombre(attrs e) {
 
 	if(!found) {
 		//DEBUG
-		fprintf(stderr, "%s NO ENCUENTRO LA FUNCION, DEVUELVO -1 \n\n%s", _CC_BOLDBLUE, _CC_RESET);
+		//fprintf(stderr, "%s NO ENCUENTRO LA FUNCION, DEVUELVO -1 \n\n%s", _CC_BOLDBLUE, _CC_RESET);
 		return -1;
 	} else {
 		// fprintf(stderr, "%s LO HE ENCONTRADO %d\n\n\n%s", _CC_BOLDBLUE, i, _CC_RESET);

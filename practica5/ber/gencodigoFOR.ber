@@ -1,0 +1,28 @@
+ent principal(){
+	var:
+		ent i, n, curr;
+	:var
+
+	salida "Introduce un número: ";
+	entrada n;
+
+	curr = 2;
+
+	para i = 1 hasta i < n paso 1+i hacer {
+		var: 
+			ent d;
+		:var
+
+		d = i/curr;
+
+		salida "El número ", i, " es ";
+
+		si (d * curr == i){
+			salida "par\n";
+		}
+		otro
+			salida "impar\n";
+	}
+
+	salida "\n";
+}

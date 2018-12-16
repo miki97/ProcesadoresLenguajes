@@ -1,0 +1,61 @@
+ent principal(){
+	var:
+		ent n, curr, ultim, cuenta, primero;
+	:var
+
+	salida "Introduce un número: ";
+	entrada n;
+	salida "\n", n, " ==";
+
+	curr = 2;
+	ultim = 0;
+	cuenta = 0;
+	primero = 1;
+
+	mientras (curr <= n){
+		var: 
+			ent d;
+		:var
+
+		d = n/curr;
+
+		si (d * curr == n){
+			si (curr != ultim){
+				ultim = curr;
+				cuenta = 1;
+			}
+			otro
+				cuenta = cuenta + 1;
+
+			n = d;
+		}
+		otro{
+			si (cuenta > 0){
+				si (primero == 0)
+					salida " *";
+
+				primero = 0;
+				salida " ", curr;
+
+				si (cuenta > 1)
+					salida "^", cuenta;
+			}
+
+			curr = curr + 1;
+			cuenta = 0;
+		}
+	}
+	
+	si (cuenta > 0){
+		si (primero == 0)
+			salida " *";
+
+		primero = 0;
+		salida " ", curr;
+
+		si (cuenta > 1)
+			salida "^", cuenta;
+	}
+
+	salida "\n";
+}

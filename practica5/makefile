@@ -1,17 +1,19 @@
 # Makefile
 
-.PHONY : all clean mrproper
+.PHONY : all gen0 gen0txt gen1 gen1txt gen2 gen2txt gen3 gen3txt genFULL genFULLtxt compile try clean clean_temp clean_gen mrproper
 
+BER = ./ber
 SRC = ./src
 INC = ./include
-BIN = ./bin
 OBJ = ./obj
+BIN = ./bin
+GEN = ./gen
 
 INCLUDES = -I$(INC)
 
 
 #**************************COMPILACIÓN**************************#
-all : $(BIN)/sintactico
+all : $(BIN)/compiler
 
 $(SRC)/lex.yy.c : $(SRC)/lexico.l
 	lex -o $@ $< 
@@ -22,7 +24,6 @@ $(SRC)/y.tab.c : $(SRC)/sintactico.y $(SRC)/lex.yy.c
 $(OBJ)/y.tab.o : $(SRC)/y.tab.c 
 	gcc -c -o $@ $< $(INCLUDES) -g
 	
-
 $(OBJ)/main.o : $(SRC)/main.c
 	gcc -c -o $@ $< -g
 
@@ -32,21 +33,51 @@ $(OBJ)/semantico.o: $(SRC)/semantico.c
 $(OBJ)/generacion.o: $(SRC)/generacion.c
 	gcc -c -o $@ $< $(INCLUDES) -g
 	
-$(BIN)/sintactico :  $(OBJ)/semantico.o $(OBJ)/main.o $(OBJ)/generacion.o  $(OBJ)/y.tab.o
+$(BIN)/compiler :  $(OBJ)/main.o $(OBJ)/y.tab.o $(OBJ)/semantico.o $(OBJ)/generacion.o 
 	gcc -o $@ $^ $(INCLUDES) -g
 
-try2 : $(BIN)/sintactico $(SRC)/helloworld.ber
-	$^ > 'output_simple.txt'
 
-try : $(BIN)/sintactico $(SRC)/programaPrueba.ber
-	# $^ > 'output.txt' 
+#***************************GENERACIÓN***************************#
+gen0 : $(BIN)/compiler $(BER)/helloworld.ber
 	$^
-gen : $(BIN)/sintactico $(SRC)/gencodigo1.ber
+
+gen0txt : $(BIN)/compiler $(BER)/helloworld.ber
+	$^ > output_simple.txt
+
+gen1 : $(BIN)/compiler $(BER)/gencodigo1.ber
 	$^
-ctry: $(BIN)/sintactico $(SRC)/programaPrueba.ber
-	make clean
-	clear
-	$^ > output.txt
+
+gen1txt : $(BIN)/compiler $(BER)/gencodigo1.ber
+	$^ > output_gen1.txt
+
+gen2 : $(BIN)/compiler $(BER)/gencodigo2.ber
+	$^
+
+gen2txt : $(BIN)/compiler $(BER)/gencodigo2.ber
+	$^ > output_gen2.txt
+
+gen3 : $(BIN)/compiler $(BER)/gencodigoFOR.ber
+	$^
+
+gen3txt : $(BIN)/compiler $(BER)/gencodigoFOR.ber
+	$^ > output_gen3.txt
+
+genFULL : $(BIN)/compiler $(BER)/programaPrueba.ber
+	$^
+
+genFULLtxt : $(BIN)/compiler $(BER)/programaPrueba.ber
+	$^ > output_genFULL.txt
+
+
+#***************************C_COMPIL***************************#
+compile : $(GEN)/generado.c
+	gcc $^ -o $(BIN)/generado 
+
+
+#***************************PRUEBA_FINAL***************************#
+try : $(BIN)/generado
+	$^
+
 
 #***************************LIMPIEZA***************************#
 clean :
@@ -60,5 +91,11 @@ clean :
 	rm -f -r ./output.txt
 	rm -f -r ./output_simple.txt
 
-mrproper : clean
+clean_temp : 
+	rm -f -r $(GEN)/temp.c
+
+clean_gen : clean_temp
+	rm -f -r $(GEN)/*
+
+mrproper : clean clean_gen
 	rm -f -r $(BIN)/*

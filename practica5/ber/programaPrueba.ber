@@ -19,7 +19,7 @@ ent principal()
         car funcionB (car b1, bool b2)
         {
             var:
-                real xf ,x2;
+                real xf, x2;
             :var
             
             real funcionC (bool c1, ent c2)
@@ -91,7 +91,7 @@ ent principal()
     pe2 = pe2++5@0;
        
     pe = 2 + pe;
-
+    ve = funcionA(ve, 1.0, 'j');
 
     pe = pe + 2;
     pe = pe - 2;
