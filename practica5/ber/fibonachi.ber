@@ -1,0 +1,81 @@
+ent principal() {
+    var:
+        lista de ent fib;
+        ent nelementos;
+        ent i;
+        ent siguiente;
+        ent j;
+	:var
+
+    ent generarSiguiente(ent primero,ent segundo){
+        devuelve primero + segundo;
+    }
+    bool esprimo(ent numero){
+        var:
+            ent primo_actu;
+            bool resultado;
+        :var
+        bool divisor(ent valor, ent divisor){
+            var:
+                ent div;
+
+            :var
+
+            div = valor / divisor;
+
+            devuelve (div*divisor) == valor;
+        }
+
+        resultado = verdadero;
+        para primo_actu = 2 hasta (primo_actu < numero) && resultado paso 1 + primo_actu hacer{
+            si(divisor(numero,primo_actu)){
+                resultado = falso;
+            }
+    
+        }
+        devuelve resultado;
+    }
+
+    salida "Introduce el numero de elementos a generar en Fibonacci>>>>: ";
+    entrada nelementos;
+    fib = [1,1];
+
+    si( nelementos <= 2){
+        salida "Numero incorrecto de elementos\n";
+        salida "\nGenerados: ", fib ;
+    }
+    otro{
+        
+        para i =0 hasta i < nelementos - 2  paso i + 1 hacer{
+            j = i + 1 ;
+            siguiente = generarSiguiente(fib@@i,fib@@j);
+            j = i + 2;
+            fib++siguiente@j;
+        }
+
+        salida "\nGenerados: ", fib ;
+        salida "\nPrimalidad: [";
+
+        para i = 0 hasta i < #fib paso i + 1 hacer{
+            salida fib@@i, ": ";
+
+            si (fib@@i == 1){
+                salida "unidad, ";
+            }
+            otro {
+                si ( esprimo(fib@@i) ){
+                    salida "primo, ";
+                }
+                otro {
+                    salida "no-primo, ";
+                }
+            }
+        }
+
+        salida "]\n";
+    }
+
+    
+
+}
+

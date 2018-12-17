@@ -72,6 +72,11 @@ genLista : $(BIN)/compiler $(BER)/gencodigoLista.ber
 	$^
 genListatxt : $(BIN)/compiler $(BER)/gencodigoLista.ber
 	$^ > output_genLISTA.txt
+
+genFib : $(BIN)/compiler $(BER)/fibonachi.ber
+	$^	
+genFibtxt : $(BIN)/compiler $(BER)/fibonachi.ber
+	$^ > output_genFIBONACHI.txt
 #***************************C_COMPIL***************************#
 compile : $(GEN)/generado.c
 	gcc $^ -o $(BIN)/generado 

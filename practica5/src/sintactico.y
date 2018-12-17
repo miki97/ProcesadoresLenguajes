@@ -156,7 +156,7 @@ Lista_expresiones: Lista_expresiones SEPAR Expresion { nParam++; addPar($3); amp
                  | Lista_expresiones error Expresion { nParam++; addPar($3); }
                  | Expresion { nParam =1; addPar($1); };                
 
-Expresion: PAREN_IZQ Expresion PAREN_DER { $$.type = $2.type; }
+Expresion: PAREN_IZQ Expresion PAREN_DER { $$.type = $2.type; $$.lex = $2.lex; }
          | OP_UNARIO Expresion { compruebaUnario($1, $2, &$$); generarUnario($1, $2, &$$); }
          | MAS_MENOS Expresion { compruebaSigno($1, $2, &$$); }%prec OP_UNARIO
          | Expresion MAS_MENOS Expresion { compruebaSumaBin($1, $2, $3, &$$); generarBinario($2, $1, $3, &$$); }

@@ -17,8 +17,8 @@ attrs coma;
 // Abre un fichero para crear el código intermedio
 void generarFichero(){
     archivo_compilado = fopen("./gen/generado.c", "w");
-	aux2 = fopen("./gen/dec_fun.c", "w");
-	fclose(aux2);
+	//aux2 = fopen("./gen/dec_fun.c", "w");
+	//fclose(aux2);
 	//aux2 = fopen("./gen/dec_dat.c", "w");
 	//fclose(aux2);
 	coma.lex = ", ";
@@ -36,30 +36,30 @@ void cerrarFichero(){
 
 // Abre fichero temporal para crear código intermedio
 void generarTemporal() {
-	aux = archivo_compilado;
+	aux2 = archivo_compilado;
 	archivo_compilado = fopen("./gen/temp.c", "w");
 }
 
 // Cierra un fichero temporal
 void cerrarTemporal() {
 	fclose(archivo_compilado);
-	archivo_compilado = aux;
+	archivo_compilado = aux2;
 }
 
 // Pasamos la información del fichero temporal al principal
 void rescatarInfoTemporal(){
 	int leido;
 
-	aux = fopen("./gen/temp.c", "r");
+	aux2 = fopen("./gen/temp.c", "r");
 
-	while ((leido = fgetc(aux)) != EOF) 
+	while ((leido = fgetc(aux2)) != EOF) 
 		fputc(leido, archivo_compilado);
 
-	fclose(aux);
+	fclose(aux2);
 
 	// Volvemos a abrir truncando a 0 y cerramos
-	aux = fopen("./gen/temp.c", "w+");
-	fclose(aux);
+	aux2 = fopen("./gen/temp.c", "w+");
+	fclose(aux2);
 }
 
 void generarFunciones() {
@@ -95,13 +95,15 @@ char *etiqueta() {
 }
 
 void guardarControl(attrs ident){
+
 	control_name.attr = ident.attr;
 	control_name.lex = ident.lex;
-	control_name.type = ident.type;
-	control_name.nDim = ident.nDim; 
+	compruebaTipoIdentificador(ident,&control_name);
 }
 
 void compruebaTipos(attrs izq, attrs der){
+	//fprintf(stderr,"tipo1 %d",izq.type);
+	//fprintf(stderr,"tipo2 %d",der.type);
     if (izq.type != der.type)
         printSemanticError("controlador y expresión de paso tienen que ser del mismo tipo.");
 }
